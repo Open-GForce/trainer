@@ -5,10 +5,11 @@
 #include <string>
 #include <sstream>
 #include <cstdint>
+#include "MessageInterface.hpp"
 
 namespace GForce::ACL::CAN {
 
-class Message
+class Message : public MessageInterface
 {
     private:
         int index;
@@ -18,7 +19,7 @@ class Message
     public:
         Message(int index, const std::vector<uint8_t>& words);
 
-        std::string toString();
+        std::string toString() override;
 };
 
 }
