@@ -23,9 +23,9 @@ class Device
 
         virtual ~Device();
 
-        void open();
-        void write(int i2cRegister, const std::vector<uint8_t>& data);
-        std::vector<uint8_t> read(int i2cRegister, int count);
+        virtual void open();
+        virtual void write(int i2cRegister, const std::vector<uint8_t>& data);
+        virtual std::vector<uint8_t> read(int i2cRegister, int count);
 };
 
 }

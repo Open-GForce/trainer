@@ -8,9 +8,10 @@ set (CMAKE_CXX_STANDARD 17)
 set(SOURCES
         src/ACL/I2C/Device.cpp
         src/ACL/I2C/IOException.cpp
-        src/Sensors/ADS1115.cpp)
+        src/Sensors/ADS1115.cpp
+        src/Sensors/InvalidArgumentException.cpp)
 
-set(TESTS)
+set(TESTS tests/Sensors/ADS1115Test.cpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 
