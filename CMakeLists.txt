@@ -7,7 +7,8 @@ set (CMAKE_CXX_STANDARD 17)
 
 set(SOURCES
         src/ACL/I2C/Device.cpp
-        src/ACL/I2C/IOException.cpp)
+        src/ACL/I2C/IOException.cpp
+        src/Sensors/ADS1115.cpp)
 
 set(TESTS)
 
