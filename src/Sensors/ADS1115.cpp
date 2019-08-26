@@ -1,9 +1,10 @@
 #include <zconf.h>
 #include <iostream>
 #include "ADS1115.hpp"
-#include "InvalidArgumentException.hpp"
+#include "../Utils/Exceptions/InvalidArgumentException.hpp"
 
 using namespace GForce::Sensors;
+using namespace GForce::Utils::Exceptions;
 
 ADS1115::ADS1115(Device *device) : device(device) {}
 

@@ -9,9 +9,12 @@ set(SOURCES
         src/ACL/I2C/Device.cpp
         src/ACL/I2C/IOException.cpp
         src/Sensors/ADS1115.cpp
-        src/Sensors/InvalidArgumentException.cpp)
+        src/Utils/Exceptions/InvalidArgumentException.cpp
+        src/ACL/CAN/Message.cpp)
 
-set(TESTS tests/Sensors/ADS1115Test.cpp)
+set(TESTS
+        tests/Sensors/ADS1115Test.cpp
+        tests/ACL/CAN/MessageTest.cpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 

@@ -4,7 +4,7 @@
 #include <exception>
 #include <string>
 
-namespace GForce::Sensors {
+namespace GForce::Utils::Exceptions {
 
 class InvalidArgumentException : public std::exception
 {
