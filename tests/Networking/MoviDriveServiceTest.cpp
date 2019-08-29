@@ -11,6 +11,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 {
     fakeit::Mock<CAN::SocketInterface> socketMock;
     fakeit::Fake(Method(socketMock, send));
+    fakeit::When(Method(socketMock, receive)).AlwaysReturn({});
 
     CAN::SocketInterface *socket = &socketMock.get();
 
@@ -25,7 +26,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                    CHECK(message->toFrame() == "< send 182 4 06 00 94 11 >");
+                    CHECK(message->toFrame() == "< send 202 4 06 00 94 11 >");
                     break;
                 case 2:
                     CHECK(message->toFrame() == "< send 080 0 >");
@@ -53,7 +54,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
                 case 1:
                 case 3:
                 case 6:
-                    CHECK(message->getIndex() == 0x182);
+                    CHECK(message->getIndex() == 0x202);
                     break;
                 case 2:
                 case 4:
@@ -91,7 +92,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
                 case 1:
                 case 3:
                 case 6:
-                    CHECK(message->getIndex() == 0x182);
+                    CHECK(message->getIndex() == 0x202);
                     break;
                 case 2:
                 case 4:
@@ -134,7 +135,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
                     throw std::exception(); // Sync
                 case 4:
                 case 6:
-                    CHECK(message->toFrame() == "< send 182 4 02 00 00 00 >"); // Soft break
+                    CHECK(message->toFrame() == "< send 202 4 02 00 00 00 >"); // Soft break
                     break;
                 case 5:
                 case 7:

@@ -42,7 +42,7 @@ class CANSocket : public SocketInterface
         /**
          * Receives messages in pipe
          */
-        std::vector<MessageInterface*> receive();
+        std::vector<MessageInterface*> receive() override;
 };
 
 }

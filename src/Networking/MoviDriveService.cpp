@@ -56,9 +56,27 @@ void MoviDriveService::send()
     this->socket->send(syncMessage);
 }
 
-void MoviDriveService::receive()
+Response* MoviDriveService::receive()
 {
+    auto messages = this->socket->receive();
+    CAN::MessageInterface* lastMessage = nullptr;
+    Response* response = nullptr;
 
+    // Filter for last status message, ignoring older and other messages
+    for (auto message : messages) {
+        if (message->getIndex() == CAN_RX_PDO_INDEX) {
+            lastMessage = message;
+        } else {
+            delete message;
+        }
+    }
+
+    if (lastMessage != nullptr) {
+        response = Response::fromMessage(lastMessage);
+    }
+
+    delete lastMessage;
+    return response;
 }
 
 void MoviDriveService::handleHeartbeat()
