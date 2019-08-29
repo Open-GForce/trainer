@@ -23,6 +23,10 @@ std::string Message::toString()
 {
     std::string data;
     data += Message::intToHex(this->index) + "#";
+    
+    while (data.size() < 4) {
+        data = "0" + data;
+    }
 
     for (uint8_t word : this->words) {
         data += Message::intToHex(word);
@@ -45,6 +49,10 @@ std::string Message::intToHex(int value)
     std::transform(string.begin(), string.end(), string.begin(), ::toupper);
 
     return string;
+}
+
+int Message::getIndex() {
+    return this->index;
 }
 
 

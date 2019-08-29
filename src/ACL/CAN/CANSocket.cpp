@@ -30,7 +30,7 @@ void CANSocket::open()
     }
 }
 
-void CANSocket::send(Message *message)
+void CANSocket::send(MessageInterface *message)
 {
     canfd_frame frame{};
 
@@ -42,8 +42,11 @@ void CANSocket::send(Message *message)
 
     int bytesWritten = write(this->rawSocket, &frame, sizeof(frame));
     if (bytesWritten != sizeof(frame)) {
+        delete message;
         throw RuntimeException("Error while transferring CAN frame");
     }
+
+    delete message;
 }
 
 

@@ -7,11 +7,12 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
-#include "Message.hpp"
+#include "MessageInterface.hpp"
+#include "SocketInterface.hpp"
 
 namespace GForce::ACL::CAN {
 
-class CANSocket
+class CANSocket : public SocketInterface
 {
     private:
         int rawSocket;
@@ -20,7 +21,12 @@ class CANSocket
 
     public:
         void open();
-        void send(Message* message);
+
+        /**
+         * Sends a CAN message
+         * Ownership of message object moves to socket
+         */
+        void send(MessageInterface* message) override;
 };
 
 }

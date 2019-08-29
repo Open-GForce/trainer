@@ -44,6 +44,24 @@ TEST_CASE( "CAN message tests", "[ACL]" )
         CHECK(message->toString() == "320#");
     }
 
+    SECTION("correct toString() => zero ID")
+    {
+        auto message = new Message(0, {});
+        CHECK(message->toString() == "000#");
+    }
+
+    SECTION("correct toString() => single digit ID")
+    {
+        auto message = new Message(4, {});
+        CHECK(message->toString() == "004#");
+    }
+
+    SECTION("correct toString() => two digit ID")
+    {
+        auto message = new Message(100, {});
+        CHECK(message->toString() == "064#");
+    }
+
     SECTION("correct toString() => zero data")
     {
         auto message = new Message(800, {0});

@@ -20,6 +20,7 @@ class Message : public MessageInterface
         Message(int index, const std::vector<uint8_t>& words);
 
         std::string toString() override;
+        int getIndex() override;
 };
 
 }

@@ -8,7 +8,10 @@ namespace GForce::ACL::CAN {
 class MessageInterface
 {
     public:
+        virtual ~MessageInterface() = default;
+
         virtual std::string toString() = 0;
+        virtual int getIndex() = 0;
 };
 
 }

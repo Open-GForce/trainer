@@ -2,6 +2,7 @@
 #include <zconf.h>
 #include "ACL/I2C/Device.hpp"
 #include "ACL/CAN/CANSocket.hpp"
+#include "ACL/CAN/Message.hpp"
 #include "Sensors/ADS1115.hpp"
 
 extern  "C"
