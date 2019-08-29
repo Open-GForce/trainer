@@ -17,13 +17,15 @@ set(SOURCES
         src/ACL/CAN/CANSocket.cpp
         src/Networking/MoviDriveService.cpp
         src/Networking/ControlStatus.cpp
-        src/Utils/Logging/StandardLogger.cpp)
+        src/Utils/Logging/StandardLogger.cpp
+        src/ACL/CAN/MessageFactory.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
         tests/ACL/CAN/MessageTest.cpp
         tests/Networking/ControlStatusTest.cpp
-        tests/Networking/MoviDriveServiceTest.cpp)
+        tests/Networking/MoviDriveServiceTest.cpp
+        tests/ACL/CAN/MessageFactoryTest.cpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 

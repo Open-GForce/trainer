@@ -22,7 +22,7 @@ class Message : public MessageInterface
         std::string toFrame() override;
 
         int getIndex() override;
-        int getSize() override;
+        std::vector<uint8_t> getData() override;
 };
 
 }

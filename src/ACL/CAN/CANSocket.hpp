@@ -38,6 +38,11 @@ class CANSocket : public SocketInterface
          * Ownership of message object moves to socket
          */
         void send(MessageInterface* message) override;
+
+        /**
+         * Receives messages in pipe
+         */
+        std::vector<MessageInterface*> receive();
 };
 
 }

@@ -57,8 +57,8 @@ int Message::getIndex() {
     return this->index;
 }
 
-int Message::getSize() {
-    return this->words.size();
+std::vector<uint8_t> Message::getData() {
+    return this->words;
 }
 
 

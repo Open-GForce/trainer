@@ -2,6 +2,7 @@
 #define GFORCE_TRAINER_CONTROLLER_MESSAGEINTERFACE_HPP
 
 #include <string>
+#include <vector>
 
 namespace GForce::ACL::CAN {
 
@@ -21,9 +22,11 @@ class MessageInterface
         virtual int getIndex() = 0;
 
         /**
-         * Get number of data bytes (max. 8)
+         * Returns the data payload separated into single bytes
          */
-        virtual int getSize() = 0;
+        virtual std::vector<uint8_t> getData() = 0;
+
+
 };
 
 }

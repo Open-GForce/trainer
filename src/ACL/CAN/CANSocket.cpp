@@ -5,6 +5,7 @@
 #include <iostream>
 #include "CANSocket.hpp"
 #include "../../Utils/Exceptions/RuntimeException.hpp"
+#include "MessageFactory.hpp"
 
 using namespace GForce::ACL::CAN;
 using namespace GForce::Utils::Exceptions;
@@ -68,6 +69,11 @@ std::string CANSocket::fetch()
 
     std::string data = buffer;
     return data;
+}
+
+std::vector<MessageInterface *> CANSocket::receive()
+{
+    return MessageFactory::createFromString(this->fetch());
 }
 
 
