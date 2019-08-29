@@ -10,8 +10,20 @@ class MessageInterface
     public:
         virtual ~MessageInterface() = default;
 
-        virtual std::string toString() = 0;
+        /**
+         * Encodes message to socket compatible format (e.g. binary, ASCII, etc.)
+         */
+        virtual std::string toFrame() = 0;
+
+        /**
+         * Get CAN ID
+         */
         virtual int getIndex() = 0;
+
+        /**
+         * Get number of data bytes (max. 8)
+         */
+        virtual int getSize() = 0;
 };
 
 }

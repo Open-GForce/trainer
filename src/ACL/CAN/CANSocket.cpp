@@ -1,52 +1,73 @@
 #include <cstring>
 #include <zconf.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <iostream>
 #include "CANSocket.hpp"
 #include "../../Utils/Exceptions/RuntimeException.hpp"
-
-extern  "C"
-{
-#include "../../../../can-utils/lib.h"
-}
 
 using namespace GForce::ACL::CAN;
 using namespace GForce::Utils::Exceptions;
 
+CANSocket::CANSocket()
+{
+    this->handle = -1;
+}
+
+void CANSocket::connect(const std::string &address, uint16_t port)
+{
+    this->handle = socket(AF_INET, SOCK_STREAM, 0);
+    if (this->handle < 0) {
+        throw RuntimeException("Unable to open CAN socket handle");
+    }
+
+    sockaddr_in server{};
+    server.sin_addr.s_addr = inet_addr(address.c_str());
+    server.sin_family = AF_INET;
+    server.sin_port = htons(port);
+
+    int status = ::connect(this->handle, (struct sockaddr *) &server, sizeof(server));
+    if (status < 0) {
+        throw RuntimeException("Connection to socket failed (RC: " + std::to_string(status) + ")");
+    }
+}
+
 void CANSocket::open()
 {
-    this->rawSocket = socket(PF_CAN, SOCK_RAW, CAN_RAW);
-    if (this->rawSocket < 0) {
-        throw RuntimeException("Unable to initialize CAN socket");
-    }
+    this->transfer("< open can0 >< rawmode >");
+    usleep(50000);
+    std::string response = this->fetch();
 
-    this->socketCANAddress.can_family = AF_CAN;
-    strcpy(this->frequency.ifr_name, "can0");
-
-    if (ioctl(this->rawSocket, SIOCGIFINDEX, &this->frequency)) {
-        throw RuntimeException("Error while selecting can0 interface");
-    }
-
-    if (bind(this->rawSocket, (struct sockaddr *) &this->socketCANAddress, sizeof(this->socketCANAddress)) < 0) {
-        throw RuntimeException("Error while binding can0 interface");
+    if (response != "< hi >< ok >< ok >") {
+        throw RuntimeException("Handshake failed. Response[" + std::to_string(response.size()) + "]: " + response);
     }
 }
 
 void CANSocket::send(MessageInterface *message)
 {
-    canfd_frame frame{};
+    this->transfer(message->toFrame());
+}
 
-    std::string encoded = message->toString();
-    char buffer[encoded.size() + 1];
-    strcpy(buffer, encoded.c_str());
+void CANSocket::transfer(const std::string& data)
+{
+    int status = ::send(this->handle, data.c_str(), strlen(data.c_str()), 0);
 
-    parse_canframe(buffer, &frame);
+    if (status < 0) {
+        throw RuntimeException("Data transfer failed (RC: " + std::to_string(status) + ")");
+    }
+}
 
-    int bytesWritten = write(this->rawSocket, &frame, sizeof(frame));
-    if (bytesWritten != sizeof(frame)) {
-        delete message;
-        throw RuntimeException("Error while transferring CAN frame");
+std::string CANSocket::fetch()
+{
+    char buffer[512];
+
+    int status = recv(this->handle, buffer, sizeof(buffer), 0);
+    if (status < 0) {
+        puts("recv failed");
     }
 
-    delete message;
+    std::string data = buffer;
+    return data;
 }
 
 

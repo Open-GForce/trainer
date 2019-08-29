@@ -25,10 +25,10 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                    CHECK(message->toString() == "182#06009411");
+                    CHECK(message->toFrame() == "< send 182 4 06 00 94 11 >");
                     break;
                 case 2:
-                    CHECK(message->toString() == "080#");
+                    CHECK(message->toFrame() == "< send 080 0 >");
                     break;
                 default:
                     FAIL("send() method called more then two times");
@@ -134,11 +134,11 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
                     throw std::exception(); // Sync
                 case 4:
                 case 6:
-                    CHECK(message->toString() == "182#02000000"); // Soft break
+                    CHECK(message->toFrame() == "< send 182 4 02 00 00 00 >"); // Soft break
                     break;
                 case 5:
                 case 7:
-                    CHECK(message->toString() == "080#"); // Sync of soft break
+                    CHECK(message->toFrame() == "< send 080 0 >"); // Sync of soft break
                     break;
                 case 8:
                     service->resetErrorCount(); // Second soft break

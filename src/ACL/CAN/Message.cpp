@@ -19,20 +19,22 @@ Message::Message(int index, const std::vector<uint8_t>& words) : index(index), w
     }
 }
 
-std::string Message::toString()
+std::string Message::toFrame()
 {
-    std::string data;
-    data += Message::intToHex(this->index) + "#";
-    
-    while (data.size() < 4) {
-        data = "0" + data;
+    std::string indexHex = Message::intToHex(this->index);
+    while (indexHex.size() < 3) {
+        indexHex = "0" + indexHex;
     }
+
+    std::string data = "< send ";
+    data += indexHex + " ";
+    data += std::to_string(this->words.size());
 
     for (uint8_t word : this->words) {
-        data += Message::intToHex(word);
+        data += " " + Message::intToHex(word);
     }
 
-    return data;
+    return data + " >";
 }
 
 std::string Message::intToHex(int value)
@@ -53,6 +55,10 @@ std::string Message::intToHex(int value)
 
 int Message::getIndex() {
     return this->index;
+}
+
+int Message::getSize() {
+    return this->words.size();
 }
 
 

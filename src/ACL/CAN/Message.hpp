@@ -19,8 +19,10 @@ class Message : public MessageInterface
     public:
         Message(int index, const std::vector<uint8_t>& words);
 
-        std::string toString() override;
+        std::string toFrame() override;
+
         int getIndex() override;
+        int getSize() override;
 };
 
 }

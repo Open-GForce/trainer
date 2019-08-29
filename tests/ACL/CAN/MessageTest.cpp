@@ -38,45 +38,45 @@ TEST_CASE( "CAN message tests", "[ACL]" )
         }
     }
 
-    SECTION("correct toString() => empty data")
+    SECTION("correct toFrame() => empty data")
     {
         auto message = new Message(800, {});
-        CHECK(message->toString() == "320#");
+        CHECK(message->toFrame() == "< send 320 0 >");
     }
 
-    SECTION("correct toString() => zero ID")
+    SECTION("correct toFrame() => zero ID")
     {
         auto message = new Message(0, {});
-        CHECK(message->toString() == "000#");
+        CHECK(message->toFrame() == "< send 000 0 >");
     }
 
-    SECTION("correct toString() => single digit ID")
+    SECTION("correct toFrame() => single digit ID")
     {
         auto message = new Message(4, {});
-        CHECK(message->toString() == "004#");
+        CHECK(message->toFrame() == "< send 004 0 >");
     }
 
-    SECTION("correct toString() => two digit ID")
+    SECTION("correct toFrame() => two digit ID")
     {
         auto message = new Message(100, {});
-        CHECK(message->toString() == "064#");
+        CHECK(message->toFrame() == "< send 064 0 >");
     }
 
-    SECTION("correct toString() => zero data")
+    SECTION("correct toFrame() => zero data")
     {
         auto message = new Message(800, {0});
-        CHECK(message->toString() == "320#00");
+        CHECK(message->toFrame() == "< send 320 1 00 >");
     }
 
-    SECTION("correct toString() => single Byte")
+    SECTION("correct toFrame() => single Byte")
     {
         auto message = new Message(800, {0x12});
-        CHECK(message->toString() == "320#12");
+        CHECK(message->toFrame() == "< send 320 1 12 >");
     }
 
-    SECTION("correct toString() => multiple bytes")
+    SECTION("correct toFrame() => multiple bytes")
     {
         auto message = new Message(800, {0x12, 0x40, 0x00, 0xef});
-        CHECK(message->toString() == "320#124000EF");
+        CHECK(message->toFrame() == "< send 320 4 12 40 00 EF >");
     }
 }

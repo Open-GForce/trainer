@@ -15,11 +15,22 @@ namespace GForce::ACL::CAN {
 class CANSocket : public SocketInterface
 {
     private:
-        int rawSocket;
-        sockaddr_can socketCANAddress;
-        ifreq frequency;
+        int handle;
+
+        void transfer(const std::string& data);
+        std::string fetch();
 
     public:
+        CANSocket();
+
+        /**
+         * Connects to the CAN socket daemon
+         */
+        void connect(const std::string& address, uint16_t port);
+
+        /**
+         * Opens can0 and switches to BCM mode
+         */
         void open();
 
         /**
