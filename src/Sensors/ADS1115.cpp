@@ -16,7 +16,7 @@ int ADS1115::read(unsigned channel)
 
     uint16_t config = this->compileConfig(channel);
     this->writeConfig(config);
-    usleep(10000);
+    usleep(2000);
 
     auto data = device->read(0, 2);
     return (data[0] << 8) | data[1];
@@ -28,7 +28,7 @@ uint16_t ADS1115::compileConfig(unsigned channel)
                       ADS1015_REG_CONFIG_CLAT_NONLAT   | // Non-latching (default val)
                       ADS1015_REG_CONFIG_CPOL_ACTVLOW  | // Alert/Rdy active low   (default val)
                       ADS1015_REG_CONFIG_CMODE_TRAD    | // Traditional comparator (default val)
-                      ADS1015_REG_CONFIG_DR_128SPS     | // 1600 samples per second (default)
+                      ADS1015_REG_CONFIG_DR_3300SPS    | // 1600 samples per second (default)
                       ADS1015_REG_CONFIG_MODE_SINGLE;   // Single-shot mode (default)
 
     // Set PGA/voltage range

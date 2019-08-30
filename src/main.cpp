@@ -1,5 +1,6 @@
 #include <iostream>
 #include <zconf.h>
+#include <deque>
 #include "ACL/I2C/Device.hpp"
 #include "ACL/CAN/CANSocket.hpp"
 #include "ACL/CAN/Message.hpp"
@@ -16,23 +17,23 @@ using namespace GForce::Sensors;
 
 int main() 
 {
-    //auto device = new Device(1, 0x48);
-    //auto sensor = new ADS1115(device);
-    //
+    auto device = new Device(1, 0x48);
+    auto sensor = new ADS1115(device);
 
-    //
-    //canSocket->send(new Message(0x702, {}));
-    //
-    //device->open();
-    //
-    //while (true) {
-    //    std::cout << "Voltage: " << sensor->read(0) << " V\n";
-    //    usleep(500000);
-    //}
+    device->open();
 
-    auto canSocket = new CANSocket();
-    canSocket->connect("192.168.2.102", 29536);
-    canSocket->open();
-    canSocket->send(new Message(0x702, {0x01}));
-    sleep(30);
+    int counter = 0;
+    int value = 0;
+
+    while (true) {
+        counter++;
+        std::cout << "Counter: " << counter << " | Value#1: " << sensor->read(0) << "\n";
+        std::cout << "Counter: " << counter << " | Value#2: " << sensor->read(1) << "\n\n";
+    }
+
+    //auto canSocket = new CANSocket();
+    //canSocket->connect("192.168.2.102", 29536);
+    //canSocket->open();
+    //canSocket->send(new Message(0x702, {0x01}));
+    //sleep(30);
 }

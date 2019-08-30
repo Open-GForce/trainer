@@ -22,7 +22,7 @@ TEST_CASE( "ADS1115 test", "[Sensors]" ) {
             CHECK(data.size() == 2);
 
             CHECK((int) data[0] == 0xC1);
-            CHECK((int) data[1] == 0x3);
+            CHECK((int) data[1] == 0xC3);
         });
 
         sensor->read(0);
