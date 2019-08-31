@@ -1,6 +1,7 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_ADS1115_HPP
 #define GFORCE_TRAINER_CONTROLLER_ADS1115_HPP
 
+#include "ADCSensorInterface.hpp"
 #include "../ACL/I2C/Device.hpp"
 
 // Registers
@@ -70,7 +71,7 @@ using namespace GForce::ACL::I2C;
 
 namespace GForce::Sensors {
 
-class ADS1115
+class ADS1115: public ADCSensorInterface
 {
     private:
         Device* device;
@@ -81,7 +82,7 @@ class ADS1115
     public:
         explicit ADS1115(Device *device);
 
-        int read(unsigned channel);
+        int read(unsigned channel) override ;
 };
 
 }

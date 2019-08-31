@@ -1,10 +1,12 @@
 #include <iostream>
 #include <zconf.h>
 #include <deque>
+#include <thread>
 #include "ACL/I2C/Device.hpp"
 #include "ACL/CAN/CANSocket.hpp"
 #include "ACL/CAN/Message.hpp"
 #include "Sensors/ADS1115.hpp"
+#include "Processing/BrakeInputThread.hpp"
 
 extern  "C"
 {
@@ -14,26 +16,24 @@ extern  "C"
 using namespace GForce::ACL::I2C;
 using namespace GForce::ACL::CAN;
 using namespace GForce::Sensors;
+using namespace GForce::Processing;
 
 int main() 
 {
     auto device = new Device(1, 0x48);
     auto sensor = new ADS1115(device);
 
+    auto brakeThread = new BrakeInputThread(sensor);
+
     device->open();
 
-    int counter = 0;
-    int value = 0;
+    std::thread t1([brakeThread] {
+        brakeThread->start();
+    });
 
     while (true) {
-        counter++;
-        std::cout << "Counter: " << counter << " | Value#1: " << sensor->read(0) << "\n";
-        std::cout << "Counter: " << counter << " | Value#2: " << sensor->read(1) << "\n\n";
+        std::cout << "First brake: " << brakeThread->getFirstBrake() << "\n";
+        std::cout << "Second brake: " << brakeThread->getSecondBrake() << "\n\n";
+        usleep(50000);
     }
-
-    //auto canSocket = new CANSocket();
-    //canSocket->connect("192.168.2.102", 29536);
-    //canSocket->open();
-    //canSocket->send(new Message(0x702, {0x01}));
-    //sleep(30);
 }
