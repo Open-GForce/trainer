@@ -44,6 +44,7 @@ class ControlStatus
         static ControlStatus* holdingBrake();
         static ControlStatus* holdingControl();
 
+        bool isSoftBrakeActivated() const;
 
 };
 

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <zconf.h>
+#include <cmath>
 #include "MoviDriveService.hpp"
 #include "../ACL/CAN/Message.hpp"
 
@@ -21,11 +22,13 @@ MoviDriveService::~MoviDriveService()
     delete this->controlStatus;
 }
 
-void MoviDriveService::sync()
+Response* MoviDriveService::sync()
 {
+    Response* response = nullptr;
+
     try {
         this->send();
-        this->receive();
+        response = this->receive();
         this->handleHeartbeat();
 
         this->errorCount = 0;
@@ -35,6 +38,7 @@ void MoviDriveService::sync()
     }
 
     this->handleErrors();
+    return response;
 }
 
 
@@ -44,9 +48,11 @@ void MoviDriveService::send()
 
     std::vector<uint8_t> data = {0, 0, 0, 0};
 
-    uint16_t speed = this->rotationSpeed < 0
-            ? (65536 - (this->rotationSpeed * 5))
+    double floatSpeed = this->rotationSpeed < 0
+            ? (65536 + (this->rotationSpeed * 5))
             : (this->rotationSpeed * 5);
+
+    auto speed = (uint16_t) std::round(floatSpeed);
 
     data[0] = lowByte(status);
     data[1] = highByte(status);
@@ -69,6 +75,7 @@ Response* MoviDriveService::receive()
     // Filter for last status message, ignoring older and other messages
     for (auto message : messages) {
         if (message->getIndex() == CAN_RX_PDO_INDEX) {
+            delete lastMessage;
             lastMessage = message;
         } else {
             delete message;
@@ -121,7 +128,7 @@ void MoviDriveService::setControlStatus(ControlStatus *status) {
     this->controlStatus = status;
 }
 
-void MoviDriveService::setRotationSpeed(uint16_t speed) {
+void MoviDriveService::setRotationSpeed(double speed) {
     this->rotationSpeed = speed;
 }
 

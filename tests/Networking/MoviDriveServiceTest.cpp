@@ -1,5 +1,6 @@
 #include "../../../catch2/catch.hpp"
 #include "../../../fake_it/single_header/catch/fakeit.hpp"
+#include "../../src/ACL/CAN/Message.hpp"
 #include "../../src/Networking/MoviDriveService.hpp"
 #include "../../src/Utils/Logging/NullLogger.hpp"
 
@@ -86,6 +87,64 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
         service->sync();
 
         fakeit::Verify(Method(socketMock, send)).Exactly(2);
+    }
+
+    SECTION("Correct response decoding => no messages => null returned")
+    {
+        fakeit::When(Method(socketMock, receive)).AlwaysReturn({});
+
+        service->setControlStatus(ControlStatus::release());
+        service->setRotationSpeed(0);
+        auto response = service->sync();
+
+        CHECK(response == nullptr);
+    }
+
+    SECTION("Correct response decoding => on error => null returned")
+    {
+        fakeit::When(Method(socketMock, receive)).AlwaysDo([] () {
+            throw std::exception();
+
+            std::vector<CAN::MessageInterface*> messages = {};
+            return messages;
+        });
+
+        service->setControlStatus(ControlStatus::release());
+        service->setRotationSpeed(0);
+        auto response = service->sync();
+
+        CHECK(response == nullptr);
+    }
+
+    SECTION("Correct response decoding => only last message used")
+    {
+        fakeit::When(Method(socketMock, receive)).AlwaysReturn({
+            new CAN::Message(0x182, {0x07, 0x04, 0x0, 0x0}),
+            new CAN::Message(0x182, {0x07, 0x04, 0x1c, 0x03}),
+        });
+
+        service->setControlStatus(ControlStatus::release());
+        service->setRotationSpeed(0);
+        auto response = service->sync();
+
+        REQUIRE(response != nullptr);
+        CHECK(response->getRotationSpeed() == 159.2);
+    }
+
+    SECTION("Correct response decoding => only message with correct index used")
+    {
+        fakeit::When(Method(socketMock, receive)).AlwaysReturn({
+            new CAN::Message(0x182, {0x07, 0x04, 0x0, 0x0}),
+            new CAN::Message(0x182, {0x07, 0x04, 0x1c, 0x03}),
+            new CAN::Message(0x666, {0x07, 0x04, 0x1c, 0x03}),
+        });
+
+        service->setControlStatus(ControlStatus::release());
+        service->setRotationSpeed(0);
+        auto response = service->sync();
+
+        REQUIRE(response != nullptr);
+        CHECK(response->getRotationSpeed() == 159.2);
     }
 
     SECTION("Heartbeat sent")

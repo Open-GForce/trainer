@@ -46,3 +46,7 @@ ControlStatus* ControlStatus::holdingBrake() {
 ControlStatus* ControlStatus::holdingControl() {
     return new ControlStatus(false, false, false, true);
 }
+
+bool ControlStatus::isSoftBrakeActivated() const {
+    return softBrakeActivated;
+}

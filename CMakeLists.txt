@@ -21,7 +21,8 @@ set(SOURCES
         src/ACL/CAN/MessageFactory.cpp
         src/Networking/EngineStatus.cpp
         src/Networking/Response.cpp
-        src/Processing/BrakeInputThread.cpp)
+        src/Processing/BrakeInputThread.cpp
+        src/Processing/Range.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -30,7 +31,10 @@ set(TESTS
         tests/Networking/MoviDriveServiceTest.cpp
         tests/ACL/CAN/MessageFactoryTest.cpp
         tests/Networking/ResponseTest.cpp
-        tests/Processing/BrakeInputThreadTest.cpp)
+        tests/Processing/BrakeInputThreadTest.cpp
+        src/Processing/ProcessingService.cpp
+        src/Configuration/UserSettings.cpp
+        tests/Processing/RangeTest.cpp tests/Processing/ProcessingServiceTest.cpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 

@@ -52,7 +52,7 @@ class MoviDriveService
         /**
          * Engine rotation speed in 1/min, send with every sync() call
          */
-        int rotationSpeed;
+        double rotationSpeed;
 
         /**
          * Sends the CAN PDOs
@@ -85,13 +85,13 @@ class MoviDriveService
          * Sends control status and rotation speed + heartbeat (if interval reached)
          * Receives and returns engine status report
          */
-        void sync();
+        virtual Response* sync();
 
         /**
          * Ownership of control status moves to service (may be deleted anytime)
          */
-        void setControlStatus(ControlStatus *status);
-        void setRotationSpeed(uint16_t speed);
+        virtual void setControlStatus(ControlStatus *status);
+        virtual void setRotationSpeed(double speed);
 
         /**
          * Is service in error state (no recovery possible)
