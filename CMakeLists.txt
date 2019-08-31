@@ -27,7 +27,8 @@ set(SOURCES
         src/Processing/ProcessingThread.cpp
         src/Processing/ProcessingService.cpp
         src/Configuration/UserSettings.cpp
-        src/API/Websocket/Server.cpp)
+        src/API/Websocket/Server.cpp
+        src/Configuration/ConfigRepository.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -39,11 +40,12 @@ set(TESTS
         tests/Processing/BrakeInputThreadTest.cpp
         tests/Processing/RangeTest.cpp
         tests/Processing/ProcessingServiceTest.cpp
-        tests/Processing/ProcessingThreadTest.cpp)
+        tests/Processing/ProcessingThreadTest.cpp
+        tests/Configuration/ConfigRepositoryIntegrationTest.cpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 
-FIND_PACKAGE( Boost 1.65 COMPONENTS system REQUIRED )
+FIND_PACKAGE( Boost 1.65 COMPONENTS system filesystem REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 add_executable(controller ${SOURCES} src/main.cpp src/API/Websocket/Server.cpp src/API/Websocket/Server.hpp)
