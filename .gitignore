@@ -7,3 +7,5 @@ Makefile
 run_tests
 build/*
 .idea/*
+
+web/js/vendor/jquery-3.4.1.js

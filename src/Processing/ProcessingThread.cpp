@@ -15,7 +15,7 @@ void ProcessingThread::start(BrakeInputThread *brakeThread)
     this->brakeInputThread = brakeThread;
 
     std::chrono::milliseconds period(this->cycleInterval);
-    std::chrono::time_point next;
+    std::chrono::high_resolution_clock::time_point next;
 
     while (!stopped) {
         next = std::chrono::high_resolution_clock::now() + period;
@@ -26,7 +26,11 @@ void ProcessingThread::start(BrakeInputThread *brakeThread)
 
 void ProcessingThread::loop()
 {
+    int firstInput = this->brakeInputThread->getFirstBrake();
+    int secondInput = this->brakeInputThread->getSecondBrake();
 
+    this->service->setFirstBrakeInput(firstInput);
+    this->service->setSecondBrakeInput(secondInput);
 }
 
 void ProcessingThread::stop() {

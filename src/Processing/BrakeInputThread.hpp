@@ -26,8 +26,8 @@ class BrakeInputThread
         void start();
         void stop();
 
-        int getFirstBrake() const;
-        int getSecondBrake() const;
+        virtual int getFirstBrake() const;
+        virtual int getSecondBrake() const;
 };
 
 }

@@ -1,8 +1,8 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_PROCESSINGTHREAD_HPP
 #define GFORCE_TRAINER_CONTROLLER_PROCESSINGTHREAD_HPP
 
-#include "../../src/Processing/ProcessingService.hpp"
-#include "../../src/Processing/BrakeInputThread.hpp"
+#include "ProcessingService.hpp"
+#include "BrakeInputThread.hpp"
 
 namespace GForce::Processing {
 

@@ -73,8 +73,8 @@ class ProcessingService
 
         void run();
 
-        void setFirstBrakeInput(int input);
-        void setSecondBrakeInput(int input);
+        virtual void setFirstBrakeInput(int input);
+        virtual void setSecondBrakeInput(int input);
 
         void setMaxSpeed(int speed);
         void setDirection(RotationDirection value);

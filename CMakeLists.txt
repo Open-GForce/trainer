@@ -6,6 +6,7 @@ project (gforce_trainer_controller LANGUAGES C CXX)
 set (CMAKE_CXX_STANDARD 17)
 
 include_directories(../can-utils)
+include_directories(../websocketpp)
 
 set(SOURCES
         src/ACL/I2C/Device.cpp
@@ -22,7 +23,11 @@ set(SOURCES
         src/Networking/EngineStatus.cpp
         src/Networking/Response.cpp
         src/Processing/BrakeInputThread.cpp
-        src/Processing/Range.cpp)
+        src/Processing/Range.cpp
+        src/Processing/ProcessingThread.cpp
+        src/Processing/ProcessingService.cpp
+        src/Configuration/UserSettings.cpp
+        src/API/Websocket/Server.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -32,20 +37,25 @@ set(TESTS
         tests/ACL/CAN/MessageFactoryTest.cpp
         tests/Networking/ResponseTest.cpp
         tests/Processing/BrakeInputThreadTest.cpp
-        src/Processing/ProcessingService.cpp
-        src/Configuration/UserSettings.cpp
-        tests/Processing/RangeTest.cpp tests/Processing/ProcessingServiceTest.cpp)
+        tests/Processing/RangeTest.cpp
+        tests/Processing/ProcessingServiceTest.cpp
+        tests/Processing/ProcessingThreadTest.cpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 
-add_executable(controller ${SOURCES} src/main.cpp)
+FIND_PACKAGE( Boost 1.65 COMPONENTS system REQUIRED )
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+
+add_executable(controller ${SOURCES} src/main.cpp src/API/Websocket/Server.cpp src/API/Websocket/Server.hpp)
 target_link_libraries (controller ${PROJECT_SOURCE_DIR}/../can-utils/build/libcan.a)
 target_link_libraries (controller pthread)
 target_link_libraries (controller m)
 target_link_libraries (controller tacopie)
+target_link_libraries (controller ${Boost_LIBRARIES} )
 
 add_executable(run_tests ${SOURCES} ${TESTS} tests/main.cpp)
 target_link_libraries (run_tests ${PROJECT_SOURCE_DIR}/../can-utils/build/libcan.a)
 target_link_libraries (run_tests pthread)
 target_link_libraries (run_tests m)
 target_link_libraries (run_tests tacopie)
+target_link_libraries (run_tests ${Boost_LIBRARIES} )
