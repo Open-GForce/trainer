@@ -1,8 +1,10 @@
+#include <bits/exception.h>
+#include <string>
 #include "BrakeInputThread.hpp"
 
 using namespace GForce::Processing;
 
-BrakeInputThread::BrakeInputThread(ADCSensorInterface *sensor) : sensor(sensor)
+BrakeInputThread::BrakeInputThread(ADCSensorInterface *sensor, LoggerInterface *logger) : sensor(sensor), logger(logger)
 {
     this->firstBrake = 0;
     this->secondBrake = 0;
@@ -12,8 +14,15 @@ BrakeInputThread::BrakeInputThread(ADCSensorInterface *sensor) : sensor(sensor)
 void BrakeInputThread::start()
 {
     while (!stopped) {
-        this->firstBrake = this->sensor->read(0);
-        this->secondBrake = this->sensor->read(1);
+        try {
+            this->firstBrake = this->sensor->read(0);
+            this->secondBrake = this->sensor->read(1);
+        } catch (std::exception &e) {
+            this->firstBrake = 0;
+            this->secondBrake = 0;
+
+            this->logger->error("BrakeInputThread => " + std::string(e.what()));
+        }
     }
 }
 

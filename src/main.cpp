@@ -7,6 +7,7 @@
 #include "ACL/CAN/Message.hpp"
 #include "Sensors/ADS1115.hpp"
 #include "Processing/BrakeInputThread.hpp"
+#include "Utils/Logging/StandardLogger.hpp"
 
 extern  "C"
 {
@@ -17,13 +18,15 @@ using namespace GForce::ACL::I2C;
 using namespace GForce::ACL::CAN;
 using namespace GForce::Sensors;
 using namespace GForce::Processing;
+using namespace GForce::Utils::Logging;
 
 int main() 
 {
     auto device = new Device(1, 0x48);
     auto sensor = new ADS1115(device);
+    auto logger = new StandardLogger();
 
-    auto brakeThread = new BrakeInputThread(sensor);
+    auto brakeThread = new BrakeInputThread(sensor, logger);
 
     device->open();
 
