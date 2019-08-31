@@ -20,6 +20,8 @@ class EngineStatus
         EngineStatus(bool powerAmplifierReleased, bool inverterReady, bool paDataReady, int currentIntegratorSet,
                      int currentParameterSet, bool malfunction, bool switchRightActive, bool switchLeftActive);
 
+        EngineStatus* clone();
+
         bool isPowerAmplifierReleased() const;
         bool isInverterReady() const;
         bool isInputDataReady() const;

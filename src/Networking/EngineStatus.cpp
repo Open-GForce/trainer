@@ -9,6 +9,12 @@ EngineStatus::EngineStatus(bool powerAmplifierReleased, bool inverterReady, bool
         currentIntegratorSet), currentParameterSet(currentParameterSet), malfunction(malfunction), switchRightActive(
         switchRightActive), switchLeftActive(switchLeftActive) {}
 
+
+EngineStatus *EngineStatus::clone()
+{
+    return new EngineStatus(powerAmplifierReleased, inverterReady, inputDataReady, currentIntegratorSet, currentParameterSet, malfunction, switchRightActive, switchLeftActive);
+}
+
 bool EngineStatus::isPowerAmplifierReleased() const {
     return powerAmplifierReleased;
 }

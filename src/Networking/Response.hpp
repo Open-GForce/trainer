@@ -25,8 +25,9 @@ class Response
 
     public:
         Response(EngineStatus *engineStatus, double rotationSpeed);
-
         virtual ~Response();
+
+        Response* clone();
 
         /**
          * Converts CAN message to Response

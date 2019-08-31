@@ -33,6 +33,11 @@ Response* Response::fromMessage(CAN::MessageInterface* message)
     return new Response(status, speed);
 }
 
+Response *Response::clone()
+{
+    return new Response(this->engineStatus->clone(), this->rotationSpeed);
+}
+
 EngineStatus *Response::getEngineStatus() const {
     return engineStatus;
 }

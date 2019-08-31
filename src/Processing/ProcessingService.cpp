@@ -48,8 +48,10 @@ void ProcessingService::sync(ControlStatus *controlStatus, double rotationSpeed)
 
     auto response = this->driveService->sync();
     if (response != nullptr) {
+        this->statusMutex.lock();
         delete this->status;
         this->status = response;
+        this->statusMutex.unlock();
     }
 }
 
@@ -71,8 +73,12 @@ void ProcessingService::setSecondBrakeInput(int input)
     }
 }
 
-Response *ProcessingService::getStatus() const {
-    return status;
+Response* ProcessingService::cloneStatus()
+{
+    this->statusMutex.lock();
+    auto cloned = this->status != nullptr ? this->status->clone() : nullptr;
+    this->statusMutex.unlock();
+    return cloned;
 }
 
 void ProcessingService::setReleased(bool isReleased) {

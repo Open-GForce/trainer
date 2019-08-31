@@ -77,4 +77,30 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
         fakeit::Verify(Method(driveServiceMock, setRotationSpeed)).Once();
         fakeit::Verify(Method(driveServiceMock, setControlStatus)).Once();
     }
+
+    SECTION("Response object saved during sync")
+    {
+        fakeit::When(Method(driveServiceMock, sync)).Return(new Response(new EngineStatus(false, false, false, false, false, false, false, false), 500));
+
+        service->setDirection(RotationDirection::right);
+        service->run();
+
+        auto status = service->cloneStatus();
+        REQUIRE(status != nullptr);
+        CHECK(status->getRotationSpeed() == 500);
+    }
+
+    SECTION("Response object saved only if not null")
+    {
+        fakeit::When(Method(driveServiceMock, sync)).Return(new Response(new EngineStatus(false, false, false, false, false, false, false, false), 500));
+        service->setDirection(RotationDirection::right);
+        service->run();
+
+        fakeit::When(Method(driveServiceMock, sync)).Return(nullptr);
+        service->run();
+
+        auto status = service->cloneStatus();
+        REQUIRE(status != nullptr);
+        CHECK(status->getRotationSpeed() == 500);
+    }
 }

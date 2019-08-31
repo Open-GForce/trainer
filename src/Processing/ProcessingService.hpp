@@ -1,6 +1,7 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_PROCESSINGSERVICE_HPP
 #define GFORCE_TRAINER_CONTROLLER_PROCESSINGSERVICE_HPP
 
+#include <mutex>
 #include "../Networking/MoviDriveService.hpp"
 #include "../Networking/Response.hpp"
 #include "../Configuration/UserSettings.hpp"
@@ -60,6 +61,12 @@ class ProcessingService
          */
         void sync(ControlStatus* controlStatus, double rotationSpeed);
 
+        /**
+         * Locked while updating or cloning status
+         * Used for thread safe access to status access
+         */
+        std::mutex statusMutex;
+
     public:
         ProcessingService(MoviDriveService* driveService, UserSettings* settings);
         virtual ~ProcessingService();
@@ -74,7 +81,10 @@ class ProcessingService
 
         void setReleased(bool isReleased);
 
-        Response *getStatus() const;
+        /**
+         * Copies the status, ownership of returned object is moved to caller
+         */
+        Response *cloneStatus();
 };
 
 }
