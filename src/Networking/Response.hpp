@@ -21,10 +21,10 @@ class Response
         /**
          * Current engine roation speed in 1/min
          */
-        int rotationSpeed;
+        double rotationSpeed;
 
     public:
-        Response(EngineStatus *engineStatus, int rotationSpeed);
+        Response(EngineStatus *engineStatus, double rotationSpeed);
 
         virtual ~Response();
 
@@ -34,7 +34,7 @@ class Response
         static Response* fromMessage(CAN::MessageInterface* message);
 
         EngineStatus *getEngineStatus() const;
-        int getRotationSpeed() const;
+        double getRotationSpeed() const;
 };
 
 }

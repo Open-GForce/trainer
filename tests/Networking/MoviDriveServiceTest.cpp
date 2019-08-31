@@ -17,8 +17,17 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
     auto service = new MoviDriveService(socket, new NullLogger());
 
-    SECTION("Correct message encoding of control status and speed + sync message")
+    SECTION("Correct message encoding of control status and positive speed + sync message")
     {
+        /**
+         * Speed conversion:
+         * PDO resolution: 1 digit = 0.2 min^-1
+         * So 4500 1/min => 22500
+         *
+         * 22500 in hex => 57 E4
+         * Low byte is sent first
+         */
+
         int callCount = 0;
 
         fakeit::When(Method(socketMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
@@ -26,7 +35,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                    CHECK(message->toFrame() == "< send 202 4 06 00 94 11 >");
+                    CHECK(message->toFrame() == "< send 202 4 06 00 E4 57 >");
                     break;
                 case 2:
                     CHECK(message->toFrame() == "< send 080 0 >");
@@ -38,6 +47,42 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
         service->setControlStatus(ControlStatus::release());
         service->setRotationSpeed(4500);
+        service->sync();
+
+        fakeit::Verify(Method(socketMock, send)).Exactly(2);
+    }
+
+    SECTION("Correct message encoding of control status and negative speed + sync message")
+    {
+        /**
+         * Speed conversion:
+         * PDO resolution: 1 digit = 0.2 min^-1
+         * So -1000 1/min => -5000
+         *
+         * PDO is using 16bit signed, so 65536 - 5000 => 60536
+         * 60536 => 0xEC78
+         * Low byte is sent first
+         */
+
+        int callCount = 0;
+
+        fakeit::When(Method(socketMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
+            callCount++;
+
+            switch (callCount) {
+                case 1:
+                    CHECK(message->toFrame() == "< send 202 4 06 00 78 EC >");
+                    break;
+                case 2:
+                    CHECK(message->toFrame() == "< send 080 0 >");
+                    break;
+                default:
+                    FAIL("send() method called more then two times");
+            }
+        });
+
+        service->setControlStatus(ControlStatus::release());
+        service->setRotationSpeed(-1000);
         service->sync();
 
         fakeit::Verify(Method(socketMock, send)).Exactly(2);

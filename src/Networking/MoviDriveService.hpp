@@ -52,7 +52,7 @@ class MoviDriveService
         /**
          * Engine rotation speed in 1/min, send with every sync() call
          */
-        uint16_t rotationSpeed;
+        int rotationSpeed;
 
         /**
          * Sends the CAN PDOs

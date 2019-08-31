@@ -44,10 +44,14 @@ void MoviDriveService::send()
 
     std::vector<uint8_t> data = {0, 0, 0, 0};
 
+    uint16_t speed = this->rotationSpeed < 0
+            ? (65536 - (this->rotationSpeed * 5))
+            : (this->rotationSpeed * 5);
+
     data[0] = lowByte(status);
     data[1] = highByte(status);
-    data[2] = lowByte(rotationSpeed);
-    data[3] = highByte(rotationSpeed);
+    data[2] = lowByte(speed);
+    data[3] = highByte(speed);
 
     auto pdoMessage = new CAN::Message(CAN_TX_PDO_INDEX, data);
     this->socket->send(pdoMessage);

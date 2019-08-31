@@ -2,7 +2,7 @@
 
 using namespace GForce::Networking;
 
-Response::Response(GForce::Networking::EngineStatus *engineStatus, int rotationSpeed)
+Response::Response(GForce::Networking::EngineStatus *engineStatus, double rotationSpeed)
         : engineStatus(engineStatus), rotationSpeed(rotationSpeed) {}
 
 
@@ -25,7 +25,10 @@ Response* Response::fromMessage(CAN::MessageInterface* message)
             statusByte & (1 << 7)
     );
 
-    int speed = message->getData()[2] | (message->getData()[3] << 8);
+    double speed = message->getData()[2] | (message->getData()[3] << 8);
+
+    // 1 digit = 0.2 min^-1
+    speed /= 5;
 
     return new Response(status, speed);
 }
@@ -34,6 +37,6 @@ EngineStatus *Response::getEngineStatus() const {
     return engineStatus;
 }
 
-int Response::getRotationSpeed() const {
+double Response::getRotationSpeed() const {
     return rotationSpeed;
 }
