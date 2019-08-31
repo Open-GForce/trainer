@@ -83,7 +83,9 @@ class MoviDriveService
 
         /**
          * Sends control status and rotation speed + heartbeat (if interval reached)
-         * Receives and returns engine status report
+         * Returns engine status.
+         *
+         * Ownership of returned object moves to caller.
          */
         virtual Response* sync();
 
