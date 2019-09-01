@@ -20,6 +20,13 @@ UserSettings* ConfigRepository::loadUserSettings()
     return ConfigRepository::decode(content);
 }
 
+void ConfigRepository::saveUserSettings(UserSettings *settings)
+{
+    std::ofstream configFile(basePath + "/user_settings.json");
+    configFile << settings->toJSON().dump() << "\n";
+    configFile.close();
+}
+
 std::string ConfigRepository::loadFileContent()
 {
     std::string path = this->basePath + "/user_settings.json";

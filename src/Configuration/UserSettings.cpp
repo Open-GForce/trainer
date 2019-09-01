@@ -10,6 +10,23 @@ UserSettings::~UserSettings()
     delete this->outerBrakeRange;
 }
 
+
+nlohmann::json UserSettings::toJSON()
+{
+    nlohmann::json data = {
+            {"innerBrakeRange", {
+                {"min", this->innerBrakeRange->getMin()},
+                {"max", this->innerBrakeRange->getMax()},
+            }},
+            {"outerBrakeRange", {
+                {"min", this->outerBrakeRange->getMin()},
+                {"max", this->outerBrakeRange->getMax()},
+            }},
+    };
+
+    return data;
+}
+
 Range *UserSettings::getInnerBrakeRange() const {
     return innerBrakeRange;
 }

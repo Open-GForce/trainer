@@ -22,6 +22,7 @@ class ConfigRepository
         explicit ConfigRepository(std::string basePath);
 
         UserSettings* loadUserSettings();
+        void saveUserSettings(UserSettings* settings);
 };
 
 }

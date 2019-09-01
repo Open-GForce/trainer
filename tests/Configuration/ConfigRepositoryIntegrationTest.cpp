@@ -98,6 +98,19 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(config->getOuterBrakeRange()->getMax() == 1400);
     }
 
+    SECTION("Config saved correctly")
+    {
+        auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792));
+        repository->saveUserSettings(saved);
+
+        auto loaded = repository->loadUserSettings();
+
+        CHECK(loaded->getInnerBrakeRange()->getMin() == 150);
+        CHECK(loaded->getInnerBrakeRange()->getMax() == 720);
+        CHECK(loaded->getOuterBrakeRange()->getMin() == 550);
+        CHECK(loaded->getOuterBrakeRange()->getMax() == 3792);
+    }
+
     boost::filesystem::remove_all(basePath);
 }
 
