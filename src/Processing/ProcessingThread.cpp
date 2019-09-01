@@ -10,9 +10,10 @@ ProcessingThread::ProcessingThread(ProcessingService *service) : service(service
     this->stopped = false;
 }
 
-void ProcessingThread::start(BrakeInputThread *brakeThread)
+void ProcessingThread::start(BrakeInputThread* brakeThread, ServerThread* serverThread)
 {
     this->brakeInputThread = brakeThread;
+    this->websocketThread = serverThread;
 
     std::chrono::milliseconds period(this->cycleInterval);
     std::chrono::high_resolution_clock::time_point next;
@@ -33,6 +34,10 @@ void ProcessingThread::loop()
     this->service->setFirstBrakeInput(firstInput);
     this->service->setSecondBrakeInput(secondInput);
     this->service->run();
+
+    auto status = this->service->getStatus();
+    this->websocketThread->addBroadcastMessage(status);
+
     this->loopMutex.unlock();
 }
 

@@ -8,6 +8,8 @@ namespace GForce::API::Websocket {
 class ResponseCastInterface
 {
     public:
+        virtual ~ResponseCastInterface() = default;
+
         /**
          * Ownership of returned response moves to caller
          */

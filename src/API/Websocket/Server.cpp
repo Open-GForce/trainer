@@ -33,3 +33,11 @@ void Server::run(uint16_t port)
     websocket.run();
 }
 
+void Server::broadcast(Response *response)
+{
+    std::string data = response->toJSON().dump();
+
+    for (const auto& connection : this->connections) {
+        this->websocket.send(connection, data, websocketpp::frame::opcode::text);
+    }
+}

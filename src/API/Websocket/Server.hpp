@@ -4,6 +4,7 @@
 #include <set>
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
+#include "ResponseCastInterface.hpp"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 
@@ -24,6 +25,12 @@ class Server
 
     public:
         Server();
+
+        /**
+         * Sends a response to all active connections
+         * Ownership of response object stays at caller
+         */
+        virtual void broadcast(Response* response);
 
         void on_open(const connection_hdl& connection);
         void on_close(const connection_hdl& connection);

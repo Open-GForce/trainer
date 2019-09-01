@@ -4,8 +4,10 @@
 #include "ProcessingService.hpp"
 #include "BrakeInputThread.hpp"
 #include "../Configuration/UserSettings.hpp"
+#include "../API/Websocket/ServerThread.hpp"
 
 using namespace GForce::Configuration;
+using namespace GForce::API::Websocket;
 
 namespace GForce::Processing {
 
@@ -15,6 +17,7 @@ class ProcessingThread
         ProcessingService* service;
 
         BrakeInputThread* brakeInputThread;
+        ServerThread* websocketThread;
 
         /**
          * Cycle interval in ms
@@ -36,7 +39,7 @@ class ProcessingThread
     public:
         explicit ProcessingThread(ProcessingService *service);
 
-        void start(BrakeInputThread* brakeThread);
+        void start(BrakeInputThread* brakeThread, ServerThread* serverThread);
         void stop();
 
         void reloadUserConfig(UserSettings* settings);

@@ -30,7 +30,8 @@ set(SOURCES
         src/API/Websocket/Server.cpp
         src/Configuration/ConfigRepository.cpp
         src/Processing/ProcessingStatus.cpp
-        src/API/Websocket/Response.cpp)
+        src/API/Websocket/Response.cpp
+        src/API/Websocket/ServerThread.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -43,7 +44,9 @@ set(TESTS
         tests/Processing/RangeTest.cpp
         tests/Processing/ProcessingServiceTest.cpp
         tests/Processing/ProcessingThreadTest.cpp
-        tests/Configuration/ConfigRepositoryIntegrationTest.cpp tests/Processing/ProcessingStatusTest.cpp)
+        tests/Configuration/ConfigRepositoryIntegrationTest.cpp
+        tests/Processing/ProcessingStatusTest.cpp
+        tests/API/Websocket/ServerThreadTest.cpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 
