@@ -9,6 +9,7 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
     fakeit::Mock<ProcessingService> serviceMock;
     fakeit::Fake(Method(serviceMock, setFirstBrakeInput));
     fakeit::Fake(Method(serviceMock, setSecondBrakeInput));
+    fakeit::Fake(Method(serviceMock, run));
     ProcessingService* service = &serviceMock.get();
 
     fakeit::Mock<BrakeInputThread> brakeThreadMock;
@@ -27,6 +28,8 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
         });
 
         thread->start(brakeThread);
+
+        fakeit::Verify(Method(serviceMock, run)).Once();
 
         fakeit::Verify(Method(serviceMock, setFirstBrakeInput)).Once();
         fakeit::Verify(Method(serviceMock, setFirstBrakeInput).Using(4381));

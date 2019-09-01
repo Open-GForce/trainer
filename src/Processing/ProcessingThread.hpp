@@ -3,6 +3,9 @@
 
 #include "ProcessingService.hpp"
 #include "BrakeInputThread.hpp"
+#include "../Configuration/UserSettings.hpp"
+
+using namespace GForce::Configuration;
 
 namespace GForce::Processing {
 
@@ -23,6 +26,11 @@ class ProcessingThread
          */
         bool stopped;
 
+        /**
+         * Gets locked during loop rung for avoiding inter-thread race conditions
+         */
+        std::mutex loopMutex;
+
         void loop();
 
     public:
@@ -30,6 +38,11 @@ class ProcessingThread
 
         void start(BrakeInputThread* brakeThread);
         void stop();
+
+        void reloadUserConfig(UserSettings* settings);
+        void setMaxSpeed(int speed);
+        void setDirection(RotationDirection direction);
+        void setReleased(bool isReleased);
 
         void setCycleInterval(int value);
 };

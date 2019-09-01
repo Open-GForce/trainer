@@ -71,14 +71,14 @@ class ProcessingService
         ProcessingService(MoviDriveService* driveService, UserSettings* settings);
         virtual ~ProcessingService();
 
-        void run();
+        virtual void run();
 
         virtual void setFirstBrakeInput(int input);
         virtual void setSecondBrakeInput(int input);
 
+        void loadUserConfig(UserSettings* settings);
         void setMaxSpeed(int speed);
         void setDirection(RotationDirection value);
-
         void setReleased(bool isReleased);
 
         /**

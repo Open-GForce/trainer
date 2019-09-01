@@ -14,9 +14,9 @@ ProcessingService::ProcessingService(MoviDriveService* driveService, UserSetting
     this->innerBrake = 0;
     this->outerBrake = 0;
 
-    this->innerBrakeRange = settings->getInnerBrakeRange()->clone();
-    this->outerBrakeRange = settings->getOuterBrakeRange()->clone();
-
+    this->innerBrakeRange = nullptr;
+    this->outerBrakeRange = nullptr;
+    this->loadUserConfig(settings);
     this->direction = RotationDirection::right;
 }
 
@@ -79,6 +79,15 @@ Response* ProcessingService::cloneStatus()
     auto cloned = this->status != nullptr ? this->status->clone() : nullptr;
     this->statusMutex.unlock();
     return cloned;
+}
+
+void ProcessingService::loadUserConfig(UserSettings *settings)
+{
+    delete this->innerBrakeRange;
+    delete this->outerBrakeRange;
+
+    this->innerBrakeRange = settings->getInnerBrakeRange()->clone();
+    this->outerBrakeRange = settings->getOuterBrakeRange()->clone();
 }
 
 void ProcessingService::setReleased(bool isReleased) {

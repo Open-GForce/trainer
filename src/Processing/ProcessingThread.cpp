@@ -26,11 +26,14 @@ void ProcessingThread::start(BrakeInputThread *brakeThread)
 
 void ProcessingThread::loop()
 {
+    this->loopMutex.lock();
     int firstInput = this->brakeInputThread->getFirstBrake();
     int secondInput = this->brakeInputThread->getSecondBrake();
 
     this->service->setFirstBrakeInput(firstInput);
     this->service->setSecondBrakeInput(secondInput);
+    this->service->run();
+    this->loopMutex.unlock();
 }
 
 void ProcessingThread::stop() {
@@ -39,6 +42,34 @@ void ProcessingThread::stop() {
 
 void ProcessingThread::setCycleInterval(int value) {
     this->cycleInterval = value;
+}
+
+void ProcessingThread::setMaxSpeed(int speed)
+{
+    this->loopMutex.lock();
+    this->service->setMaxSpeed(speed);
+    this->loopMutex.unlock();
+}
+
+void ProcessingThread::setDirection(RotationDirection direction)
+{
+    this->loopMutex.lock();
+    this->service->setDirection(direction);
+    this->loopMutex.unlock();
+}
+
+void ProcessingThread::setReleased(bool isReleased)
+{
+    this->loopMutex.lock();
+    this->service->setReleased(isReleased);
+    this->loopMutex.unlock();
+}
+
+void ProcessingThread::reloadUserConfig(UserSettings *settings)
+{
+    this->loopMutex.lock();
+    this->service->loadUserConfig(settings);
+    this->loopMutex.unlock();
 }
 
 
