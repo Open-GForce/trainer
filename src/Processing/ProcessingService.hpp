@@ -6,6 +6,7 @@
 #include "../Networking/Response.hpp"
 #include "../Configuration/UserSettings.hpp"
 #include "Range.hpp"
+#include "ProcessingStatus.hpp"
 
 using namespace GForce::Networking;
 using namespace GForce::Configuration;
@@ -67,6 +68,11 @@ class ProcessingService
          */
         std::mutex statusMutex;
 
+        /**
+         * Calculates the target speed based on brake inputs
+         */
+        double calcTargetSpeed();
+
     public:
         ProcessingService(MoviDriveService* driveService, UserSettings* settings);
         virtual ~ProcessingService();
@@ -75,6 +81,12 @@ class ProcessingService
 
         virtual void setFirstBrakeInput(int input);
         virtual void setSecondBrakeInput(int input);
+
+        /**
+         * Returns reflection of current processing status
+         * Ownership of returned objects moves to caller
+         */
+        virtual ProcessingStatus* getStatus();
 
         void loadUserConfig(UserSettings* settings);
         void setMaxSpeed(int speed);

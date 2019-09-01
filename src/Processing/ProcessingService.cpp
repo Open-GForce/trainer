@@ -32,13 +32,17 @@ void ProcessingService::run()
         return this->sync(ControlStatus::softBrake(), 0);
     }
 
+    double speed = this->calcTargetSpeed();
+    this->sync(ControlStatus::release(), speed);
+}
+
+double ProcessingService::calcTargetSpeed()
+{
     double innerValue = this->innerBrakeRange->getLimitedPercentage(this->innerBrake);
     double outerValue = this->outerBrakeRange->getLimitedPercentage(this->outerBrake);
 
     double delta = innerValue - outerValue;
-    double speed = delta * this->maxSpeed;
-
-    this->sync(ControlStatus::release(), speed);
+    return delta * this->maxSpeed;
 }
 
 void ProcessingService::sync(ControlStatus *controlStatus, double rotationSpeed)
@@ -71,6 +75,20 @@ void ProcessingService::setSecondBrakeInput(int input)
     } else {
         this->innerBrake = input;
     }
+}
+
+ProcessingStatus *ProcessingService::getStatus()
+{
+    return new ProcessingStatus(
+            this->status != nullptr ? this->status->getEngineStatus()->clone() : nullptr,
+            this->status != nullptr ? this->status->getRotationSpeed() : -1,
+            this->maxSpeed,
+            this->calcTargetSpeed(),
+            this->innerBrake,
+            this->outerBrake,
+            this->innerBrakeRange->getLimitedPercentage(this->innerBrake),
+            this->outerBrakeRange->getLimitedPercentage(this->outerBrake)
+    );
 }
 
 Response* ProcessingService::cloneStatus()

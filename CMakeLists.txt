@@ -28,7 +28,8 @@ set(SOURCES
         src/Processing/ProcessingService.cpp
         src/Configuration/UserSettings.cpp
         src/API/Websocket/Server.cpp
-        src/Configuration/ConfigRepository.cpp)
+        src/Configuration/ConfigRepository.cpp
+        src/Processing/ProcessingStatus.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -48,7 +49,7 @@ set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -
 FIND_PACKAGE( Boost 1.65 COMPONENTS system filesystem REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
-add_executable(controller ${SOURCES} src/main.cpp src/API/Websocket/Server.cpp src/API/Websocket/Server.hpp)
+add_executable(controller ${SOURCES} src/main.cpp src/API/Websocket/Server.cpp src/API/Websocket/Server.hpp src/Processing/ProcessingStatus.cpp src/Processing/ProcessingStatus.hpp)
 target_link_libraries (controller ${PROJECT_SOURCE_DIR}/../can-utils/build/libcan.a)
 target_link_libraries (controller pthread)
 target_link_libraries (controller m)
