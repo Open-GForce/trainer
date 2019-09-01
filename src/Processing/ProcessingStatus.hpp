@@ -1,9 +1,11 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_PROCESSINGSTATUS_HPP
 #define GFORCE_TRAINER_CONTROLLER_PROCESSINGSTATUS_HPP
 
+#include "../API/Websocket/ResponseCastInterface.hpp"
 #include "../Networking/EngineStatus.hpp"
 
 using namespace GForce::Networking;
+using namespace GForce::API;
 
 namespace GForce::Processing
 {
@@ -12,7 +14,7 @@ namespace GForce::Processing
  * Represents the processing status
  * Reflects properties of ProcessingService
  */
-class ProcessingStatus
+class ProcessingStatus : public Websocket::ResponseCastInterface
 {
     private:
         /**
@@ -53,6 +55,8 @@ class ProcessingStatus
                          double outerBrakePercentage);
 
         virtual ~ProcessingStatus();
+
+        Websocket::Response *toResponse() override;
 
         EngineStatus *getEngineStatus() const;
 

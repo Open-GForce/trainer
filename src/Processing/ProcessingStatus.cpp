@@ -18,6 +18,26 @@ ProcessingStatus::~ProcessingStatus()
     delete this->engineStatus;
 }
 
+Websocket::Response *ProcessingStatus::toResponse()
+{
+    nlohmann::json data = {
+        {"engineStatus", this->engineStatus->toJSON()},
+        {"rotationSpeed", this->rotationSpeed},
+        {"maxSpeed", this->maxSpeed},
+        {"targetSpeed", this->targetSpeed},
+        {"innerBrake", {
+           {"raw", this->innerBrakeRawValue},
+           {"scaled", this->innerBrakePercentage},
+        }},
+        {"outerBrake", {
+           {"raw", this->outerBrakeRawValue},
+           {"scaled", this->outerBrakePercentage},
+        }},
+    };
+
+    return new Websocket::Response("processingStatus", data);
+}
+
 EngineStatus *ProcessingStatus::getEngineStatus() const {
     return engineStatus;
 }

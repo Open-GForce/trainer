@@ -15,6 +15,22 @@ EngineStatus *EngineStatus::clone()
     return new EngineStatus(powerAmplifierReleased, inverterReady, inputDataReady, currentIntegratorSet, currentParameterSet, malfunction, switchRightActive, switchLeftActive);
 }
 
+nlohmann::json EngineStatus::toJSON()
+{
+    nlohmann::json data = {
+        {"powerAmplifierReleased", powerAmplifierReleased},
+        {"inverterReady", inverterReady},
+        {"inputDataReady", inputDataReady},
+        {"currentIntegratorSet", currentIntegratorSet},
+        {"currentParameterSet", currentParameterSet},
+        {"malfunction", malfunction},
+        {"switchRightActive", switchRightActive},
+        {"switchLeftActive", switchLeftActive},
+    };
+
+    return data;
+}
+
 bool EngineStatus::isPowerAmplifierReleased() const {
     return powerAmplifierReleased;
 }

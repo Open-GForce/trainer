@@ -1,6 +1,8 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_ENGINESTATUS_HPP
 #define GFORCE_TRAINER_CONTROLLER_ENGINESTATUS_HPP
 
+#include <json.hpp>
+
 namespace GForce::Networking
 {
 
@@ -21,6 +23,8 @@ class EngineStatus
                      int currentParameterSet, bool malfunction, bool switchRightActive, bool switchLeftActive);
 
         EngineStatus* clone();
+
+        nlohmann::json toJSON();
 
         bool isPowerAmplifierReleased() const;
         bool isInverterReady() const;
