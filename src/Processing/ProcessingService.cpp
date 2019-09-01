@@ -87,7 +87,8 @@ ProcessingStatus *ProcessingService::getStatus()
             this->innerBrake,
             this->outerBrake,
             this->innerBrakeRange->getLimitedPercentage(this->innerBrake),
-            this->outerBrakeRange->getLimitedPercentage(this->outerBrake)
+            this->outerBrakeRange->getLimitedPercentage(this->outerBrake),
+            this->direction
     );
 }
 

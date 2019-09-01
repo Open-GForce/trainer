@@ -46,7 +46,7 @@ set(TESTS
         tests/Processing/ProcessingThreadTest.cpp
         tests/Configuration/ConfigRepositoryIntegrationTest.cpp
         tests/Processing/ProcessingStatusTest.cpp
-        tests/API/Websocket/ServerThreadTest.cpp)
+        tests/API/Websocket/ServerThreadTest.cpp src/Processing/RotationDirection.hpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 

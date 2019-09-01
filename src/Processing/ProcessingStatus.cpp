@@ -2,16 +2,15 @@
 
 using namespace GForce::Processing;
 
-
 ProcessingStatus::ProcessingStatus(EngineStatus *engineStatus, double rotationSpeed, int maxSpeed, double targetSpeed,
                                    int innerBrakeRawValue, int outerBrakeRawValue, double innerBrakePercentage,
-                                   double outerBrakePercentage) : engineStatus(engineStatus),
-                                                                  rotationSpeed(rotationSpeed), maxSpeed(maxSpeed),
-                                                                  targetSpeed(targetSpeed),
-                                                                  innerBrakeRawValue(innerBrakeRawValue),
-                                                                  outerBrakeRawValue(outerBrakeRawValue),
-                                                                  innerBrakePercentage(innerBrakePercentage),
-                                                                  outerBrakePercentage(outerBrakePercentage) {}
+                                   double outerBrakePercentage, RotationDirection rotationDirection) : engineStatus(
+        engineStatus), rotationSpeed(rotationSpeed), maxSpeed(maxSpeed), targetSpeed(targetSpeed), innerBrakeRawValue(
+        innerBrakeRawValue), outerBrakeRawValue(outerBrakeRawValue), innerBrakePercentage(innerBrakePercentage),
+                                                                                                       outerBrakePercentage(
+                                                                                                               outerBrakePercentage),
+                                                                                                       rotationDirection(
+                                                                                                               rotationDirection) {}
 
 ProcessingStatus::~ProcessingStatus()
 {
@@ -33,6 +32,7 @@ Websocket::Response *ProcessingStatus::toResponse()
            {"raw", this->outerBrakeRawValue},
            {"scaled", this->outerBrakePercentage},
         }},
+        {"rotationDirection", this->rotationDirection == RotationDirection::right ? "right" : "left"}
     };
 
     return new Websocket::Response("processingStatus", data);
@@ -68,4 +68,8 @@ double ProcessingStatus::getOuterBrakePercentage() const {
 
 double ProcessingStatus::getTargetSpeed() const {
     return targetSpeed;
+}
+
+RotationDirection ProcessingStatus::getRotationDirection() const {
+    return rotationDirection;
 }

@@ -5,6 +5,7 @@
 #include "../Networking/MoviDriveService.hpp"
 #include "../Networking/Response.hpp"
 #include "../Configuration/UserSettings.hpp"
+#include "RotationDirection.hpp"
 #include "Range.hpp"
 #include "ProcessingStatus.hpp"
 
@@ -12,8 +13,6 @@ using namespace GForce::Networking;
 using namespace GForce::Configuration;
 
 namespace GForce::Processing {
-
-enum RotationDirection{right, left};
 
 class ProcessingService
 {

@@ -126,5 +126,6 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
         CHECK(status->getTargetSpeed() == Approx(875.0));
         CHECK(status->getInnerBrakePercentage() == Approx(0.5));
         CHECK(status->getOuterBrakePercentage() == Approx(0.25));
+        CHECK(status->getRotationDirection() == RotationDirection::right);
     }
 }

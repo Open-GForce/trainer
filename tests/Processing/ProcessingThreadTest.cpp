@@ -46,7 +46,7 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
 
     SECTION("Processing status sent to websocket thread")
     {
-        auto status = new ProcessingStatus(new EngineStatus(true, false, true, 1, 2, false, true, false), 1497, 3500, 1450, 1434, 1000, 0.44, 0.35);
+        auto status = new ProcessingStatus(new EngineStatus(true, false, true, 1, 2, false, true, false), 1497, 3500, 1450, 1434, 1000, 0.44, 0.35, RotationDirection::right);
 
         fakeit::When(Method(serviceMock, getStatus)).Return(status);
 

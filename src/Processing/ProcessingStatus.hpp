@@ -1,6 +1,7 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_PROCESSINGSTATUS_HPP
 #define GFORCE_TRAINER_CONTROLLER_PROCESSINGSTATUS_HPP
 
+#include "RotationDirection.hpp"
 #include "../API/Websocket/ResponseCastInterface.hpp"
 #include "../Networking/EngineStatus.hpp"
 
@@ -49,12 +50,17 @@ class ProcessingStatus : public Websocket::ResponseCastInterface
         double innerBrakePercentage;
         double outerBrakePercentage;
 
+        /**
+         * Current rotation direction
+         */
+        RotationDirection rotationDirection;
+
     public:
         ProcessingStatus(EngineStatus *engineStatus, double rotationSpeed, int maxSpeed, double targetSpeed,
                          int innerBrakeRawValue, int outerBrakeRawValue, double innerBrakePercentage,
-                         double outerBrakePercentage);
+                         double outerBrakePercentage, RotationDirection rotationDirection);
 
-        virtual ~ProcessingStatus();
+        ~ProcessingStatus() override;
 
         Websocket::Response *toResponse() override;
 
@@ -70,6 +76,8 @@ class ProcessingStatus : public Websocket::ResponseCastInterface
 
         double getInnerBrakePercentage() const;
         double getOuterBrakePercentage() const;
+
+        RotationDirection getRotationDirection() const;
 };
 
 }
