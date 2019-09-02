@@ -1,0 +1,25 @@
+{
+  "name": "gforce_trainer",
+  "version": "1.0.0",
+  "description": "Controller and UI for GForce trainer",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SkydiveMarius/gforce_trainer.git"
+  },
+  "author": "Marius Meißner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SkydiveMarius/gforce_trainer/issues"
+  },
+  "homepage": "https://github.com/SkydiveMarius/gforce_trainer#readme",
+  "dependencies": {
+    "fomantic-ui": "^2.7.8"
+  }
+}

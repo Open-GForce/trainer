@@ -1,0 +1,29 @@
+body {
+    background-color: #000;
+    padding: 0;
+    margin: 0;
+}
+
+#navigation {
+    background-color: #1a1c1d;
+    width: 115px;
+    float: left;
+    height: 101vh;
+}
+
+#navigation img {
+    padding: 11px;
+}
+
+.operation.grid {
+    padding-top: 24px;
+    padding-left: 14px;
+}
+
+.dark.header {
+    height: 32px;
+    padding-top: 8px !important;
+    background-color: #4e4e4e !important;
+    color: #fff;
+    border-color: #646464 !important;
+}

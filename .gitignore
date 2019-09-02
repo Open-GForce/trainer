@@ -8,4 +8,6 @@ run_tests
 build/*
 .idea/*
 
+node_modules
 web/js/vendor/jquery-3.4.1.js
+web/js/vendor/semantic/*

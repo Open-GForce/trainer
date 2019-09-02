@@ -2,8 +2,13 @@
     <head>
         <title>G-Force trainer</title>
         <script type="text/javascript" src="js/vendor/jquery-3.4.1.js"></script>
+        <script type="text/javascript" src="js/vendor/semantic/dist/semantic.js"></script>
         <script type="text/javascript" src="js/lib/app.js"></script>
         <script type="text/javascript" src="js/lib/Networking/Websocket.js"></script>
+        <script type="text/javascript" src="js/lib/Pages/OperationsPage.js"></script>
+        <link rel="stylesheet" type="text/css" href="js/vendor/semantic/dist/semantic.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="shortcut icon" type="image/x-icon" href="img/icon.png">
     </head>
     <body>
         <script>
@@ -12,5 +17,101 @@
                 app.start();
             })
         </script>
+        <div id="navigation">
+            <div class="ui vertical labeled inverted icon menu">
+                <div class="disabled item">
+                    <img src="img/icon.png" alt="Icon">
+                </div>
+                <a class="item">
+                    <i class="dashboard icon"></i>
+                    Betrieb
+                </a>
+                <a class="item">
+                    <i class="video settings icon"></i>
+                    Einstellungen
+                </a>
+            </div>
+        </div>
+        <div id="content">
+            <div class="ui grid operation">
+                <div class="sixteen wide column">
+                    <h5 class="ui top attached dark header">
+                        Aktuelle Werte
+                    </h5>
+                    <div class="ui attached inverted segment control">
+                        <div class="ui inverted four statistics">
+                            <div class="statistic">
+                                <div class="value">
+                                    1447
+                                </div>
+                                <div class="label">
+                                    Aktuelle Geschwindigkeit
+                                </div>
+                            </div>
+                            <div class="statistic">
+                                <div class="value">
+                                    3400
+                                </div>
+                                <div class="label">
+                                    Maximale Geschwindigkeit
+                                </div>
+                            </div>
+                            <div class="statistic">
+                                <div class="value">
+                                    1579
+                                </div>
+                                <div class="label">
+                                    Ziel Geschwindigkeit
+                                </div>
+                            </div>
+                            <div class="statistic">
+                                <div class="value">
+                                    4.5 G
+                                </div>
+                                <div class="label">
+                                    Belastung
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="eight wide column">
+                    <h5 class="ui top attached dark header">
+                        Steuerung
+                    </h5>
+                    <div class="ui attached inverted segment control">
+                        <h3 class="ui inverted header">
+                            <i class="fighter jet icon"></i>
+                            <div class="content">
+                                Belastung
+                                <div class="sub header">Begrenzung der G-Kräfte</div>
+                            </div>
+                        </h3><br>
+                        <div class="ui labeled ticked inverted slider"></div>
+                        <div class="ui divider"></div>
+                        <h3 class="ui inverted header">
+                            <i class="directions icon"></i>
+                            <div class="content">
+                                Drehrichtung
+                            </div>
+                        </h3>
+                        <div class="ui huge fluid inverted buttons">
+                            <button class="ui inverted active blue button">Rechts</button>
+                            <button class="ui inverted button">Links</button>
+                        </div>
+                        <div class="ui divider"></div>
+                        <button class="ui inverted green fluid massive button" style="height: 101px">Freigeben</button>
+                    </div>
+                </div>
+                <div class="eight wide column">
+                    <h5 class="ui top attached dark header">
+                        Pilot
+                    </h5>
+                    <div class="ui attached inverted segment control">
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
