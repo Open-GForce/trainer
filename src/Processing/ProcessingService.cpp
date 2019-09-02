@@ -92,7 +92,7 @@ ProcessingStatus *ProcessingService::getStatus()
     );
 }
 
-Response* ProcessingService::cloneStatus()
+BusResponse* ProcessingService::cloneStatus()
 {
     this->statusMutex.lock();
     auto cloned = this->status != nullptr ? this->status->clone() : nullptr;

@@ -80,7 +80,7 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
 
     SECTION("Response object saved during sync")
     {
-        fakeit::When(Method(driveServiceMock, sync)).Return(new Response(new EngineStatus(false, false, false, false, false, false, false, false), 500));
+        fakeit::When(Method(driveServiceMock, sync)).Return(new BusResponse(new EngineStatus(false, false, false, false, false, false, false, false), 500));
 
         service->setDirection(RotationDirection::right);
         service->run();
@@ -92,7 +92,7 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
 
     SECTION("Response object saved only if not null")
     {
-        fakeit::When(Method(driveServiceMock, sync)).Return(new Response(new EngineStatus(false, false, false, false, false, false, false, false), 500));
+        fakeit::When(Method(driveServiceMock, sync)).Return(new BusResponse(new EngineStatus(false, false, false, false, false, false, false, false), 500));
         service->setDirection(RotationDirection::right);
         service->run();
 
@@ -106,7 +106,7 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
 
     SECTION("Correct processing status")
     {
-        fakeit::When(Method(driveServiceMock, sync)).Return(new Response(new EngineStatus(true, false, false, false, false, false, false, false), 500));
+        fakeit::When(Method(driveServiceMock, sync)).Return(new BusResponse(new EngineStatus(true, false, false, false, false, false, false, false), 500));
 
         service->setDirection(RotationDirection::right);
         service->setFirstBrakeInput(115); // Inner brake => 0.4118

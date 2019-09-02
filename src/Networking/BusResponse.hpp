@@ -1,5 +1,5 @@
-#ifndef GFORCE_TRAINER_CONTROLLER_RESPONSE_HPP
-#define GFORCE_TRAINER_CONTROLLER_RESPONSE_HPP
+#ifndef GFORCE_TRAINER_CONTROLLER_BUSRESPONSE_HPP
+#define GFORCE_TRAINER_CONTROLLER_BUSRESPONSE_HPP
 
 #include "EngineStatus.hpp"
 #include "../ACL/CAN/MessageInterface.hpp"
@@ -9,7 +9,7 @@ using namespace GForce::ACL;
 namespace GForce::Networking
 {
 
-class Response
+class BusResponse
 {
     private:
         /**
@@ -24,15 +24,15 @@ class Response
         double rotationSpeed;
 
     public:
-        Response(EngineStatus *engineStatus, double rotationSpeed);
-        virtual ~Response();
+        BusResponse(EngineStatus *engineStatus, double rotationSpeed);
+        virtual ~BusResponse();
 
-        Response* clone();
+        BusResponse* clone();
 
         /**
          * Converts CAN message to Response
          */
-        static Response* fromMessage(CAN::MessageInterface* message);
+        static BusResponse* fromMessage(CAN::MessageInterface* message);
 
         EngineStatus *getEngineStatus() const;
         double getRotationSpeed() const;
@@ -40,4 +40,4 @@ class Response
 
 }
 
-#endif //GFORCE_TRAINER_CONTROLLER_RESPONSE_HPP
+#endif //GFORCE_TRAINER_CONTROLLER_BUSRESPONSE_HPP

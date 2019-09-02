@@ -1,13 +1,14 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_MOVIDRIVESERVICE_HPP
 #define GFORCE_TRAINER_CONTROLLER_MOVIDRIVESERVICE_HPP
 
+#include "BusResponse.hpp"
 #include "ControlStatus.hpp"
 #include "../ACL/CAN/CANSocket.hpp"
 #include "../Utils/Logging/LoggerInterface.hpp"
-#include "Response.hpp"
 
 using namespace GForce::ACL;
 using namespace GForce::Utils::Logging;
+using namespace GForce::Networking;
 
 namespace GForce::Networking {
 
@@ -62,7 +63,7 @@ class MoviDriveService
         /**
          * Receives the CAN status
          */
-        Response* receive();
+        GForce::Networking::BusResponse* receive();
 
         /**
          * Sends heartbeat if needed
@@ -87,7 +88,7 @@ class MoviDriveService
          *
          * Ownership of returned object moves to caller.
          */
-        virtual Response* sync();
+        virtual BusResponse* sync();
 
         /**
          * Ownership of control status moves to service (may be deleted anytime)

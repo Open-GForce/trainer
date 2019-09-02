@@ -1,6 +1,6 @@
-#include <bits/exception.h>
 #include <string>
 #include "BrakeInputThread.hpp"
+#include <exception>
 
 using namespace GForce::Processing;
 

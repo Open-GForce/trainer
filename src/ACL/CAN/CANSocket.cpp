@@ -68,6 +68,11 @@ std::string CANSocket::fetch()
     }
 
     std::string data = buffer;
+
+    if (data.back() != '>') {
+        data.pop_back();
+    }
+
     return data;
 }
 

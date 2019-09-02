@@ -1,16 +1,16 @@
-#include "Response.hpp"
+#include "BusResponse.hpp"
 
 using namespace GForce::Networking;
 
-Response::Response(GForce::Networking::EngineStatus *engineStatus, double rotationSpeed)
+BusResponse::BusResponse(GForce::Networking::EngineStatus *engineStatus, double rotationSpeed)
         : engineStatus(engineStatus), rotationSpeed(rotationSpeed) {}
 
 
-Response::~Response() {
+BusResponse::~BusResponse() {
     delete this->engineStatus;
 }
 
-Response* Response::fromMessage(CAN::MessageInterface* message)
+BusResponse* BusResponse::fromMessage(CAN::MessageInterface* message)
 {
     auto statusByte = message->getData()[0];
 
@@ -30,18 +30,18 @@ Response* Response::fromMessage(CAN::MessageInterface* message)
     // 1 digit = 0.2 min^-1
     speed /= 5;
 
-    return new Response(status, speed);
+    return new BusResponse(status, speed);
 }
 
-Response *Response::clone()
+BusResponse *BusResponse::clone()
 {
-    return new Response(this->engineStatus->clone(), this->rotationSpeed);
+    return new BusResponse(this->engineStatus->clone(), this->rotationSpeed);
 }
 
-EngineStatus *Response::getEngineStatus() const {
+EngineStatus *BusResponse::getEngineStatus() const {
     return engineStatus;
 }
 
-double Response::getRotationSpeed() const {
+double BusResponse::getRotationSpeed() const {
     return rotationSpeed;
 }

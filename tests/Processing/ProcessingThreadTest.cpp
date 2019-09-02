@@ -3,6 +3,7 @@
 #include "../../src/Processing/ProcessingThread.hpp"
 
 using namespace GForce::Processing;
+using namespace GForce::API;
 
 TEST_CASE( "ProcessingThread tests", "[Processing]" )
 {
@@ -17,9 +18,9 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
     fakeit::Fake(Method(brakeThreadMock, getSecondBrake));
     BrakeInputThread* brakeThread = &brakeThreadMock.get();
 
-    fakeit::Mock<ServerThread> serverThreadMock;
+    fakeit::Mock<Websocket::ServerThread> serverThreadMock;
     fakeit::Fake(Method(serverThreadMock, addBroadcastMessage));
-    ServerThread* serverThread = &serverThreadMock.get();
+    Websocket::ServerThread* serverThread = &serverThreadMock.get();
 
     auto thread = new ProcessingThread(service);
 
@@ -56,7 +57,7 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
             return 1064;
         });
 
-        fakeit::When(Method(serverThreadMock, addBroadcastMessage)).AlwaysDo([status] (ResponseCastInterface* message) {
+        fakeit::When(Method(serverThreadMock, addBroadcastMessage)).AlwaysDo([status] (Websocket::ResponseCastInterface* message) {
             REQUIRE(message != nullptr);
             CHECK(message == status);
         });

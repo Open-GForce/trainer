@@ -6,11 +6,12 @@ using namespace GForce::Processing;
 ProcessingThread::ProcessingThread(ProcessingService *service) : service(service)
 {
     this->brakeInputThread = nullptr;
+    this->websocketThread = nullptr;
     this->cycleInterval = 10;
     this->stopped = false;
 }
 
-void ProcessingThread::start(BrakeInputThread* brakeThread, ServerThread* serverThread)
+void ProcessingThread::start(BrakeInputThread* brakeThread, Websocket::ServerThread* serverThread)
 {
     this->brakeInputThread = brakeThread;
     this->websocketThread = serverThread;

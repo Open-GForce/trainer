@@ -3,7 +3,7 @@
 
 #include <mutex>
 #include "../Networking/MoviDriveService.hpp"
-#include "../Networking/Response.hpp"
+#include "../Networking/BusResponse.hpp"
 #include "../Configuration/UserSettings.hpp"
 #include "RotationDirection.hpp"
 #include "Range.hpp"
@@ -27,7 +27,7 @@ class ProcessingService
         /**
          * Status of the engine
          */
-        Response* status;
+        BusResponse* status;
 
         /**
          * Max. speed in 1/min
@@ -95,7 +95,7 @@ class ProcessingService
         /**
          * Copies the status, ownership of returned object is moved to caller
          */
-        Response *cloneStatus();
+        BusResponse *cloneStatus();
 };
 
 }

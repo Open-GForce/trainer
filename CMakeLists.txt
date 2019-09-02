@@ -7,6 +7,7 @@ set (CMAKE_CXX_STANDARD 17)
 
 include_directories(../can-utils)
 include_directories(../websocketpp)
+include_directories(../nlohmann_json)
 
 set(SOURCES
         src/ACL/I2C/Device.cpp
@@ -21,17 +22,17 @@ set(SOURCES
         src/Utils/Logging/StandardLogger.cpp
         src/ACL/CAN/MessageFactory.cpp
         src/Networking/EngineStatus.cpp
-        src/Networking/Response.cpp
+        src/Networking/BusResponse.cpp
         src/Processing/BrakeInputThread.cpp
         src/Processing/Range.cpp
         src/Processing/ProcessingThread.cpp
-        src/Processing/ProcessingService.cpp
         src/Configuration/UserSettings.cpp
         src/API/Websocket/Server.cpp
         src/Configuration/ConfigRepository.cpp
         src/Processing/ProcessingStatus.cpp
         src/API/Websocket/Response.cpp
-        src/API/Websocket/ServerThread.cpp)
+        src/API/Websocket/ServerThread.cpp
+        src/Processing/ProcessingService.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -46,11 +47,11 @@ set(TESTS
         tests/Processing/ProcessingThreadTest.cpp
         tests/Configuration/ConfigRepositoryIntegrationTest.cpp
         tests/Processing/ProcessingStatusTest.cpp
-        tests/API/Websocket/ServerThreadTest.cpp src/Processing/RotationDirection.hpp)
+        tests/API/Websocket/ServerThreadTest.cpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 
-FIND_PACKAGE( Boost 1.65 COMPONENTS system filesystem REQUIRED )
+FIND_PACKAGE( Boost 1.62 COMPONENTS system filesystem REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 add_executable(controller ${SOURCES} src/main.cpp src/API/Websocket/Server.cpp src/API/Websocket/Server.hpp src/Processing/ProcessingStatus.cpp src/Processing/ProcessingStatus.hpp)

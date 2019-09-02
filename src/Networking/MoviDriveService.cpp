@@ -22,9 +22,9 @@ MoviDriveService::~MoviDriveService()
     delete this->controlStatus;
 }
 
-Response* MoviDriveService::sync()
+BusResponse* MoviDriveService::sync()
 {
-    Response* response = nullptr;
+    BusResponse* response = nullptr;
 
     try {
         this->send();
@@ -66,11 +66,11 @@ void MoviDriveService::send()
     this->socket->send(syncMessage);
 }
 
-Response* MoviDriveService::receive()
+BusResponse* MoviDriveService::receive()
 {
     auto messages = this->socket->receive();
     CAN::MessageInterface* lastMessage = nullptr;
-    Response* response = nullptr;
+    BusResponse* response = nullptr;
 
     // Filter for last status message, ignoring older and other messages
     for (auto message : messages) {
@@ -83,7 +83,7 @@ Response* MoviDriveService::receive()
     }
 
     if (lastMessage != nullptr) {
-        response = Response::fromMessage(lastMessage);
+        response = BusResponse::fromMessage(lastMessage);
     }
 
     delete lastMessage;

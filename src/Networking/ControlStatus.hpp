@@ -1,7 +1,7 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_CONTROLSTATUS_HPP
 #define GFORCE_TRAINER_CONTROLLER_CONTROLSTATUS_HPP
 
-#include <stdint-gcc.h>
+#include <cstdint>
 
 namespace GForce::Networking {
 
