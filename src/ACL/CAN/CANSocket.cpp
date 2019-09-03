@@ -19,7 +19,7 @@ void CANSocket::connect(const std::string &address, uint16_t port)
 {
     this->handle = socket(AF_INET, SOCK_STREAM, 0);
     if (this->handle < 0) {
-        throw RuntimeException("Unable to open CAN socket handle");
+        throw RuntimeException("Unable to open CAN socket _handleMessage");
     }
 
     sockaddr_in server{};

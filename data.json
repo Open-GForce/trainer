@@ -1,0 +1,27 @@
+{
+  "data": {
+    "engineStatus": {
+      "currentIntegratorSet": 1,
+      "currentParameterSet": 1,
+      "inputDataReady": true,
+      "inverterReady": true,
+      "malfunction": false,
+      "powerAmplifierReleased": true,
+      "switchLeftActive": false,
+      "switchRightActive": false
+    },
+    "innerBrake": {
+      "raw": 1960,
+      "scaled": 0.196
+    },
+    "maxSpeed": 0,
+    "outerBrake": {
+      "raw": 2995,
+      "scaled": 0.2995
+    },
+    "rotationDirection": "right",
+    "rotationSpeed": 159.2,
+    "targetSpeed": -0.0
+  },
+  "type": "processingStatus"
+}

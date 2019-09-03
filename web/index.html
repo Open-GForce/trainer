@@ -7,6 +7,12 @@
         <script type="text/javascript" src="js/lib/app.js"></script>
         <script type="text/javascript" src="js/lib/Networking/Websocket.js"></script>
         <script type="text/javascript" src="js/lib/Pages/OperationsPage.js"></script>
+        <script type="text/javascript" src="js/lib/Pages/Components/BarChart.js"></script>
+        <script type="text/javascript" src="js/lib/Pages/Components/BrakeInputChart.js"></script>
+        <script type="text/javascript" src="js/lib/Pages/Components/SpeedChart.js"></script>
+        <script type="text/javascript" src="js/lib/Operation/SystemStatus.js"></script>
+        <script type="text/javascript" src="js/lib/Operation/EngineStatus.js"></script>
+        <script type="text/javascript" src="js/lib/Operation/BrakeInput.js"></script>
         <link rel="stylesheet" type="text/css" href="js/vendor/semantic/dist/semantic.css">
         <link rel="stylesheet" type="text/css" href="css/chart-2.8.0.css">
         <link rel="stylesheet" type="text/css" href="css/style.css">
@@ -14,8 +20,13 @@
     </head>
     <body>
         <script>
+            /**
+             * @type {App}
+             */
+            let app = undefined;
+
             $(document).ready(function () {
-                let app = new App();
+                app = new App();
                 app.start();
             })
         </script>

@@ -12,7 +12,7 @@ class Device
         unsigned bus;
         unsigned address;
 
-        /* Device handle */
+        /* Device _handleMessage */
         int handle;
 
         unsigned selectedRegister;
