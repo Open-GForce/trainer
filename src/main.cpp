@@ -1,6 +1,7 @@
 #include <thread>
 #include "ACL/I2C/Device.hpp"
 #include "ACL/CAN/CANSocket.hpp"
+#include "ACL/CAN/DummyCANSocket.hpp"
 #include "ACL/CAN/Message.hpp"
 #include "Sensors/ADS1115.hpp"
 #include "Processing/BrakeInputThread.hpp"
@@ -35,7 +36,7 @@ int main()
     auto sensor = new ADS1115(device);
     auto brakeThread = new BrakeInputThread(sensor, logger);
 
-    auto canSocket = new CANSocket();
+    auto canSocket = new DummyCANSocket();
     auto moviDriveService = new MoviDriveService(canSocket, logger);
     auto processingService = new ProcessingService(moviDriveService, userConfig);
     auto processingThread = new ProcessingThread(processingService);
@@ -55,8 +56,8 @@ int main()
     });
     std::cout << "Brake input thread started\n";
 
-    canSocket->connect("192.168.2.102", 29536);
-    canSocket->open();
+    //canSocket->connect("192.168.2.102", 29536);
+    //canSocket->open();
     std::thread t3([processingThread, brakeThread, webSocketThread] {
         processingThread->start(brakeThread, webSocketThread);
     });

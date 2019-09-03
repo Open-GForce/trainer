@@ -33,7 +33,8 @@ set(SOURCES
         src/Processing/ProcessingStatus.cpp
         src/API/Websocket/Response.cpp
         src/API/Websocket/ServerThread.cpp
-        src/Processing/ProcessingService.cpp)
+        src/Processing/ProcessingService.cpp
+        src/ACL/CAN/DummyCANSocket.cpp src/ACL/CAN/DummyCANSocket.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp

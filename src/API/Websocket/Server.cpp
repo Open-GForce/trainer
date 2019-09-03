@@ -6,6 +6,8 @@ Server::Server()
 {
     websocket.init_asio();
 
+    websocket.clear_access_channels(websocketpp::log::alevel::all);
+
     websocket.set_open_handler(bind(&Server::on_open,this,::_1));
     websocket.set_close_handler(bind(&Server::on_close,this,::_1));
     websocket.set_message_handler(bind(&Server::on_message,this,::_1,::_2));
