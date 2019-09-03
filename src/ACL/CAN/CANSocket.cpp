@@ -64,13 +64,14 @@ std::string CANSocket::fetch()
 
     int status = recv(this->handle, buffer, sizeof(buffer), 0);
     if (status < 0) {
-        puts("recv failed");
+        throw RuntimeException("CAN socket => call to recv() failed with RC " + std::to_string(status));
     }
 
     std::string data = buffer;
+    int length = data.find_last_of('>') + 1;
 
-    if (data.back() != '>') {
-        data.pop_back();
+    if (length > 0) {
+        data = data.substr(0, length);
     }
 
     return data;
