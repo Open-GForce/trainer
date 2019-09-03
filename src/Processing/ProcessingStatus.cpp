@@ -20,7 +20,6 @@ ProcessingStatus::~ProcessingStatus()
 Websocket::Response *ProcessingStatus::toResponse()
 {
     nlohmann::json data = {
-        {"engineStatus", this->engineStatus->toJSON()},
         {"rotationSpeed", this->rotationSpeed},
         {"maxSpeed", this->maxSpeed},
         {"targetSpeed", this->targetSpeed},
@@ -34,6 +33,12 @@ Websocket::Response *ProcessingStatus::toResponse()
         }},
         {"rotationDirection", this->rotationDirection == RotationDirection::right ? "right" : "left"}
     };
+
+    if (this->engineStatus == nullptr) {
+        data["engineStatus"] = nullptr;
+    } else {
+        data["engineStatus"] = this->engineStatus->toJSON();
+    }
 
     return new Websocket::Response("processingStatus", data);
 }

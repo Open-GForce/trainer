@@ -4,6 +4,7 @@ set(CMAKE_CXX_COMPILER "g++")
 project (gforce_trainer_controller LANGUAGES C CXX)
 
 set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_BUILD_TYPE Debug)
 
 include_directories(../can-utils)
 include_directories(../websocketpp)

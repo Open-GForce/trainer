@@ -10,7 +10,7 @@ class Websocket
 
 
     start() {
-        let connection = new WebSocket('ws://localhost:8418');
+        let connection = new WebSocket('ws://192.168.2.102:8763');
 
         connection.onopen = function ()
         {
@@ -21,9 +21,9 @@ class Websocket
             console.log('socket Error: ' + error);
         };
 
-        connection.onmessage = function (e)
+        connection.onmessage = function (message)
         {
-
+            console.log(message);
         };
     }
 }

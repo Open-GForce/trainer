@@ -9,5 +9,5 @@ build/*
 .idea/*
 
 node_modules
-web/js/vendor/jquery-3.4.1.js
-web/js/vendor/semantic/*
+web/js/vendor/*
+web/css/chart-2.8.0.css

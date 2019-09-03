@@ -20,6 +20,10 @@ body {
     padding-left: 14px;
 }
 
+.operation.grid canvas {
+    width: 100%;
+}
+
 .dark.header {
     height: 32px;
     padding-top: 8px !important;

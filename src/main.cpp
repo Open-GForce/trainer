@@ -64,6 +64,5 @@ int main()
 
     while (true) {
         usleep(50000);
-        std::cout << "Brake#1: " << brakeThread->getFirstBrake() << "\n";
     }
 }
