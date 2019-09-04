@@ -10,6 +10,6 @@ void DummyCANSocket::send(GForce::ACL::CAN::MessageInterface *message)
 std::vector<MessageInterface *> DummyCANSocket::receive()
 {
     return {
-            new CAN::Message(0x182, {0x07, 0x00, 0x1c, 0x03})
+            new CAN::Message(0x182, {0x07, 0x00, 0x8C, 0x0})
     };
 }

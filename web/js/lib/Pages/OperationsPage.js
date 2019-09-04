@@ -18,14 +18,14 @@ class OperationsPage
         this.speedChart = undefined;
 
         /**
-         * @type {number}
+         * @type {jQuery}
          */
-        this.iteration = 0;
+        this.statusSegment = undefined;
 
         /**
          * @type {jQuery}
          */
-        this.statusSegment = undefined;
+        this.forceSegment = undefined;
     }
 
     start()
@@ -38,6 +38,7 @@ class OperationsPage
             });
 
         this.statusSegment = $('.status.segment');
+        this.forceSegment = $('.force.segment');
 
         this.brakeChart = new BrakeInputChart();
         this.speedChart = new SpeedChart();
@@ -52,18 +53,17 @@ class OperationsPage
      */
     onSystemStatus(status)
     {
-        this.iteration++;
-
         this.brakeChart.setInnerBrake(status.innerBrake.scaled * 100);
         this.brakeChart.setOuterBrake(status.outerBrake.scaled * 100);
         this.brakeChart.setTotalValue((status.innerBrake.scaled - status.outerBrake.scaled) * 100);
         this.brakeChart.update();
 
-        this.speedChart.setCurrentSpeed(status.currentSpeed + (this.iteration * 0.2));
-        this.speedChart.setMaxSpeed(1000);
-        this.speedChart.setTargetSpeed(600);
+        this.speedChart.setCurrentSpeed(status.currentSpeed);
+        this.speedChart.setMaxSpeed(status.maxSpeed);
+        this.speedChart.setTargetSpeed(status.targetSpeed);
 
         this._renderStatus(status);
+        this._renderForce(status);
     }
 
     /**
@@ -99,6 +99,30 @@ class OperationsPage
             }
 
             app.currentPage.statusSegment.html(rendered);
+        });
+    }
+
+    /**
+     * @param {SystemStatus|undefined} status
+     */
+    _renderForce(status)
+    {
+        app.templates.load('forceStatistics', function (template) {
+            let rendered = '';
+
+            if (status === undefined) {
+                rendered = Mustache.render(template, {
+                    currentForce: '0.0',
+                    maxForce: '0.0'
+                });
+            } else {
+                rendered = Mustache.render(template, {
+                    currentForce: RotationMath.speedToForce(status.currentSpeed).toFixed(1),
+                    maxForce: RotationMath.speedToForce(status.maxSpeed).toFixed(1)
+                });
+            }
+
+            app.currentPage.forceSegment.html(rendered);
         });
     }
 }

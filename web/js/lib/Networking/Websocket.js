@@ -6,6 +6,11 @@ class Websocket
          * @type {socket}
          */
         this.connection = undefined;
+
+        /**
+         * @type {number}
+         */
+        this.iteration = 0;
     }
 
 
@@ -59,6 +64,14 @@ class Websocket
             message.data.maxSpeed,
             message.data.targetSpeed,
         );
+
+        this.iteration++;
+
+        status.targetSpeed = 30;
+        status.maxSpeed = 40;
+
+        status.currentSpeed += this.iteration * 0.008;
+        status.currentSpeed -= 15;
 
         app.currentPage.onSystemStatus(status);
     }
