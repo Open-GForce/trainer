@@ -1,11 +1,36 @@
-class SpeedChart extends BarChart
+class SpeedChart extends GaugeChart
 {
     constructor() {
-        super("Geschwindigkeit");
+        super();
 
-        this.labels = ['Ziel', 'Aktuell', 'Max'];
-        this.colors = ['#1976d2', '#63a4ff','#004ba0'];
-        this.data = [1500, 1200, 3400];
+        this.colors = ['#1976d2', '#bdbdbd','#004ba0'];
+        this.valueColor = '#fff';
+    }
+
+    /**
+     * @param {number} speed
+     */
+    setTarget(speed) {
+        if (this.chart.data.datasets[0].gaugeLimits[1] > 0) {
+            this.chart.data.datasets[0].gaugeLimits[1]++;
+            return;
+        }
+
+        this.chart.data.datasets[0].gaugeLimits[1] = Math.round(speed);
+    }
+
+    /**
+     * @param {number} speed
+     */
+    setCurrent(speed) {
+        this.chart.data.datasets[0].gaugeData.value = 200;
+    }
+
+    /**
+     * @param {number} speed
+     */
+    setMax(speed) {
+        this.chart.data.datasets[0].gaugeLimits[2] = Math.round(speed);
     }
 
     /**
@@ -13,15 +38,5 @@ class SpeedChart extends BarChart
      */
     _getCanvas() {
         return $('#speedChart');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    _getConfig() {
-        let options = this.baseOptions;
-        options.scales.yAxes[0].ticks.max = 3500;
-
-        return options;
     }
 }

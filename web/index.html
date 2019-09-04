@@ -3,11 +3,13 @@
         <title>G-Force trainer</title>
         <script type="text/javascript" src="js/vendor/jquery-3.4.1.js"></script>
         <script type="text/javascript" src="js/vendor/chart-2.8.0.js"></script>
+        <script type="text/javascript" src="js/vendor/Gauge.js"></script>
         <script type="text/javascript" src="js/vendor/semantic/dist/semantic.js"></script>
         <script type="text/javascript" src="js/lib/app.js"></script>
         <script type="text/javascript" src="js/lib/Networking/Websocket.js"></script>
         <script type="text/javascript" src="js/lib/Pages/OperationsPage.js"></script>
         <script type="text/javascript" src="js/lib/Pages/Components/BarChart.js"></script>
+        <script type="text/javascript" src="js/lib/Pages/Components/GaugeChart.js"></script>
         <script type="text/javascript" src="js/lib/Pages/Components/BrakeInputChart.js"></script>
         <script type="text/javascript" src="js/lib/Pages/Components/SpeedChart.js"></script>
         <script type="text/javascript" src="js/lib/Operation/SystemStatus.js"></script>
@@ -136,8 +138,8 @@
                                 Geschwindigkeit
                             </h5>
                             <div class="ui attached inverted segment speed">
+                                <canvas id="speedChart" height="170"></canvas>
                             </div><br>
-
                         </div>
                     </div>
 

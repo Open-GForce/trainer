@@ -1,34 +1,21 @@
-class BarChart
+class GaugeChart
 {
-    constructor(name)
+    constructor()
     {
         /**
-         * @type {{legend: {display: boolean}, responsive: boolean, scales: {yAxes: {ticks: {max: number, beginAtZero: boolean}}[]}}}
+         * @type {{showMarkers: boolean, events: Array}}
          */
         this.baseOptions = {
-            responsive: false,
-            legend: {
-                display: false
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        max: 100,
-                    }
-                }]
+            events: [],
+            showMarkers: true,
+            responsive: true,
+            arrowColor: '#fff',
+            defaultFontColor: '#fff',
+            animation: {
+                animateRotate: false,
+                animateArrow: false
             }
         };
-
-        /**
-         * @type {string}
-         */
-        this.name = name;
-
-        /**
-         * @type {string[]}
-         */
-        this.labels = [];
 
         /**
          * @type {string[]}
@@ -36,9 +23,14 @@ class BarChart
         this.colors = [];
 
         /**
+         * @type {string}
+         */
+        this.valueColor = '';
+
+        /**
          * @type {number[]}
          */
-        this.data = [];
+        this.limits = [];
 
         /**
          * @type {Chart}
@@ -49,14 +41,16 @@ class BarChart
     show()
     {
         this.chart = new Chart(this._getCanvas(), {
-            type: 'bar',
+            type: "tsgauge",
             data: {
-                labels: this.labels,
                 datasets: [{
-                    label: this.name,
-                    data: this.data,
                     backgroundColor: this.colors,
-                    borderWidth: 1
+                    borderWidth: 0,
+                    gaugeData: {
+                        value: 0,
+                        valueColor: this.valueColor,
+                    },
+                    gaugeLimits: [0, 0, 0]
                 }]
             },
             options: this._getConfig()
@@ -65,7 +59,7 @@ class BarChart
 
     update()
     {
-        this.chart.update(0);
+        this.chart.update();
     }
 
     /**

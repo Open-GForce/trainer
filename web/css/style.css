@@ -39,9 +39,10 @@ body {
 
 .status.segment .label {
     text-align: center;
-    margin-bottom: 12px !important;
+    margin-bottom: 13px !important;
     height: 34px;
     font-size: 14px;
+    padding-top: 9px;
 }
 
 .status.segment .label .icon {
@@ -54,7 +55,8 @@ body {
 }
 
 .speed.segment {
-    height: 170px;
+    height: 172px;
+    padding: 0;
 }
 
 .force.segment {

@@ -30,7 +30,7 @@ class OperationsPage
         this.brakeChart = new BrakeInputChart();
         this.speedChart = new SpeedChart();
         this.brakeChart.show();
-        // this.speedChart.show();
+        this.speedChart.show();
     }
 
     /**
@@ -42,5 +42,10 @@ class OperationsPage
         this.brakeChart.setOuterBrake(status.outerBrake.scaled * 100);
         this.brakeChart.setTotalValue((status.innerBrake.scaled - status.outerBrake.scaled) * 100);
         this.brakeChart.update();
+
+        this.speedChart.setCurrent(status.currentSpeed);
+        this.speedChart.setMax(1000);
+        this.speedChart.setTarget(600);
+        this.speedChart.update();
     }
 }
