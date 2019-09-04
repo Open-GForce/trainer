@@ -5,6 +5,7 @@
         <script type="text/javascript" src="js/vendor/chart-2.8.0.js"></script>
         <script type="text/javascript" src="js/vendor/gauge.js"></script>
         <script type="text/javascript" src="js/vendor/semantic/dist/semantic.js"></script>
+        <script type="text/javascript" src="js/vendor/mustache.js"></script>
         <script type="text/javascript" src="js/lib/app.js"></script>
         <script type="text/javascript" src="js/lib/Networking/Websocket.js"></script>
         <script type="text/javascript" src="js/lib/Pages/OperationsPage.js"></script>
@@ -14,6 +15,7 @@
         <script type="text/javascript" src="js/lib/Operation/SystemStatus.js"></script>
         <script type="text/javascript" src="js/lib/Operation/EngineStatus.js"></script>
         <script type="text/javascript" src="js/lib/Operation/BrakeInput.js"></script>
+        <script type="text/javascript" src="js/lib/Utils/TemplateRepository.js"></script>
         <link rel="stylesheet" type="text/css" href="js/vendor/semantic/dist/semantic.css">
         <link rel="stylesheet" type="text/css" href="css/chart-2.8.0.css">
         <link rel="stylesheet" type="text/css" href="css/style.css">
@@ -53,20 +55,7 @@
                         Status
                     </h5>
                     <div class="ui attached inverted segment status">
-                        <div class="ui grid">
-                            <div class="four wide column">
-                                <a class="ui primary inverted red basic large fluid centered label"><i class="red circle icon"></i>Spannung unterbrochen</a>
-                            </div>
-                            <div class="four wide column">
-                                <a class="ui primary inverted green basic large fluid centered label"><i class="green circle icon"></i>Feldbus bereit</a>
-                            </div>
-                            <div class="four wide column">
-                                <a class="ui primary inverted red basic large fluid centered label"><i class="red circle icon"></i>Umrichter gebremst</a>
-                            </div>
-                            <div class="four wide column">
-                                <a class="ui primary inverted green basic large fluid centered label"><i class="red green circle icon"></i>Keine Störung</a>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
                 <div class="eight wide column">

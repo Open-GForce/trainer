@@ -8,6 +8,11 @@ class App
         this.socket = undefined;
 
         /**
+         * @type {TemplateRepository}
+         */
+        this.templates = undefined;
+
+        /**
          * @type {OperationsPage}
          */
         this.currentPage = undefined;
@@ -17,6 +22,8 @@ class App
     {
         this.socket = new Websocket();
         this.socket.start();
+
+        this.templates = new TemplateRepository();
 
         this.currentPage = new OperationsPage();
         this.currentPage.start();
