@@ -16,6 +16,11 @@ class OperationsPage
          * @type {SpeedChart}
          */
         this.speedChart = undefined;
+
+        /**
+         * @type {number}
+         */
+        this.iteration = 0;
     }
 
     start()
@@ -38,14 +43,15 @@ class OperationsPage
      */
     onSystemStatus(status)
     {
+        this.iteration++;
+
         this.brakeChart.setInnerBrake(status.innerBrake.scaled * 100);
         this.brakeChart.setOuterBrake(status.outerBrake.scaled * 100);
         this.brakeChart.setTotalValue((status.innerBrake.scaled - status.outerBrake.scaled) * 100);
         this.brakeChart.update();
 
-        this.speedChart.setCurrent(status.currentSpeed);
-        this.speedChart.setMax(1000);
-        this.speedChart.setTarget(600);
-        this.speedChart.update();
+        this.speedChart.setCurrentSpeed(status.currentSpeed + (this.iteration * 0.2));
+        this.speedChart.setMaxSpeed(1000);
+        this.speedChart.setTargetSpeed(600);
     }
 }

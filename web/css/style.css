@@ -34,7 +34,7 @@ body {
 
 
 .status.segment {
-    height: 110px;
+    height: 60px;
 }
 
 .status.segment .label {
@@ -49,13 +49,18 @@ body {
     float: left;
 }
 
+.pilot.segment {
+    padding: 11px 0 0;
+    height: 424px;
+    padding-right: 8px;
+}
 
-.speed.header {
+.speed.header{
     margin-top: 28px !important;
 }
 
 .speed.segment {
-    height: 172px;
+    height: 263px;
     padding: 0;
 }
 
@@ -63,6 +68,59 @@ body {
     height: 100px;
 }
 
-.control.segment {
-    height: 500px;
+#speedChart {
+    height: 100%;
+    display: block;
+    float: left;
+    margin: 0;
+    border-radius: 3px;
+    position: relative;
 }
+
+#speedChart > .label {
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: inline-block;
+    background: rgba(0,0,0,0.5);
+    font-family: monospace;
+    font-size: 0.8em;
+    padding: 5px 10px;
+}
+#speedChart > .gauge > .dial {
+    stroke: #334455;
+    stroke-width: 2;
+    fill: rgba(0,0,0,0);
+}
+#speedChart > .gauge > .value {
+    stroke: rgb(47, 227, 255);
+    stroke-width: 2;
+    fill: rgba(0,0,0,0);
+}
+#speedChart > .gauge > .value-text {
+    fill: rgb(47, 227, 255);
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
+#speedChart > .gauge > .dial {
+    stroke: #334455;
+    stroke-width: 2;
+}
+#speedChart > .gauge > .value {
+    stroke: #004c8c;
+    stroke-width: 5;
+}
+#speedChart > .gauge > .value-text {
+    fill: #fff;
+}
+
+#speedChart svg:nth-child(2) .dial {
+   stroke: transparent;
+}
+
+#speedChart svg:nth-child(2) .value {
+    stroke: #63ccff;
+}
+
