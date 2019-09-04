@@ -5,7 +5,7 @@ class SpeedChart extends BarChart
 
         this.labels = ['Ziel', 'Aktuell', 'Max'];
         this.colors = ['#1976d2', '#63a4ff','#004ba0'];
-        this.data = [0, 0, 0];
+        this.data = [1500, 1200, 3400];
     }
 
     /**

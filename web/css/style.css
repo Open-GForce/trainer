@@ -31,3 +31,24 @@ body {
     color: #fff;
     border-color: #646464 !important;
 }
+
+
+.status.segment {
+    height: 90px;
+}
+
+.speed.header {
+    margin-top: 28px !important;
+}
+
+.speed.segment {
+    height: 170px;
+}
+
+.force.segment {
+    height: 100px;
+}
+
+.control.segment {
+    height: 480px;
+}

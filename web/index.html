@@ -47,48 +47,7 @@
         </div>
         <div id="content">
             <div class="ui grid operation">
-                <div class="sixteen wide column">
-                    <h5 class="ui top attached dark header">
-                        Aktuelle Werte
-                    </h5>
-                    <div class="ui attached inverted segment control">
-                        <div class="ui inverted four statistics">
-                            <div class="statistic">
-                                <div class="value">
-                                    1447
-                                </div>
-                                <div class="label">
-                                    Aktuelle Geschwindigkeit
-                                </div>
-                            </div>
-                            <div class="statistic">
-                                <div class="value">
-                                    3400
-                                </div>
-                                <div class="label">
-                                    Maximale Geschwindigkeit
-                                </div>
-                            </div>
-                            <div class="statistic">
-                                <div class="value">
-                                    1579
-                                </div>
-                                <div class="label">
-                                    Ziel Geschwindigkeit
-                                </div>
-                            </div>
-                            <div class="statistic">
-                                <div class="value">
-                                    4.5 G
-                                </div>
-                                <div class="label">
-                                    Belastung
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="ten wide column">
+                <div class="eight wide column">
                     <h5 class="ui top attached dark header">
                         Steuerung
                     </h5>
@@ -113,24 +72,65 @@
                             <button class="ui inverted button">Links</button>
                         </div>
                         <div class="ui divider"></div>
-                        <button class="ui inverted blue fluid massive button" style="height: 101px">Freigeben</button>
+                        <h3 class="ui inverted header">
+                            <i class="play icon"></i>
+                            <div class="content">
+                                Antrieb freigeben?
+                            </div>
+                        </h3>
+                        <button class="ui inverted blue fluid massive button" style="height: 120px">Freigeben</button>
                     </div>
                 </div>
-                <div class="three wide column">
-                    <h5 class="ui top attached dark header">
-                        Pilot (Steuerleinen)
-                    </h5>
-                    <div class="ui attached inverted segment pilot">
-                        <canvas id="brakeInputChart" height="383"></canvas>
+                <div class="eight wide column">
+                    <div class="ui grid">
+                        <div class="sixteen wide column">
+                            <h5 class="ui top attached dark header">
+                                Status
+                            </h5>
+                            <div class="ui attached inverted segment status">
+                            </div>
+                        </div>
+                        <div class="five wide column">
+                            <h5 class="ui top attached dark header">
+                                Pilot (Steuerleinen)
+                            </h5>
+                            <div class="ui attached inverted segment pilot">
+                                <canvas id="brakeInputChart" height="300"></canvas>
+                            </div>
+                        </div>
+                        <div class="eleven wide column">
+                            <h5 class="ui top attached dark header">
+                                Belastung
+                            </h5>
+                            <div class="ui attached inverted segment force">
+                                <div class="ui inverted two statistics">
+                                    <div class="statistic">
+                                        <div class="value">
+                                            5.0 G
+                                        </div>
+                                        <div class="label">
+                                            Maximale Belastung
+                                        </div>
+                                    </div>
+                                    <div class="statistic">
+                                        <div class="value">
+                                            4.5 G
+                                        </div>
+                                        <div class="label">
+                                            Aktuelle Belastung
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5 class="ui top attached dark speed header">
+                                Geschwindigkeit
+                            </h5>
+                            <div class="ui attached inverted segment speed">
+                            </div><br>
+
+                        </div>
                     </div>
-                </div>
-                <div class="three wide column">
-                    <h5 class="ui top attached dark header">
-                        Geschwindigkeit
-                    </h5>
-                    <div class="ui attached inverted segment pilot">
-                        <canvas id="speedChart" height="383"></canvas>
-                    </div>
+
                 </div>
             </div>
         </div>

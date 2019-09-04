@@ -30,7 +30,7 @@ class OperationsPage
         this.brakeChart = new BrakeInputChart();
         this.speedChart = new SpeedChart();
         this.brakeChart.show();
-        this.speedChart.show();
+        // this.speedChart.show();
     }
 
     /**
