@@ -74,6 +74,7 @@ class Websocket
         );
 
         this.iteration++;
+        console.log(this.iteration);
 
         status.targetSpeed = 30;
 

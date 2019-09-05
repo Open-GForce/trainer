@@ -45,23 +45,29 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
         fakeit::Verify(Method(serviceMock, setSecondBrakeInput).Using(1064));
     }
 
-    SECTION("Processing status sent to websocket thread")
+    SECTION("Processing status sent to websocket thread based on status interval")
     {
         auto status = new ProcessingStatus(new EngineStatus(true, false, true, 1, 2, false, true, false), 1497, 3500, 1450, 1434, 1000, 0.44, 0.35, RotationDirection::right);
+        int cycleCount = 0;
 
-        fakeit::When(Method(serviceMock, getStatus)).Return(status);
+        fakeit::When(Method(serviceMock, getStatus)).AlwaysReturn(status);
 
-        fakeit::When(Method(brakeThreadMock, getFirstBrake)).Return(4381);
-        fakeit::When(Method(brakeThreadMock, getSecondBrake)).AlwaysDo([thread] () {
-            thread->stop();
+        fakeit::When(Method(brakeThreadMock, getFirstBrake)).AlwaysReturn(4381);
+        fakeit::When(Method(brakeThreadMock, getSecondBrake)).AlwaysDo([thread, &cycleCount] () {
+            cycleCount++;
+            if (cycleCount >= 3) {
+                thread->stop();
+            }
             return 1064;
         });
 
-        fakeit::When(Method(serverThreadMock, addBroadcastMessage)).AlwaysDo([status] (Websocket::ResponseCastInterface* message) {
+        fakeit::When(Method(serverThreadMock, addBroadcastMessage)).AlwaysDo([status, cycleCount] (Websocket::ResponseCastInterface* message) {
             REQUIRE(message != nullptr);
             CHECK(message == status);
+            CHECK(cycleCount == 3);
         });
 
+        thread->setStatusInterval(3);
         thread->start(brakeThread, serverThread);
 
         fakeit::Verify(Method(serverThreadMock, addBroadcastMessage)).Once();

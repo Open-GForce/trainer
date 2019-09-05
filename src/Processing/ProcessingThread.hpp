@@ -25,6 +25,16 @@ class ProcessingThread
         int cycleInterval;
 
         /**
+         * Number of cycles without sending a cycle
+         */
+        int lastStatusSent;
+
+        /**
+         * Send status to UI every n cycles
+         */
+        int statusInterval;
+
+        /**
          * Is Thread stopped?
          */
         bool stopped;
@@ -48,6 +58,8 @@ class ProcessingThread
         virtual void setReleased(bool isReleased);
 
         void setCycleInterval(int value);
+
+        void setStatusInterval(int statusInterval);
 };
 
 }

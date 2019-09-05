@@ -8,6 +8,8 @@ ProcessingThread::ProcessingThread(ProcessingService *service) : service(service
     this->brakeInputThread = nullptr;
     this->websocketThread = nullptr;
     this->cycleInterval = 10;
+    this->statusInterval = 4;
+    this->lastStatusSent = 0;
     this->stopped = false;
 }
 
@@ -36,8 +38,13 @@ void ProcessingThread::loop()
     this->service->setSecondBrakeInput(secondInput);
     this->service->run();
 
-    auto status = this->service->getStatus();
-    this->websocketThread->addBroadcastMessage(status);
+    if (this->lastStatusSent >= (this->statusInterval - 1)) {
+        auto status = this->service->getStatus();
+        this->websocketThread->addBroadcastMessage(status);
+        this->lastStatusSent = 0;
+    } else {
+        this->lastStatusSent++;
+    }
 
     this->loopMutex.unlock();
 }
@@ -76,6 +83,10 @@ void ProcessingThread::reloadUserConfig(UserSettings *settings)
     this->loopMutex.lock();
     this->service->loadUserConfig(settings);
     this->loopMutex.unlock();
+}
+
+void ProcessingThread::setStatusInterval(int interval) {
+    this->statusInterval = interval;
 }
 
 
