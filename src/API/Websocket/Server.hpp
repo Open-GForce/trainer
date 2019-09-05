@@ -5,8 +5,12 @@
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 #include "ResponseCastInterface.hpp"
+#include "RouterInterface.hpp"
+#include "../../Utils/Logging/LoggerInterface.hpp"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
+
+using namespace GForce::Utils::Logging;
 
 using websocketpp::connection_hdl;
 using websocketpp::lib::placeholders::_1;
@@ -20,11 +24,14 @@ class Server
     private:
         typedef std::set<connection_hdl,std::owner_less<connection_hdl>> con_list;
 
+        RouterInterface* router;
+        LoggerInterface* logger;
+
         server websocket;
         con_list connections;
 
     public:
-        Server();
+        Server(RouterInterface *router, LoggerInterface *logger);
 
         /**
          * Sends a response to all active connections

@@ -17,6 +17,9 @@ class OperationsController
     public:
         explicit OperationsController(ProcessingThread *processingThread);
 
+        /**
+         * Ownership of request stays at owner
+         */
         virtual void handleSpeedLimit(Request* request);
 };
 

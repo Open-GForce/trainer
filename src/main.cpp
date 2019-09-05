@@ -6,7 +6,9 @@
 #include "Sensors/ADS1115.hpp"
 #include "Processing/BrakeInputThread.hpp"
 #include "Utils/Logging/StandardLogger.hpp"
-#include "API/Websocket/Server.hpp"
+#include "API/Controller/OperationsController.hpp"
+#include "API/Websocket/RequestRouter.hpp"
+#include "API/Websocket/ServerThread.hpp"
 #include "Processing/ProcessingService.hpp"
 #include "Processing/ProcessingThread.hpp"
 #include "Configuration/ConfigRepository.hpp"
@@ -18,7 +20,8 @@ extern  "C"
 
 using namespace GForce::ACL::I2C;
 using namespace GForce::ACL::CAN;
-using namespace GForce::API;
+using namespace GForce::API::Websocket;
+using namespace GForce::API::Controller;
 using namespace GForce::Sensors;
 using namespace GForce::Processing;
 using namespace GForce::Utils::Logging;
@@ -29,9 +32,6 @@ int main()
     auto configRepository = new ConfigRepository();
     auto userConfig = configRepository->loadUserSettings();
 
-    auto websocketServer = new Websocket::Server();
-    auto webSocketThread = new Websocket::ServerThread(websocketServer, logger);
-
     auto device = new Device(1, 0x48);
     auto sensor = new ADS1115(device);
     auto brakeThread = new BrakeInputThread(sensor, logger);
@@ -40,6 +40,11 @@ int main()
     auto moviDriveService = new MoviDriveService(canSocket, logger);
     auto processingService = new ProcessingService(moviDriveService, userConfig);
     auto processingThread = new ProcessingThread(processingService);
+
+    auto operationsController = new OperationsController(processingThread);
+    auto router = new RequestRouter(operationsController);
+    auto websocketServer = new Server(router, logger);
+    auto webSocketThread = new ServerThread(websocketServer, logger);
 
     std::thread t0([websocketServer] {
         websocketServer->run(8763);

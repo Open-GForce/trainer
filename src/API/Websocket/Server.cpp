@@ -2,7 +2,7 @@
 
 using namespace GForce::API::Websocket;
 
-Server::Server()
+Server::Server(RouterInterface *router, LoggerInterface *logger) : router(router), logger(logger)
 {
     websocket.init_asio();
 
@@ -25,7 +25,11 @@ void Server::on_close(const connection_hdl& connection)
 
 void Server::on_message(const connection_hdl& connection, const server::message_ptr& message)
 {
-    std::cout << "Message: " << message->get_payload() << "\n";
+    try {
+        this->router->handle(message->get_payload());
+    } catch (std::exception &e) {
+        this->logger->error("Error while handling websocket request => " + std::string(e.what()));
+    }
 }
 
 void Server::run(uint16_t port)
