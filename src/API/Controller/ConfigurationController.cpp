@@ -4,8 +4,13 @@
 using namespace GForce::Utils::Assertions;
 using namespace GForce::API::Controller;
 
-Controller::ConfigurationController::ConfigurationController(ProcessingThread *processingThread,ConfigRepository *configRepository) :
+ConfigurationController::ConfigurationController(ProcessingThread *processingThread,ConfigRepository *configRepository) :
     processingThread(processingThread), configRepository(configRepository) {}
+
+UserSettings* ConfigurationController::getUserSettings()
+{
+    this->configRepository->loadUserSettings();
+}
 
 void ConfigurationController::setInnerBrakeRange(Request *request)
 {

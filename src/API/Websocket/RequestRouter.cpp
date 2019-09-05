@@ -10,7 +10,7 @@ using namespace GForce::API::Websocket;
 RequestRouter::RequestRouter(OperationsController *operationsController, ConfigurationController *configurationController) :
     operationsController(operationsController), configurationController(configurationController) {}
 
-void RequestRouter::handle(const std::string& message)
+ResponseCastInterface* RequestRouter::handle(const std::string& message)
 {
     nlohmann::json data = nlohmann::json::parse(message);
 
@@ -19,33 +19,44 @@ void RequestRouter::handle(const std::string& message)
 
     auto request = new Request(data["type"], data["data"]);
     try {
-        this->route(request);
+        auto response = this->route(request);
+        delete request;
+        return response;
     } catch (std::exception &e) {
         delete request;
         throw e;
     }
 }
 
-void RequestRouter::route(Request *request)
+ResponseCastInterface* RequestRouter::route(Request *request)
 {
     if (request->getType() == RequestRouter::TYPE_SET_MAX_SPEED) {
-        return this->operationsController->handleSpeedLimit(request);
+        this->operationsController->handleSpeedLimit(request);
+        return nullptr;
     }
 
     if (request->getType() == RequestRouter::TYPE_SET_DIRECTION) {
-        return this->operationsController->handleRotationDirection(request);
+        this->operationsController->handleRotationDirection(request);
+        return nullptr;
     }
 
     if (request->getType() == RequestRouter::TYPE_SET_RELEASE) {
-        return this->operationsController->handleReleaseStatus(request);
+        this->operationsController->handleReleaseStatus(request);
+        return nullptr;
     }
 
     if (request->getType() == RequestRouter::TYPE_SET_CONFIG_INNER_BRAKE) {
-        return this->configurationController->setInnerBrakeRange(request);
+        this->configurationController->setInnerBrakeRange(request);
+        return nullptr;
     }
 
     if (request->getType() == RequestRouter::TYPE_SET_CONFIG_OUTER_BRAKE) {
-        return this->configurationController->setOuterBrakeRange(request);
+        this->configurationController->setOuterBrakeRange(request);
+        return nullptr;
+    }
+
+    if (request->getType() == RequestRouter::TYPE_GET_USER_CONFIG) {
+        return this->configurationController->getUserSettings();
     }
 
     throw RuntimeException("No route defined for " + request->getType());

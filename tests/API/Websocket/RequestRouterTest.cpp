@@ -145,4 +145,19 @@ TEST_CASE( "Request router tests", "[Websocket]" )
         router->handle(data.dump());
         fakeit::Verify(Method(configControllerMock, setOuterBrakeRange)).Once();
     }
+
+    SECTION("ConfigurationController->loadUserSettings() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "getUserSettings";
+
+        fakeit::When(Method(configControllerMock, getUserSettings)).AlwaysDo([] () {
+            return new UserSettings(new Range(1000, 2000), new Range(3000, 4000));
+        });
+
+        auto response = router->handle(data.dump());
+
+        REQUIRE(response != nullptr);
+        CHECK(response->toResponse()->getType() == "userSettings");
+    }
 }

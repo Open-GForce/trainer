@@ -31,6 +31,12 @@ class ConfigurationController
         ConfigurationController(ProcessingThread *processingThread, ConfigRepository *configRepository);
 
         /**
+         * Loads the current user settings
+         * Ownership of returned object moves to caller
+         */
+        virtual UserSettings* getUserSettings();
+
+        /**
          * Saving brake range configuration
          */
         virtual void setInnerBrakeRange(Request *request);

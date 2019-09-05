@@ -25,11 +25,22 @@ void Server::on_close(const connection_hdl& connection)
 
 void Server::on_message(const connection_hdl& connection, const server::message_ptr& message)
 {
+    ResponseCastInterface* responseSource = nullptr;
+    Response* response = nullptr;
+
     try {
-        this->router->handle(message->get_payload());
+        responseSource = this->router->handle(message->get_payload());
+
+        if (responseSource != nullptr) {
+            response = responseSource->toResponse();
+            this->broadcast(response);
+        }
     } catch (std::exception &e) {
         this->logger->error("Error while handling websocket request => " + std::string(e.what()));
     }
+
+    delete responseSource;
+    delete response;
 }
 
 void Server::run(uint16_t port)

@@ -10,6 +10,10 @@ UserSettings::~UserSettings()
     delete this->outerBrakeRange;
 }
 
+Response *UserSettings::toResponse()
+{
+    return new Response("userSettings", this->toJSON());
+}
 
 nlohmann::json UserSettings::toJSON()
 {

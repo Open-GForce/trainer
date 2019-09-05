@@ -3,12 +3,14 @@
 
 #include <json.hpp>
 #include "../Processing/Range.hpp"
+#include "../API/Websocket/ResponseCastInterface.hpp"
 
 using namespace GForce::Processing;
+using namespace GForce::API::Websocket;
 
 namespace GForce::Configuration {
 
-class UserSettings
+class UserSettings : public ResponseCastInterface
 {
     private:
         Range* innerBrakeRange;
@@ -16,9 +18,10 @@ class UserSettings
 
     public:
         UserSettings(Range *innerBrakeRange, Range *outerBrakeRange);
-        virtual ~UserSettings();
+        ~UserSettings() override;
 
         nlohmann::json toJSON();
+        Response *toResponse() override;
 
         Range* getInnerBrakeRange() const;
         Range* getOuterBrakeRange() const;

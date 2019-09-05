@@ -16,6 +16,7 @@ class RequestRouter : public RouterInterface
     const std::string TYPE_SET_DIRECTION = "setRotationDirection";
     const std::string TYPE_SET_RELEASE   = "setReleaseStatus";
 
+    const std::string TYPE_GET_USER_CONFIG        = "getUserSettings";
     const std::string TYPE_SET_CONFIG_INNER_BRAKE = "setInnerBrakeRange";
     const std::string TYPE_SET_CONFIG_OUTER_BRAKE = "setOuterBrakeRange";
 
@@ -23,7 +24,7 @@ class RequestRouter : public RouterInterface
         OperationsController* operationsController;
         ConfigurationController* configurationController;
 
-        void route(Request* request);
+        ResponseCastInterface* route(Request* request);
 
     public:
         explicit RequestRouter(OperationsController *operationsController);
@@ -33,7 +34,7 @@ class RequestRouter : public RouterInterface
         /**
          * Decodes and routes incoming messages
          */
-        void handle(const std::string& message) override;
+        ResponseCastInterface* handle(const std::string& message) override;
 };
 
 }
