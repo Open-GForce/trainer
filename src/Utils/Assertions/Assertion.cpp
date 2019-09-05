@@ -12,6 +12,15 @@ void Assertion::jsonExistsAndNumber(const nlohmann::json &data, const std::strin
     }
 }
 
+void Assertion::jsonExistsAndString(const nlohmann::json &data, const std::string &key)
+{
+    Assertion::jsonKeyExists(data, key);
+
+    if (!data[key].is_string()) {
+        throw AssertionFailedException("Assertion failed. JSON field " + key + " is not a string");
+    }
+}
+
 void Assertion::jsonExistsAndObject(const nlohmann::json &data, const std::string &key)
 {
     Assertion::jsonKeyExists(data, key);

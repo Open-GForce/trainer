@@ -13,6 +13,7 @@ class Assertion
 
     public:
         static void jsonExistsAndNumber(const nlohmann::json& data, const std::string& key);
+        static void jsonExistsAndString(const nlohmann::json& data, const std::string& key);
         static void jsonExistsAndObject(const nlohmann::json& data, const std::string& key);
 };
 

@@ -17,7 +17,7 @@ class OperationsController
     public:
         explicit OperationsController(ProcessingThread *processingThread);
 
-        void handleSpeedLimit(Request* request);
+        virtual void handleSpeedLimit(Request* request);
 };
 
 }
