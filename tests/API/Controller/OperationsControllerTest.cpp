@@ -11,6 +11,7 @@ TEST_CASE( "OperationsController tests", "[Controller]" )
     fakeit::Mock<ProcessingThread> processingThreadMock;
     fakeit::Fake(Method(processingThreadMock, setMaxSpeed));
     fakeit::Fake(Method(processingThreadMock, setDirection));
+    fakeit::Fake(Method(processingThreadMock, setReleased));
     ProcessingThread* processingThread = &processingThreadMock.get();
 
     auto controller = new OperationsController(processingThread);
@@ -88,5 +89,47 @@ TEST_CASE( "OperationsController tests", "[Controller]" )
 
         fakeit::Verify(Method(processingThreadMock, setDirection)).Once();
         fakeit::Verify(Method(processingThreadMock, setDirection).Using(RotationDirection::left));
+    }
+    
+    SECTION("handleReleaseStatus() => direction field is missing")
+    {
+        auto request = new Request("setReleaseStatus", {{}});
+
+        try {
+            controller->handleReleaseStatus(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field released");
+        }
+    }
+
+    SECTION("handleReleaseStatus() => speed field is not boolean")
+    {
+        auto request = new Request("setReleaseStatus", {{"released", 12893}});
+
+        try {
+            controller->handleReleaseStatus(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field released is not boolean");
+        }
+    }
+
+    SECTION("handleReleaseStatus() => processing thread called => right")
+    {
+        auto request = new Request("setReleaseStatus", {{"released", true}});
+        controller->handleReleaseStatus(request);
+
+        fakeit::Verify(Method(processingThreadMock, setReleased)).Once();
+        fakeit::Verify(Method(processingThreadMock, setReleased).Using(true));
+    }
+
+    SECTION("handleReleaseStatus() => processing thread called => left")
+    {
+        auto request = new Request("setReleaseStatus", {{"released", false}});
+        controller->handleReleaseStatus(request);
+
+        fakeit::Verify(Method(processingThreadMock, setReleased)).Once();
+        fakeit::Verify(Method(processingThreadMock, setReleased).Using(false));
     }
 }

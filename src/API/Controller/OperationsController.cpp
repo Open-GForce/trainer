@@ -27,3 +27,9 @@ void OperationsController::handleRotationDirection(Request *request)
 
     this->processingThread->setDirection(direction);
 }
+
+void OperationsController::handleReleaseStatus(Request *request)
+{
+    Assertion::jsonExistsAndBool(request->getData(), "released");
+    this->processingThread->setReleased(request->getData()["released"]);
+}

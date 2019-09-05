@@ -21,6 +21,15 @@ void Assertion::jsonExistsAndString(const nlohmann::json &data, const std::strin
     }
 }
 
+void Assertion::jsonExistsAndBool(const nlohmann::json &data, const std::string &key)
+{
+    Assertion::jsonKeyExists(data, key);
+
+    if (!data[key].is_boolean()) {
+        throw AssertionFailedException("Assertion failed. JSON field " + key + " is not boolean");
+    }
+}
+
 void Assertion::jsonExistsAndObject(const nlohmann::json &data, const std::string &key)
 {
     Assertion::jsonKeyExists(data, key);
