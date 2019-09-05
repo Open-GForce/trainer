@@ -23,6 +23,14 @@ class OperationsPage
         this.controlSegment = undefined;
 
         /**
+         * @type {{left: {jQuery}, right: {jQuery}}}
+         */
+        this.directionButtons = {
+            right: undefined,
+            left: undefined
+        };
+
+        /**
          * @type {jQuery}
          */
         this.statusSegment = undefined;
@@ -39,6 +47,9 @@ class OperationsPage
         this.statusSegment = $('.status.segment');
         this.forceSegment = $('.force.segment');
         this.controlSegment = $('.control.segment');
+
+        this.directionButtons.right = this.controlSegment.find('.direction.buttons .right');
+        this.directionButtons.left = this.controlSegment.find('.direction.buttons .left');
 
         this.brakeChart = new BrakeInputChart();
         this.speedChart = new SpeedChart();
@@ -73,15 +84,50 @@ class OperationsPage
         this.speedSlider = $('.control.segment .slider').slider({
             min: 0,
             max: 7,
-            start: 2,
+            start: 0,
             step: 0.5,
             onChange: function (value) {
+                if (value === 0) {
+                    return;
+                }
+
                 let message = new Message(Message.REQUEST_TYPE_MAX_SPEED, {
                     speed: RotationMath.forceToSpeed(value)
                 });
                 app.socket.send(message);
             }
         });
+
+        this.directionButtons.right.click(() => {
+            this._sendDirectionMessage('right');
+        });
+
+        this.directionButtons.left.click(() => {
+            this._sendDirectionMessage('left');
+        })
+    }
+
+    /**
+     * @param {string} direction
+     * @private
+     */
+    _sendDirectionMessage(direction)
+    {
+        let message = new Message(Message.REQUEST_TYPE_DIRECTION, {
+            direction: direction
+        });
+        app.socket.send(message);
+
+        let toggleButtons = (active, passive) => {
+           active.addClass('active').addClass('white');
+           passive.removeClass('active').removeClass('white');
+        };
+
+        if (direction === 'right') {
+            toggleButtons(this.directionButtons.right, this.directionButtons.left);
+        } else {
+            toggleButtons(this.directionButtons.left, this.directionButtons.right);
+        }
     }
 
     /**
