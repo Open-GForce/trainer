@@ -28,6 +28,13 @@ class AbstractPage
     }
 
     /**
+     * @param {UserSettings} settings
+     */
+    onUserSettings(settings)
+    {
+    }
+
+    /**
      * @protected
      */
     _initialize()

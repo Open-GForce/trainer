@@ -52,6 +52,8 @@ class Websocket
         switch (data.type) {
             case "processingStatus":
                 return this._handleSystemStatus(data);
+            case "userSettings":
+                return this._handleUserSettings(data);
             default:
                 console.log("Received unknown message type " + type);
         }
@@ -74,12 +76,16 @@ class Websocket
         );
 
         this.iteration++;
-
-        status.targetSpeed = 30;
-
-        status.currentSpeed += this.iteration * 0.008;
-        status.currentSpeed -= 15;
-
         app.currentPage.onSystemStatus(status);
+    }
+
+    /**
+     * @param {*} message
+     * @private
+     */
+    _handleUserSettings(message)
+    {
+        let settings = new UserSettings(message.data);
+        app.currentPage.onUserSettings(settings);
     }
 }

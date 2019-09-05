@@ -15,5 +15,6 @@ Message.REQUEST_TYPE_MAX_SPEED      = 'setMaxSpeed';
 Message.REQUEST_TYPE_DIRECTION      = 'setRotationDirection';
 Message.REQUEST_TYPE_RELEASE_STATUS = 'setReleaseStatus';
 
+Message.REQUEST_GET_USER_SETTINGS     = 'getUserSettings';
 Message.REQUEST_TYPE_CONF_INNER_BRAKE = 'setInnerBrakeRange';
 Message.REQUEST_TYPE_CONF_OUTER_BRAKE = 'setInnerOuterRange';

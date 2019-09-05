@@ -12,7 +12,7 @@ class AssertionFailedException: public std::exception
         std::string message;
 
     public:
-        explicit AssertionFailedException(std::string message);
+        explicit AssertionFailedException(const std::string& message);
 
         std::string getMessage();
 

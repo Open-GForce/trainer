@@ -39,9 +39,9 @@ class Server
          */
         virtual void broadcast(Response* response);
 
-        void on_open(const connection_hdl& connection);
-        void on_close(const connection_hdl& connection);
-        void on_message(const connection_hdl& connection, const server::message_ptr& message);
+        void onOpen(const connection_hdl &connection);
+        void onClose(const connection_hdl &connection);
+        void onMessage(const connection_hdl &connection, const server::message_ptr &message);
         void run(uint16_t port);
 };
 

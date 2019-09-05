@@ -40,6 +40,9 @@ class SettingsPage extends AbstractPage
         this._configureBrakeRangeSegment(this.outerBrakeSegment, Message.REQUEST_TYPE_CONF_OUTER_BRAKE, () => {
             return this.lastSystemStatus.outerBrake
         });
+
+        let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
+        app.socket.send(configRequest);
     }
 
     /**
@@ -67,18 +70,7 @@ class SettingsPage extends AbstractPage
                 max: parseInt(maxInput.val())
             });
             app.socket.send(message);
-
-            saveButton.html('<i class="ui checkmark icon"></i>Gespeichert!')
-                .removeClass('blue')
-                .addClass('green')
-                .addClass('disabled');
-
-            setTimeout(function () {
-                saveButton.html('Speichern')
-                    .removeClass('green')
-                    .addClass('blue')
-                    .removeClass('disabled');
-            }, 3000);
+            this._saveAnimation(saveButton);
         });
     }
 
@@ -89,6 +81,18 @@ class SettingsPage extends AbstractPage
     {
         this.lastSystemStatus = status;
         this._renderBrakeStats(status);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    onUserSettings(settings)
+    {
+        this.innerBrakeSegment.find('.minimum.input input').val(settings.innerBrakeRange.min);
+        this.innerBrakeSegment.find('.maximum.input input').val(settings.innerBrakeRange.max);
+
+        this.outerBrakeSegment.find('.minimum.input input').val(settings.outerBrakeRange.min);
+        this.outerBrakeSegment.find('.maximum.input input').val(settings.outerBrakeRange.max);
     }
 
     /**
@@ -113,5 +117,24 @@ class SettingsPage extends AbstractPage
 
             this.brakeStatsSegment.html(rendered);
         })
+    }
+
+    /**
+     * @param {jQuery} button
+     * @private
+     */
+    _saveAnimation(button)
+    {
+        button.html('<i class="ui checkmark icon"></i>Gespeichert!')
+            .removeClass('blue')
+            .addClass('green')
+            .addClass('disabled');
+
+        setTimeout(function () {
+            button.html('Speichern')
+                .removeClass('green')
+                .addClass('blue')
+                .removeClass('disabled');
+        }, 3000);
     }
 }

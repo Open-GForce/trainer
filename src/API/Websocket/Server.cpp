@@ -1,5 +1,10 @@
 #include "Server.hpp"
+#include "../../Utils/Exceptions/RuntimeException.hpp"
+#include "../../Utils/Assertions/AssertionFailedException.hpp"
+#include "../../Utils/Exceptions/InvalidArgumentException.hpp"
 
+using namespace GForce::Utils::Exceptions;
+using namespace GForce::Utils::Assertions;
 using namespace GForce::API::Websocket;
 
 Server::Server(RouterInterface *router, LoggerInterface *logger) : router(router), logger(logger)
@@ -8,22 +13,22 @@ Server::Server(RouterInterface *router, LoggerInterface *logger) : router(router
 
     websocket.clear_access_channels(websocketpp::log::alevel::all);
 
-    websocket.set_open_handler(bind(&Server::on_open,this,::_1));
-    websocket.set_close_handler(bind(&Server::on_close,this,::_1));
-    websocket.set_message_handler(bind(&Server::on_message,this,::_1,::_2));
+    websocket.set_open_handler(bind(&Server::onOpen,this,::_1));
+    websocket.set_close_handler(bind(&Server::onClose,this,::_1));
+    websocket.set_message_handler(bind(&Server::onMessage,this,::_1,::_2));
 }
 
-void Server::on_open(const connection_hdl& connection)
+void Server::onOpen(const connection_hdl &connection)
 {
     connections.insert(connection);
 }
 
-void Server::on_close(const connection_hdl& connection)
+void Server::onClose(const connection_hdl &connection)
 {
     connections.erase(connection);
 }
 
-void Server::on_message(const connection_hdl& connection, const server::message_ptr& message)
+void Server::onMessage(const connection_hdl &connection, const server::message_ptr &message)
 {
     ResponseCastInterface* responseSource = nullptr;
     Response* response = nullptr;
@@ -35,8 +40,14 @@ void Server::on_message(const connection_hdl& connection, const server::message_
             response = responseSource->toResponse();
             this->broadcast(response);
         }
+    } catch (RuntimeException &e) {
+        this->logger->error("Error[RuntimeException] while handling websocket request => " + e.getMessage());
+    } catch (AssertionFailedException &e) {
+        this->logger->error("Error[AssertionFailedException] while handling websocket request => " + e.getMessage());
+    } catch (InvalidArgumentException &e) {
+        this->logger->error("Error[InvalidArgumentException] while handling websocket request => " + e.getMessage());
     } catch (std::exception &e) {
-        this->logger->error("Error while handling websocket request => " + std::string(e.what()));
+        this->logger->error("Error[Unknown] while handling websocket request => " + std::string(e.what()));
     }
 
     delete responseSource;

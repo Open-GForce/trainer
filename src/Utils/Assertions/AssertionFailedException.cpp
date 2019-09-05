@@ -2,9 +2,9 @@
 
 using namespace GForce::Utils::Assertions;
 
-AssertionFailedException::AssertionFailedException(std::string message)
+AssertionFailedException::AssertionFailedException(const std::string& message)
 {
-    this->message = std::move(message);
+    this->message = message;
 }
 
 std::string AssertionFailedException::getMessage()
@@ -16,5 +16,3 @@ const char *AssertionFailedException::what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCX
 {
     return this->message.c_str();
 }
-
-
