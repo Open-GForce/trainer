@@ -47,6 +47,7 @@ void CANSocket::open()
 void CANSocket::send(MessageInterface *message)
 {
     this->transfer(message->toFrame());
+    delete message;
 }
 
 void CANSocket::transfer(const std::string& data)

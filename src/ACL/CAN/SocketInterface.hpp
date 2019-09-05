@@ -19,6 +19,7 @@ class SocketInterface
 
         /**
         * Receives messages in pipe
+        * Ownership of returned list moves to caller
         */
         virtual std::vector<MessageInterface*> receive() = 0;
 };

@@ -5,6 +5,7 @@ using namespace GForce::ACL::CAN;
 
 void DummyCANSocket::send(GForce::ACL::CAN::MessageInterface *message)
 {
+    delete message;
 }
 
 std::vector<MessageInterface *> DummyCANSocket::receive()
