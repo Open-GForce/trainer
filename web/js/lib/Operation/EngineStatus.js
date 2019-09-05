@@ -45,4 +45,12 @@ class EngineStatus
          */
         this.currentParameterSet = props.currentParameterSet;
     }
+
+    /**
+     * @return {boolean}
+     */
+    isFullyReleased()
+    {
+        return this.powerAmplifierReleased && this.inverterReady && this.inputDataReady;
+    }
 }

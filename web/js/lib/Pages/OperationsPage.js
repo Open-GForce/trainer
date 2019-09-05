@@ -33,12 +33,24 @@ class OperationsPage
         /**
          * @type {jQuery}
          */
+        this.releaseButton = undefined;
+
+        /**
+         * @type {jQuery}
+         */
         this.statusSegment = undefined;
 
         /**
          * @type {jQuery}
          */
         this.forceSegment = undefined;
+
+        /**
+         * Is engine released (based on system status)?
+         *
+         * @type {boolean}
+         */
+        this.released = false;
     }
 
     start()
@@ -50,6 +62,7 @@ class OperationsPage
 
         this.directionButtons.right = this.controlSegment.find('.direction.buttons .right');
         this.directionButtons.left = this.controlSegment.find('.direction.buttons .left');
+        this.releaseButton = this.controlSegment.find('.release.button');
 
         this.brakeChart = new BrakeInputChart();
         this.speedChart = new SpeedChart();
@@ -77,6 +90,7 @@ class OperationsPage
 
         this._renderStatus(status);
         this._renderForce(status);
+        this._renderReleaseButton(status);
     }
 
     _bindControls()
@@ -104,7 +118,14 @@ class OperationsPage
 
         this.directionButtons.left.click(() => {
             this._sendDirectionMessage('left');
-        })
+        });
+
+        this.releaseButton.click(() => {
+            let message = new Message(Message.REQUEST_TYPE_RELEASE_STATUS, {
+                released: !this.released
+            });
+            app.socket.send(message);
+        });
     }
 
     /**
@@ -138,7 +159,7 @@ class OperationsPage
         app.templates.load('statusLabels', function (template) {
             let rendered = '';
 
-            if (status === undefined) {
+            if (status === undefined || status.engineStatus === undefined) {
                 rendered = Mustache.render(template, {
                     amplifierText: 'unbekannt',
                     amplifierColor: 'grey',
@@ -188,5 +209,23 @@ class OperationsPage
 
             app.currentPage.forceSegment.html(rendered);
         });
+    }
+
+    /**
+     * @param {SystemStatus|undefined} status
+     */
+    _renderReleaseButton(status)
+    {
+        this.released = status.engineStatus === undefined ? false : status.engineStatus.isFullyReleased();
+
+        if (this.released) {
+            this.releaseButton
+                .removeClass('blue').addClass('red')
+                .html('Anhalten');
+        } else {
+            this.releaseButton
+                .removeClass('red').addClass('blue')
+                .html('Freigeben');
+        }
     }
 }

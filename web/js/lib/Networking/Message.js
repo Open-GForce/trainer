@@ -11,5 +11,6 @@ class Message
     }
 }
 
-Message.REQUEST_TYPE_MAX_SPEED = 'setMaxSpeed';
-Message.REQUEST_TYPE_DIRECTION = 'setRotationDirection';
+Message.REQUEST_TYPE_MAX_SPEED      = 'setMaxSpeed';
+Message.REQUEST_TYPE_DIRECTION      = 'setRotationDirection';
+Message.REQUEST_TYPE_RELEASE_STATUS = 'setReleaseStatus';
