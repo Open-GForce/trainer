@@ -1,10 +1,70 @@
-<div class="ui grid operation">
-    <div class="eight wide column">
+<div class="ui grid settings">
+    <div class="ten wide column">
         <h5 class="ui top attached dark header">
             Werte Steuerleinen
         </h5>
-        <div class="ui attached inverted segment status">
-
+        <div class="ui attached inverted segment" id="brakeStatsSegment">
+        </div>
+    </div>
+    <div class="six wide column"></div>
+    <div class="five wide column">
+        <h5 class="ui top attached dark header">
+            Bereich Außenbremse
+        </h5>
+        <div class="ui attached inverted segment" id="outerBrakeSegment">
+            <h4 class="ui inverted header">
+                <i class="chevron circle right icon"></i>
+                <div class="content">
+                    Minimum:
+                </div>
+            </h4>
+            <div class="ui fluid action inverted minimum input">
+                <input type="text" aria-label="Min. outer brake" value="1000">
+                <div class="ui inverted white button">Setzen</div>
+            </div>
+            <div class="ui divider"></div>
+            <h4 class="ui inverted header">
+                <i class="chevron circle left icon"></i>
+                <div class="content">
+                    Maximum:
+                </div>
+            </h4>
+            <div class="ui fluid action inverted maximum input">
+                <input type="text" aria-label="Min. outer brake" value="6500">
+                <div class="ui inverted white button">Setzen</div>
+            </div>
+            <div class="ui divider"></div>
+            <div class="ui blue inverted fluid button">Speichern</div>
+        </div>
+    </div>
+    <div class="five wide column">
+        <h5 class="ui top attached dark header">
+            Bereich Innenbremse
+        </h5>
+        <div class="ui attached inverted segment" id="innerBrakeSegment">
+            <h4 class="ui inverted header">
+                <i class="chevron circle right icon"></i>
+                <div class="content">
+                    Minimum:
+                </div>
+            </h4>
+            <div class="ui fluid action inverted minimum input">
+                <input type="text" aria-label="Min. outer brake" value="1000">
+                <div class="ui inverted white button">Setzen</div>
+            </div>
+            <div class="ui divider"></div>
+            <h4 class="ui inverted header">
+                <i class="chevron circle left icon"></i>
+                <div class="content">
+                    Maximum:
+                </div>
+            </h4>
+            <div class="ui fluid action inverted maximum input">
+                <input type="text" aria-label="Min. outer brake" value="6500">
+                <div class="ui inverted white button">Setzen</div>
+            </div>
+            <div class="ui divider"></div>
+            <div class="ui blue inverted fluid button">Speichern</div>
         </div>
     </div>
 </div>

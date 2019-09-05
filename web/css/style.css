@@ -15,7 +15,8 @@ body {
     padding: 11px;
 }
 
-.operation.grid {
+.operation.grid,
+.settings.grid {
     padding-top: 24px;
     padding-left: 14px;
 }
