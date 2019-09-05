@@ -52,7 +52,12 @@ class ProcessingThread
         void start(BrakeInputThread* brakeThread, Websocket::ServerThread* serverThread);
         void stop();
 
+        /**
+         * Reloads the user configuration
+         * Ownership of object stays at caller
+         */
         virtual void reloadUserConfig(UserSettings* settings);
+
         virtual void setMaxSpeed(double speed);
         virtual void setDirection(RotationDirection direction);
         virtual void setReleased(bool isReleased);

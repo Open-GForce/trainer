@@ -21,8 +21,15 @@ class ConfigRepository
         ConfigRepository();
         explicit ConfigRepository(std::string basePath);
 
-        UserSettings* loadUserSettings();
-        void saveUserSettings(UserSettings* settings);
+        /**
+         * Ownership of returned object moves to caller
+         */
+        virtual UserSettings* loadUserSettings();
+
+        /**
+        * Ownership of object stays at caller
+        */
+        virtual void saveUserSettings(UserSettings* settings);
 };
 
 }

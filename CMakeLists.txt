@@ -39,7 +39,8 @@ set(SOURCES
         src/Utils/Assertions/Assertion.cpp
         src/Utils/Assertions/AssertionFailedException.cpp
         src/API/Websocket/Request.cpp
-        src/API/Websocket/RequestRouter.cpp)
+        src/API/Websocket/RequestRouter.cpp
+        src/API/Controller/ConfigurationController.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -56,7 +57,8 @@ set(TESTS
         tests/Processing/ProcessingStatusTest.cpp
         tests/API/Websocket/ServerThreadTest.cpp
         tests/API/Controller/OperationsControllerTest.cpp
-        tests/API/Websocket/RequestRouterTest.cpp src/API/Websocket/RouterInterface.hpp)
+        tests/API/Websocket/RequestRouterTest.cpp
+        tests/API/Controller/ConfigurationControllerTest.cpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 

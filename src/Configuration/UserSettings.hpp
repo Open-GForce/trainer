@@ -16,7 +16,6 @@ class UserSettings
 
     public:
         UserSettings(Range *innerBrakeRange, Range *outerBrakeRange);
-
         virtual ~UserSettings();
 
         nlohmann::json toJSON();
