@@ -16,3 +16,14 @@ void OperationsController::handleSpeedLimit(Request *request)
     double maxSpeed = request->getData()["speed"];
     this->processingThread->setMaxSpeed(maxSpeed);
 }
+
+void OperationsController::handleRotationDirection(Request *request)
+{
+    Assertion::jsonExistsAndString(request->getData(), "direction");
+
+    auto direction = request->getData()["direction"] == "right"
+            ? RotationDirection::right
+            : RotationDirection::left;
+
+    this->processingThread->setDirection(direction);
+}

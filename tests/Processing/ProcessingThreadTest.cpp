@@ -61,7 +61,7 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
             return 1064;
         });
 
-        fakeit::When(Method(serverThreadMock, addBroadcastMessage)).AlwaysDo([status, cycleCount] (Websocket::ResponseCastInterface* message) {
+        fakeit::When(Method(serverThreadMock, addBroadcastMessage)).AlwaysDo([status, &cycleCount] (Websocket::ResponseCastInterface* message) {
             REQUIRE(message != nullptr);
             CHECK(message == status);
             CHECK(cycleCount == 3);

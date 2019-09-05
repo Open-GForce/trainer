@@ -107,7 +107,7 @@ class OperationsPage
     _bindControls()
     {
         this.speedSliderElement = $('.control.segment .slider');
-        let slider = this.speedSliderElement.slider({
+        this.speedSliderElement.slider({
             min: 0,
             max: 7,
             start: 0,

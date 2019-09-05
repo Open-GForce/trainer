@@ -18,9 +18,11 @@ class OperationsController
         explicit OperationsController(ProcessingThread *processingThread);
 
         /**
-         * Ownership of request stays at owner
+         * Ownership of request stays at caller
          */
         virtual void handleSpeedLimit(Request* request);
+        virtual void handleRotationDirection(Request* request);
+
 };
 
 }
