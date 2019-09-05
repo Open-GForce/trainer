@@ -9,7 +9,7 @@ ConfigurationController::ConfigurationController(ProcessingThread *processingThr
 
 UserSettings* ConfigurationController::getUserSettings()
 {
-    this->configRepository->loadUserSettings();
+    return this->configRepository->loadUserSettings();
 }
 
 void ConfigurationController::setInnerBrakeRange(Request *request)
