@@ -33,21 +33,22 @@ class SettingsPage extends AbstractPage
         this.innerBrakeSegment = $('#innerBrakeSegment');
         this.outerBrakeSegment = $('#outerBrakeSegment');
 
-        this._configureBrakeRangeSegment(this.innerBrakeSegment, () => {
+        this._configureBrakeRangeSegment(this.innerBrakeSegment, Message.REQUEST_TYPE_CONF_INNER_BRAKE, () => {
             return this.lastSystemStatus.innerBrake
         });
 
-        this._configureBrakeRangeSegment(this.outerBrakeSegment, () => {
+        this._configureBrakeRangeSegment(this.outerBrakeSegment, Message.REQUEST_TYPE_CONF_OUTER_BRAKE, () => {
             return this.lastSystemStatus.outerBrake
         });
     }
 
     /**
      * @param {jQuery} segment
+     * @param {string} messageType
      * @param {function} brakeStatus
      * @private
      */
-    _configureBrakeRangeSegment(segment, brakeStatus)
+    _configureBrakeRangeSegment(segment, messageType, brakeStatus)
     {
         let minInput = segment.find('.minimum.input input');
         segment.find('.minimum.input .button').click(() => {
@@ -57,6 +58,27 @@ class SettingsPage extends AbstractPage
         let maxInput = segment.find('.maximum.input input');
         segment.find('.maximum.input .button').click(() => {
             maxInput.val(brakeStatus().raw);
+        });
+
+        let saveButton = segment.find('.save.button');
+        saveButton.click(() => {
+            let message = new Message(messageType, {
+                min: parseInt(minInput.val()),
+                max: parseInt(maxInput.val())
+            });
+            app.socket.send(message);
+
+            saveButton.html('<i class="ui checkmark icon"></i>Gespeichert!')
+                .removeClass('blue')
+                .addClass('green')
+                .addClass('disabled');
+
+            setTimeout(function () {
+                saveButton.html('Speichern')
+                    .removeClass('green')
+                    .addClass('blue')
+                    .removeClass('disabled');
+            }, 3000);
         });
     }
 
