@@ -7,8 +7,11 @@
         <script type="text/javascript" src="js/vendor/semantic/dist/semantic.js"></script>
         <script type="text/javascript" src="js/vendor/mustache.js"></script>
         <script type="text/javascript" src="js/lib/app.js"></script>
+        <script type="text/javascript" src="js/lib/Pages/NavigationController.js"></script>
         <script type="text/javascript" src="js/lib/Networking/Websocket.js"></script>
         <script type="text/javascript" src="js/lib/Networking/Message.js"></script>
+        <script type="text/javascript" src="js/lib/Pages/AbstractPage.js"></script>
+        <script type="text/javascript" src="js/lib/Pages/SettingsPage.js"></script>
         <script type="text/javascript" src="js/lib/Pages/OperationsPage.js"></script>
         <script type="text/javascript" src="js/lib/Pages/Components/BarChart.js"></script>
         <script type="text/javascript" src="js/lib/Pages/Components/BrakeInputChart.js"></script>
@@ -40,87 +43,17 @@
                 <div class="disabled item">
                     <img src="img/icon.png" alt="Icon">
                 </div>
-                <a class="item">
+                <a class="operation active item">
                     <i class="dashboard icon"></i>
                     Betrieb
                 </a>
-                <a class="item">
+                <a class="settings item">
                     <i class="video settings icon"></i>
                     Einstellungen
                 </a>
             </div>
         </div>
         <div id="content">
-            <div class="ui grid operation">
-                <div class="sixteen wide column">
-                    <h5 class="ui top attached dark header">
-                        Status
-                    </h5>
-                    <div class="ui attached inverted segment status">
-
-                    </div>
-                </div>
-                <div class="eight wide column">
-                    <h5 class="ui top attached dark control header">
-                        Steuerung
-                    </h5>
-                    <div class="ui attached inverted segment control">
-                        <h3 class="ui inverted header">
-                            <i class="fighter jet icon"></i>
-                            <div class="content">
-                                Belastung
-                                <div class="sub header">Begrenzung der G-Kräfte</div>
-                            </div>
-                        </h3><br>
-                        <div class="ui labeled ticked inverted slider"></div>
-                        <div class="ui divider"></div>
-                        <h3 class="ui inverted header">
-                            <i class="directions icon"></i>
-                            <div class="content">
-                                Drehrichtung
-                            </div>
-                        </h3>
-                        <div class="ui huge fluid inverted direction buttons">
-                            <button class="ui inverted active white right button">Rechts</button>
-                            <button class="ui inverted left button">Links</button>
-                        </div>
-                        <div class="ui divider"></div>
-                        <h3 class="ui inverted header">
-                            <i class="play icon"></i>
-                            <div class="content">
-                                Freigabe Antrieb
-                            </div>
-                        </h3>
-                        <button class="ui inverted blue fluid massive button release">Freigeben</button>
-                    </div>
-                </div>
-                <div class="eight wide column">
-                    <div class="ui grid">
-                        <div class="five wide column">
-                            <h5 class="ui top attached dark header">
-                                Pilot
-                            </h5>
-                            <div class="ui attached inverted segment pilot">
-                                <canvas id="brakeInputChart" height="400"></canvas>
-                            </div>
-                        </div>
-                        <div class="eleven wide column">
-                            <h5 class="ui top attached dark header">
-                                Belastung
-                            </h5>
-                            <div class="ui attached inverted segment force">
-                            </div>
-                            <h5 class="ui top attached dark speed header">
-                                Geschwindigkeit
-                            </h5>
-                            <div class="ui attached inverted segment speed">
-                                <div id="speedChart"></div>
-                            </div><br>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
         </div>
     </body>
 </html>

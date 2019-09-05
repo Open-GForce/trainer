@@ -1,7 +1,9 @@
-class OperationsPage
+class OperationsPage extends AbstractPage
 {
     constructor()
     {
+        super('operationsPage');
+
         /**
          * @type {jQuery}
          */
@@ -60,8 +62,13 @@ class OperationsPage
         this.firstStatusHandled = false;
     }
 
-    start()
+    /**
+     * @protected
+     */
+    _initialize()
     {
+        this.firstStatusHandled = false;
+
         this.statusSegment = $('.status.segment');
         this.forceSegment = $('.force.segment');
         this.controlSegment = $('.control.segment');
@@ -95,9 +102,11 @@ class OperationsPage
         this.brakeChart.setTotalValue((status.innerBrake.scaled - status.outerBrake.scaled) * 100);
         this.brakeChart.update();
 
-        this.speedChart.setCurrentSpeed(status.currentSpeed);
-        this.speedChart.setMaxSpeed(status.maxSpeed);
-        this.speedChart.setTargetSpeed(status.targetSpeed);
+        if (status.maxSpeed > 0) {
+            this.speedChart.setCurrentSpeed(status.currentSpeed);
+            this.speedChart.setMaxSpeed(status.maxSpeed);
+            this.speedChart.setTargetSpeed(status.targetSpeed);
+        }
 
         this._renderStatus(status);
         this._renderForce(status);
@@ -186,7 +195,7 @@ class OperationsPage
                 rendered = Mustache.render(template, {
                     amplifierText: status.engineStatus.powerAmplifierReleased ? 'Endstufe bereit' : 'Endstufe gesperrt',
                     amplifierColor: status.engineStatus.powerAmplifierReleased ? 'green' : 'red',
-                    inverterText: status.engineStatus.powerAmplifierReleased ? 'Endstufe bereit' : 'Endstufe gesperrt',
+                    inverterText: status.engineStatus.inverterReady ? 'Umrichter bereit' : 'Umrichter gesperrt',
                     inverterColor: status.engineStatus.inverterReady ? 'green' : 'red',
                     fieldBusText: status.engineStatus.powerAmplifierReleased ? 'Feldbus bereit' : 'Feldbus deaktiviert',
                     fieldBusColor: status.engineStatus.inputDataReady ? 'green' : 'red',

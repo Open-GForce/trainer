@@ -13,7 +13,12 @@ class App
         this.templates = undefined;
 
         /**
-         * @type {OperationsPage}
+         * @type {NavigationController}
+         */
+        this.navigation = undefined;
+
+        /**
+         * @type {AbstractPage}
          */
         this.currentPage = undefined;
     }
@@ -25,8 +30,8 @@ class App
 
         this.templates = new TemplateRepository();
 
-        this.currentPage = new OperationsPage();
-        this.currentPage.start();
+        this.navigation = new NavigationController();
+        this.navigation.start();
     }
 }
 
