@@ -16,7 +16,7 @@ void BrakeInputThread::start()
     while (!stopped) {
         try {
             this->firstBrake = this->sensor->read(0);
-            this->secondBrake = this->sensor->read(1);
+            this->secondBrake = this->sensor->read(3);
         } catch (std::exception &e) {
             this->firstBrake = 0;
             this->secondBrake = 0;
