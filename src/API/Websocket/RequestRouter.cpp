@@ -7,7 +7,8 @@ using namespace GForce::Utils::Assertions;
 using namespace GForce::Utils::Exceptions;
 using namespace GForce::API::Websocket;
 
-RequestRouter::RequestRouter(OperationsController *operationsController) : operationsController(operationsController) {}
+RequestRouter::RequestRouter(OperationsController *operationsController, ConfigurationController *configurationController) :
+    operationsController(operationsController), configurationController(configurationController) {}
 
 void RequestRouter::handle(const std::string& message)
 {
@@ -37,6 +38,14 @@ void RequestRouter::route(Request *request)
 
     if (request->getType() == RequestRouter::TYPE_SET_RELEASE) {
         return this->operationsController->handleReleaseStatus(request);
+    }
+
+    if (request->getType() == RequestRouter::TYPE_SET_CONFIG_INNER_BRAKE) {
+        return this->configurationController->setInnerBrakeRange(request);
+    }
+
+    if (request->getType() == RequestRouter::TYPE_SET_CONFIG_OUTER_BRAKE) {
+        return this->configurationController->setOuterBrakeRange(request);
     }
 
     throw RuntimeException("No route defined for " + request->getType());

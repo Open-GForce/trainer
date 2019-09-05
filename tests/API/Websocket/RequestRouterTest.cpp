@@ -15,7 +15,12 @@ TEST_CASE( "Request router tests", "[Websocket]" )
     fakeit::Fake(Method(operationsControllerMock, handleReleaseStatus));
     OperationsController* operationsController = &operationsControllerMock.get();
 
-    auto router = new RequestRouter(operationsController);
+    fakeit::Mock<ConfigurationController> configControllerMock;
+    fakeit::Fake(Method(configControllerMock, setInnerBrakeRange));
+    fakeit::Fake(Method(configControllerMock, setOuterBrakeRange));
+    ConfigurationController* configController = &configControllerMock.get();
+
+    auto router = new RequestRouter(operationsController, configController);
 
     nlohmann::json correctMessage = {
             {"type", "replace_me"},
@@ -113,5 +118,31 @@ TEST_CASE( "Request router tests", "[Websocket]" )
 
         router->handle(data.dump());
         fakeit::Verify(Method(operationsControllerMock, handleReleaseStatus)).Once();
+    }
+
+    SECTION("ConfigurationController->setInnerBrakeRange() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "setInnerBrakeRange";
+
+        fakeit::When(Method(configControllerMock, setInnerBrakeRange)).AlwaysDo([] (Request* request) {
+            CHECK(request->getType() == "setInnerBrakeRange");
+        });
+
+        router->handle(data.dump());
+        fakeit::Verify(Method(configControllerMock, setInnerBrakeRange)).Once();
+    }
+
+    SECTION("ConfigurationController->setOuterBrakeRange() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "setOuterBrakeRange";
+
+        fakeit::When(Method(configControllerMock, setOuterBrakeRange)).AlwaysDo([] (Request* request) {
+            CHECK(request->getType() == "setOuterBrakeRange");
+        });
+
+        router->handle(data.dump());
+        fakeit::Verify(Method(configControllerMock, setOuterBrakeRange)).Once();
     }
 }

@@ -6,6 +6,7 @@
 #include "Sensors/ADS1115.hpp"
 #include "Processing/BrakeInputThread.hpp"
 #include "Utils/Logging/StandardLogger.hpp"
+#include "API/Controller/ConfigurationController.hpp"
 #include "API/Controller/OperationsController.hpp"
 #include "API/Websocket/RequestRouter.hpp"
 #include "API/Websocket/ServerThread.hpp"
@@ -41,8 +42,9 @@ int main()
     auto processingService = new ProcessingService(moviDriveService, userConfig);
     auto processingThread = new ProcessingThread(processingService);
 
+    auto configController = new ConfigurationController(processingThread, configRepository);
     auto operationsController = new OperationsController(processingThread);
-    auto router = new RequestRouter(operationsController);
+    auto router = new RequestRouter(operationsController, configController);
     auto websocketServer = new Server(router, logger);
     auto webSocketThread = new ServerThread(websocketServer, logger);
 
