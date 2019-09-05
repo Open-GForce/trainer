@@ -1,0 +1,15 @@
+//
+// Created by marius on 05.09.19.
+//
+
+#ifndef GFORCE_TRAINER_CONTROLLER_REQUEST_HPP
+#define GFORCE_TRAINER_CONTROLLER_REQUEST_HPP
+
+
+class Request
+{
+
+};
+
+
+#endif //GFORCE_TRAINER_CONTROLLER_REQUEST_HPP
