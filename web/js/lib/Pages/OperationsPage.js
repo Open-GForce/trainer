@@ -20,6 +20,11 @@ class OperationsPage
         /**
          * @type {jQuery}
          */
+        this.controlSegment = undefined;
+
+        /**
+         * @type {jQuery}
+         */
         this.statusSegment = undefined;
 
         /**
@@ -30,15 +35,10 @@ class OperationsPage
 
     start()
     {
-        this.speedSlider = $('.control.segment .slider').slider({
-                min: 0,
-                max: 7,
-                start: 2,
-                step: 0.5
-            });
 
         this.statusSegment = $('.status.segment');
         this.forceSegment = $('.force.segment');
+        this.controlSegment = $('.control.segment');
 
         this.brakeChart = new BrakeInputChart();
         this.speedChart = new SpeedChart();
@@ -46,6 +46,8 @@ class OperationsPage
         this.speedChart.show();
 
         this._renderStatus(undefined);
+        this._renderForce(undefined);
+        this._bindControls();
     }
 
     /**
@@ -64,6 +66,22 @@ class OperationsPage
 
         this._renderStatus(status);
         this._renderForce(status);
+    }
+
+    _bindControls()
+    {
+        this.speedSlider = $('.control.segment .slider').slider({
+            min: 0,
+            max: 7,
+            start: 2,
+            step: 0.5,
+            onChange: function (value) {
+                let message = new Message(Message.REQUEST_TYPE_MAX_SPEED, {
+                    speed: RotationMath.forceToSpeed(value)
+                });
+                app.socket.send(message);
+            }
+        });
     }
 
     /**

@@ -3,7 +3,7 @@ class Websocket
     constructor()
     {
         /**
-         * @type {socket}
+         * @type {WebSocket}
          */
         this.connection = undefined;
 
@@ -15,22 +15,30 @@ class Websocket
 
 
     start() {
-        let socket = this;
-        let connection = new WebSocket('ws://192.168.2.102:8763');
+        let handler = this;
+        this.connection = new WebSocket('ws://192.168.2.102:8763');
 
-        connection.onopen = function ()
+        this.connection.onopen = function ()
         {
         };
 
-        connection.onerror = function (error)
+        this.connection.onerror = function (error)
         {
             console.log('socket Error: ' + error);
         };
 
-        connection.onmessage = function (message)
+        this.connection.onmessage = function (message)
         {
-            socket._handleMessage(message.data);
+            handler._handleMessage(message.data);
         };
+    }
+
+    /**
+     * @param {Message} message
+     */
+    send(message)
+    {
+        this.connection.send(JSON.stringify(message));
     }
 
     /**
