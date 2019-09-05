@@ -32,7 +32,7 @@ class ProcessingService
         /**
          * Max. speed in 1/min
          */
-        int maxSpeed;
+        double maxSpeed;
 
         /**
          * Raw value of inner brake
@@ -88,7 +88,7 @@ class ProcessingService
         virtual ProcessingStatus* getStatus();
 
         void loadUserConfig(UserSettings* settings);
-        void setMaxSpeed(int speed);
+        void setMaxSpeed(double speed);
         void setDirection(RotationDirection value);
         void setReleased(bool isReleased);
 

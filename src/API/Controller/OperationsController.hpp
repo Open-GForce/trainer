@@ -1,15 +1,25 @@
-//
-// Created by marius on 05.09.19.
-//
-
 #ifndef GFORCE_TRAINER_CONTROLLER_OPERATIONSCONTROLLER_HPP
 #define GFORCE_TRAINER_CONTROLLER_OPERATIONSCONTROLLER_HPP
 
+#include "../../Processing/ProcessingThread.hpp"
+#include "../Websocket/Request.hpp"
+
+using namespace GForce::Processing;
+using namespace GForce::API::Websocket;
+
+namespace GForce::API::Controller {
 
 class OperationsController
 {
+    private:
+        ProcessingThread* processingThread{};
 
+    public:
+        explicit OperationsController(ProcessingThread *processingThread);
+
+        void handleSpeedLimit(Request* request);
 };
 
+}
 
 #endif //GFORCE_TRAINER_CONTROLLER_OPERATIONSCONTROLLER_HPP

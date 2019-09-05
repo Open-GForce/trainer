@@ -50,7 +50,7 @@ void ProcessingThread::setCycleInterval(int value) {
     this->cycleInterval = value;
 }
 
-void ProcessingThread::setMaxSpeed(int speed)
+void ProcessingThread::setMaxSpeed(double speed)
 {
     this->loopMutex.lock();
     this->service->setMaxSpeed(speed);

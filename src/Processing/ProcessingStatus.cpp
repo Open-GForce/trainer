@@ -2,7 +2,7 @@
 
 using namespace GForce::Processing;
 
-ProcessingStatus::ProcessingStatus(EngineStatus *engineStatus, double rotationSpeed, int maxSpeed, double targetSpeed,
+ProcessingStatus::ProcessingStatus(EngineStatus *engineStatus, double rotationSpeed, double maxSpeed, double targetSpeed,
                                    int innerBrakeRawValue, int outerBrakeRawValue, double innerBrakePercentage,
                                    double outerBrakePercentage, RotationDirection rotationDirection) : engineStatus(
         engineStatus), rotationSpeed(rotationSpeed), maxSpeed(maxSpeed), targetSpeed(targetSpeed), innerBrakeRawValue(
@@ -51,7 +51,7 @@ double ProcessingStatus::getRotationSpeed() const {
     return rotationSpeed;
 }
 
-int ProcessingStatus::getMaxSpeed() const {
+double ProcessingStatus::getMaxSpeed() const {
     return maxSpeed;
 }
 

@@ -23,6 +23,6 @@ TEST_CASE( "ProcessingStatus tests", "[Processing]" )
 
         auto response = status->toResponse();
 
-        CHECK(response->toJSON().dump() == "{\"data\":{\"engineStatus\":{\"currentIntegratorSet\":1,\"currentParameterSet\":2,\"inputDataReady\":true,\"inverterReady\":false,\"malfunction\":false,\"powerAmplifierReleased\":true,\"switchLeftActive\":false,\"switchRightActive\":true},\"innerBrake\":{\"raw\":1434,\"scaled\":0.44},\"maxSpeed\":3500,\"outerBrake\":{\"raw\":1000,\"scaled\":0.35},\"rotationDirection\":\"right\",\"rotationSpeed\":1497.0,\"targetSpeed\":1450.0},\"type\":\"processingStatus\"}");
+        CHECK(response->toJSON().dump() == "{\"data\":{\"engineStatus\":{\"currentIntegratorSet\":1,\"currentParameterSet\":2,\"inputDataReady\":true,\"inverterReady\":false,\"malfunction\":false,\"powerAmplifierReleased\":true,\"switchLeftActive\":false,\"switchRightActive\":true},\"innerBrake\":{\"raw\":1434,\"scaled\":0.44},\"maxSpeed\":3500.0,\"outerBrake\":{\"raw\":1000,\"scaled\":0.35},\"rotationDirection\":\"right\",\"rotationSpeed\":1497.0,\"targetSpeed\":1450.0},\"type\":\"processingStatus\"}");
     }
 }

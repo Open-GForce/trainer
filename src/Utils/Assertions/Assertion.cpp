@@ -1,7 +1,7 @@
 #include "Assertion.hpp"
 #include "AssertionFailedException.hpp"
 
-using namespace Pegasus::Networking;
+using namespace GForce::Utils::Assertions;
 
 void Assertion::jsonExistsAndNumber(const nlohmann::json &data, const std::string& key)
 {

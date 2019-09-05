@@ -4,7 +4,7 @@
 #include <exception>
 #include <string>
 
-namespace Pegasus::Networking {
+namespace GForce::Utils::Assertions {
 
 class AssertionFailedException: public std::exception
 {

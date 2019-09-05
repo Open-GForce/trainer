@@ -31,7 +31,7 @@ class ProcessingStatus : public Websocket::ResponseCastInterface
         /**
          * Max. configured rotation speed in 1/min
          */
-        int maxSpeed;
+        double maxSpeed;
 
         /**
          * Target speed based on brake calculation
@@ -56,7 +56,7 @@ class ProcessingStatus : public Websocket::ResponseCastInterface
         RotationDirection rotationDirection;
 
     public:
-        ProcessingStatus(EngineStatus *engineStatus, double rotationSpeed, int maxSpeed, double targetSpeed,
+        ProcessingStatus(EngineStatus *engineStatus, double rotationSpeed, double maxSpeed, double targetSpeed,
                          int innerBrakeRawValue, int outerBrakeRawValue, double innerBrakePercentage,
                          double outerBrakePercentage, RotationDirection rotationDirection);
 
@@ -67,7 +67,7 @@ class ProcessingStatus : public Websocket::ResponseCastInterface
         EngineStatus *getEngineStatus() const;
 
         double getRotationSpeed() const;
-        int getMaxSpeed() const;
+        double getMaxSpeed() const;
 
         double getTargetSpeed() const;
 

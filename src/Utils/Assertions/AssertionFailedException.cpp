@@ -1,6 +1,6 @@
 #include "AssertionFailedException.hpp"
 
-using namespace Pegasus::Networking;
+using namespace GForce::Utils::Assertions;
 
 AssertionFailedException::AssertionFailedException(std::string message)
 {

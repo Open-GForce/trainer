@@ -42,10 +42,10 @@ class ProcessingThread
         void start(BrakeInputThread* brakeThread, Websocket::ServerThread* serverThread);
         void stop();
 
-        void reloadUserConfig(UserSettings* settings);
-        void setMaxSpeed(int speed);
-        void setDirection(RotationDirection direction);
-        void setReleased(bool isReleased);
+        virtual void reloadUserConfig(UserSettings* settings);
+        virtual void setMaxSpeed(double speed);
+        virtual void setDirection(RotationDirection direction);
+        virtual void setReleased(bool isReleased);
 
         void setCycleInterval(int value);
 };

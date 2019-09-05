@@ -113,7 +113,7 @@ void ProcessingService::setReleased(bool isReleased) {
     ProcessingService::released = isReleased;
 }
 
-void ProcessingService::setMaxSpeed(int speed) {
+void ProcessingService::setMaxSpeed(double speed) {
     ProcessingService::maxSpeed = speed;
 }
 

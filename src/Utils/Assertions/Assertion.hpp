@@ -1,13 +1,9 @@
-//
-// Created by marius on 25.07.19.
-//
-
 #ifndef PEGASUS_CONTROLLER_ASSERTION_HPP
 #define PEGASUS_CONTROLLER_ASSERTION_HPP
 
-#include "../../../nlohmann_json/json.hpp"
+#include <json.hpp>
 
-namespace Pegasus::Networking
+namespace GForce::Utils::Assertions
 {
 
 class Assertion
