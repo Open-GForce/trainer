@@ -76,7 +76,6 @@ class Websocket
         this.iteration++;
 
         status.targetSpeed = 30;
-        status.maxSpeed = 40;
 
         status.currentSpeed += this.iteration * 0.008;
         status.currentSpeed -= 15;

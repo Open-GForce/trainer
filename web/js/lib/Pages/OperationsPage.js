@@ -3,9 +3,9 @@ class OperationsPage
     constructor()
     {
         /**
-         * @type {*}
+         * @type {jQuery}
          */
-        this.speedSlider = undefined;
+        this.speedSliderElement = undefined;
 
         /**
          * @type {BrakeInputChart}
@@ -51,11 +51,17 @@ class OperationsPage
          * @type {boolean}
          */
         this.released = false;
+
+        /**
+         * If true min. one system status has been handled
+         *
+         * @type {boolean}
+         */
+        this.firstStatusHandled = false;
     }
 
     start()
     {
-
         this.statusSegment = $('.status.segment');
         this.forceSegment = $('.force.segment');
         this.controlSegment = $('.control.segment');
@@ -79,6 +85,11 @@ class OperationsPage
      */
     onSystemStatus(status)
     {
+        if (!this.firstStatusHandled) {
+            this.speedSliderElement.slider("set value", RotationMath.speedToForce(status.maxSpeed));
+            this.firstStatusHandled = true;
+        }
+
         this.brakeChart.setInnerBrake(status.innerBrake.scaled * 100);
         this.brakeChart.setOuterBrake(status.outerBrake.scaled * 100);
         this.brakeChart.setTotalValue((status.innerBrake.scaled - status.outerBrake.scaled) * 100);
@@ -95,7 +106,8 @@ class OperationsPage
 
     _bindControls()
     {
-        this.speedSlider = $('.control.segment .slider').slider({
+        this.speedSliderElement = $('.control.segment .slider');
+        let slider = this.speedSliderElement.slider({
             min: 0,
             max: 7,
             start: 0,
