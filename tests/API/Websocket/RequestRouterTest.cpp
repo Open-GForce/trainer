@@ -11,14 +11,16 @@ TEST_CASE( "Request router tests", "[Websocket]" )
 {
     fakeit::Mock<OperationsController> operationsControllerMock;
     fakeit::Fake(Method(operationsControllerMock, handleSpeedLimit));
+    fakeit::Fake(Method(operationsControllerMock, handleRotationDirection));
+    fakeit::Fake(Method(operationsControllerMock, handleReleaseStatus));
     OperationsController* operationsController = &operationsControllerMock.get();
 
     auto router = new RequestRouter(operationsController);
 
     nlohmann::json correctMessage = {
-            {"type", "setMaxSpeed"},
+            {"type", "replace_me"},
             {"data", {
-                 {"speed", 23.11}
+                 {"test", 123}
             }}
     };
 
@@ -74,14 +76,42 @@ TEST_CASE( "Request router tests", "[Websocket]" )
         }
     }
 
-    SECTION("OperationsController called")
+    SECTION("OperationsController->handleSpeedLimit() called")
     {
+        nlohmann::json data = correctMessage;
+        data["type"] = "setMaxSpeed";
+
         fakeit::When(Method(operationsControllerMock, handleSpeedLimit)).AlwaysDo([] (Request* request) {
             CHECK(request->getType() == "setMaxSpeed");
-            CHECK(request->getData()["speed"] == 23.11);
         });
 
-        router->handle(correctMessage.dump());
+        router->handle(data.dump());
         fakeit::Verify(Method(operationsControllerMock, handleSpeedLimit)).Once();
+    }
+
+    SECTION("OperationsController->handleRotationDirection() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "setRotationDirection";
+
+        fakeit::When(Method(operationsControllerMock, handleSpeedLimit)).AlwaysDo([] (Request* request) {
+            CHECK(request->getType() == "setRotationDirection");
+        });
+
+        router->handle(data.dump());
+        fakeit::Verify(Method(operationsControllerMock, handleRotationDirection)).Once();
+    }
+
+    SECTION("OperationsController->handleReleaseStatus() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "setReleaseStatus";
+
+        fakeit::When(Method(operationsControllerMock, handleSpeedLimit)).AlwaysDo([] (Request* request) {
+            CHECK(request->getType() == "setReleaseStatus");
+        });
+
+        router->handle(data.dump());
+        fakeit::Verify(Method(operationsControllerMock, handleReleaseStatus)).Once();
     }
 }

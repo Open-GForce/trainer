@@ -11,7 +11,7 @@ class RouterInterface
          /**
          * Decodes and routes incoming messages
          */
-        void virtual handle(const std::string& message) = 0;
+         virtual void handle(const std::string& message) = 0;
 };
 
 }

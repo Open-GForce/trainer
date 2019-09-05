@@ -31,5 +31,13 @@ void RequestRouter::route(Request *request)
         return this->operationsController->handleSpeedLimit(request);
     }
 
+    if (request->getType() == RequestRouter::TYPE_SET_DIRECTION) {
+        return this->operationsController->handleRotationDirection(request);
+    }
+
+    if (request->getType() == RequestRouter::TYPE_SET_RELEASE) {
+        return this->operationsController->handleReleaseStatus(request);
+    }
+
     throw RuntimeException("No route defined for " + request->getType());
 }
