@@ -19,6 +19,8 @@ class MoviDriveService
     const int CAN_SYNC_INDEX      = 0x080;
     const int CAN_HEARTBEAT_INDEX = 0x702;
 
+    const double SPEED_SCALE_FACTOR = 166.66;
+
     private:
         CAN::SocketInterface* socket;
         LoggerInterface* logger;

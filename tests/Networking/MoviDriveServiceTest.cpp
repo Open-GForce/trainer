@@ -22,7 +22,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
     {
         /**
          * Speed conversion:
-         * PDO resolution: 1 digit = 0.2 min^-1
+         * PDO resolution: 1 digit = 1/SPEED_SCALE_FACTOR/min
          * So 4500 1/min => 22500
          *
          * 22500 in hex => 57 E4
@@ -36,7 +36,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                    CHECK(message->toFrame() == "< send 202 6 06 00 E4 57 00 00 >");
+                    CHECK(message->toFrame() == "< send 202 6 06 00 92 71 00 00 >");
                     break;
                 case 2:
                     CHECK(message->toFrame() == "< send 080 0 >");
@@ -57,7 +57,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
     {
         /**
          * Speed conversion:
-         * PDO resolution: 1 digit = 0.2 min^-1
+         * PDO resolution: 1 digit = 1/SPEED_SCALE_FACTOR/min
          * So -1000 1/min => -5000
          *
          * PDO is using 16bit signed, so 65536 - 5000 => 60536
@@ -72,7 +72,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                    CHECK(message->toFrame() == "< send 202 6 06 00 78 EC 00 00 >");
+                    CHECK(message->toFrame() == "< send 202 6 06 00 FC 74 00 00 >");
                     break;
                 case 2:
                     CHECK(message->toFrame() == "< send 080 0 >");

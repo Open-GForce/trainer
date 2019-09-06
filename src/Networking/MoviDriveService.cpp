@@ -49,8 +49,8 @@ void MoviDriveService::send()
     std::vector<uint8_t> data = {0, 0, 0, 0, 0, 0};
 
     double floatSpeed = this->rotationSpeed < 0
-            ? (65536 + (this->rotationSpeed * 5))
-            : (this->rotationSpeed * 5);
+            ? (65536 + (this->rotationSpeed * SPEED_SCALE_FACTOR))
+            : (this->rotationSpeed * SPEED_SCALE_FACTOR);
 
     auto speed = (uint16_t) std::round(floatSpeed);
 
