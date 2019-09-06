@@ -27,8 +27,10 @@ using namespace GForce::Sensors;
 using namespace GForce::Processing;
 using namespace GForce::Utils::Logging;
 
-int main() 
+int main(int argc, char *argv[])
 {
+    bool dummyMode = argc > 1 && std::string(argv[1]) == "--dummy";
+
     auto logger = new StandardLogger();
     auto configRepository = new ConfigRepository();
     auto userConfig = configRepository->loadUserSettings();
@@ -37,8 +39,19 @@ int main()
     auto sensor = new ADS1115(device);
     auto brakeThread = new BrakeInputThread(sensor, logger);
 
-    auto canSocket = new DummyCANSocket();
-    auto moviDriveService = new MoviDriveService(canSocket, logger);
+    MoviDriveService* moviDriveService = nullptr;
+
+    if (dummyMode) {
+        std::cout << "Running in CAN dummy mode!\n";
+        auto canSocket = new DummyCANSocket();
+        moviDriveService = new MoviDriveService(canSocket, logger);
+    } else {
+        auto canSocket = new CANSocket();
+        canSocket->connect("10.0.0.1", 29536);
+        canSocket->open();
+        moviDriveService = new MoviDriveService(canSocket, logger);
+    }
+
     auto processingService = new ProcessingService(moviDriveService, userConfig);
     auto processingThread = new ProcessingThread(processingService);
 
@@ -63,8 +76,6 @@ int main()
     });
     std::cout << "Brake input thread started\n";
 
-    //canSocket->connect("192.168.2.102", 29536);
-    //canSocket->open();
     std::thread t3([processingThread, brakeThread, webSocketThread] {
         processingThread->start(brakeThread, webSocketThread);
     });

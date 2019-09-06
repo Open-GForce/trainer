@@ -36,7 +36,7 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
         });
 
         thread->start(brakeThread, serverThread);
-        
+
         fakeit::Verify(Method(serviceMock, init)).Once();
         fakeit::Verify(Method(serviceMock, run)).Once();
 
