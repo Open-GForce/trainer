@@ -36,7 +36,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                    CHECK(message->toFrame() == "< send 202 4 06 00 E4 57 >");
+                    CHECK(message->toFrame() == "< send 202 6 06 00 E4 57 00 00 >");
                     break;
                 case 2:
                     CHECK(message->toFrame() == "< send 080 0 >");
@@ -72,7 +72,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                    CHECK(message->toFrame() == "< send 202 4 06 00 78 EC >");
+                    CHECK(message->toFrame() == "< send 202 6 06 00 78 EC 00 00 >");
                     break;
                 case 2:
                     CHECK(message->toFrame() == "< send 080 0 >");
@@ -239,7 +239,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
                     throw std::exception(); // Sync
                 case 4:
                 case 6:
-                    CHECK(message->toFrame() == "< send 202 4 02 00 00 00 >"); // Soft break
+                    CHECK(message->toFrame() == "< send 202 6 02 00 00 00 00 00 >"); // Soft break
                     break;
                 case 5:
                 case 7:

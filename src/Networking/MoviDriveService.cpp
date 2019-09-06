@@ -46,7 +46,7 @@ void MoviDriveService::send()
 {
     uint16_t status = this->controlStatus->toBinary();
 
-    std::vector<uint8_t> data = {0, 0, 0, 0};
+    std::vector<uint8_t> data = {0, 0, 0, 0, 0, 0};
 
     double floatSpeed = this->rotationSpeed < 0
             ? (65536 + (this->rotationSpeed * 5))
