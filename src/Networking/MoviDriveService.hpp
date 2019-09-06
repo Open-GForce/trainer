@@ -12,14 +12,14 @@ using namespace GForce::Networking;
 
 namespace GForce::Networking {
 
+const double SPEED_SCALE_FACTOR = 166.66;
+
 class MoviDriveService
 {
     const int CAN_TX_PDO_INDEX    = 0x202;
     const int CAN_RX_PDO_INDEX    = 0x182;
     const int CAN_SYNC_INDEX      = 0x080;
     const int CAN_HEARTBEAT_INDEX = 0x702;
-
-    const double SPEED_SCALE_FACTOR = 166.66;
 
     private:
         CAN::SocketInterface* socket;

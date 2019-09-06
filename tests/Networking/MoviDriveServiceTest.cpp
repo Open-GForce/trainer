@@ -128,7 +128,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
         auto response = service->sync();
 
         REQUIRE(response != nullptr);
-        CHECK(response->getRotationSpeed() == 159.2);
+        CHECK(response->getRotationSpeed() == Approx(4.7762));
     }
 
     SECTION("Correct response decoding => only message with correct index used")
@@ -144,7 +144,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
         auto response = service->sync();
 
         REQUIRE(response != nullptr);
-        CHECK(response->getRotationSpeed() == 159.2);
+        CHECK(response->getRotationSpeed() == Approx(4.7762));
     }
 
     SECTION("Heartbeat sent")

@@ -141,6 +141,6 @@ TEST_CASE( "MoviDrive response tests", "[Networking]" )
         auto message = new CAN::Message(0x182, {0x07, 0x04, 0x1c, 0x03});
         auto response = BusResponse::fromMessage(message);
 
-        CHECK(response->getRotationSpeed() == 159.2);
+        CHECK(response->getRotationSpeed() == Approx(4.7762));
     }
 }

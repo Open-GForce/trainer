@@ -1,4 +1,5 @@
 #include "BusResponse.hpp"
+#include "MoviDriveService.hpp"
 
 using namespace GForce::Networking;
 
@@ -27,8 +28,7 @@ BusResponse* BusResponse::fromMessage(CAN::MessageInterface* message)
 
     double speed = message->getData()[2] | (message->getData()[3] << 8);
 
-    // 1 digit = 0.2 min^-1
-    speed /= 5;
+    speed /= SPEED_SCALE_FACTOR;
 
     return new BusResponse(status, speed);
 }
