@@ -263,4 +263,35 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
         fakeit::Verify(Method(socketMock, send)).Exactly(9);
     }
+
+
+    SECTION("Correct node start sequence")
+    {
+        int callCount = 0;
+
+        fakeit::When(Method(socketMock, send)).AlwaysDo([&callCount, service] (CAN::MessageInterface* message) {
+            callCount++;
+
+            switch (callCount) {
+                case 1:
+                    CHECK(message->getIndex() == 0);
+                    CHECK(message->getData().size() == 2);
+                    CHECK(message->getData()[0] == 0x80);
+                    CHECK(message->getData()[1] == 0x2);
+                    break;
+                case 2:
+                    CHECK(message->getIndex() == 0);
+                    CHECK(message->getData().size() == 2);
+                    CHECK(message->getData()[0] == 0x1);
+                    CHECK(message->getData()[1] == 0x2);
+                    break;
+                default:
+                    FAIL("send() method called more then two times");
+            }
+        });
+
+        service->startNode();
+
+        fakeit::Verify(Method(socketMock, send)).Exactly(2);
+    }
 }

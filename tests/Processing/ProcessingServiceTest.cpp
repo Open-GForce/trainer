@@ -8,6 +8,7 @@ using namespace GForce::Networking;
 TEST_CASE( "ProcessingService tests", "[Processing]" )
 {
     fakeit::Mock<MoviDriveService> driveServiceMock;
+    fakeit::Fake(Method(driveServiceMock, startNode));
     fakeit::Fake(Method(driveServiceMock, setRotationSpeed));
     fakeit::Fake(Method(driveServiceMock, setControlStatus));
     fakeit::Fake(Method(driveServiceMock, sync));
@@ -15,6 +16,13 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
 
     auto settings = new UserSettings(new Range(30, 200), new Range(40, 100));
     auto service = new ProcessingService(driveService, settings);
+
+
+    SECTION("Node started during init")
+    {
+        service->init();
+        fakeit::Verify(Method(driveServiceMock, startNode)).Once();
+    }
 
     SECTION("Not released => soft brake and 0 rotation speed")
     {

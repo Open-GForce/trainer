@@ -26,6 +26,11 @@ ProcessingService::~ProcessingService()
     delete this->outerBrakeRange;
 }
 
+void ProcessingService::init()
+{
+    this->driveService->startNode();
+}
+
 void ProcessingService::run()
 {
     if (!this->released) {
@@ -120,7 +125,6 @@ void ProcessingService::setMaxSpeed(double speed) {
 void ProcessingService::setDirection(RotationDirection value) {
     ProcessingService::direction = value;
 }
-
 
 
 

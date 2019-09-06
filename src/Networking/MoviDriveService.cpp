@@ -22,6 +22,16 @@ MoviDriveService::~MoviDriveService()
     delete this->controlStatus;
 }
 
+void MoviDriveService::startNode()
+{
+    auto preOpMessage = new CAN::Message(0, {0x80, NODE_ID});
+    this->socket->send(preOpMessage);
+    usleep(50000);
+
+    auto opMessage = new CAN::Message(0, {0x1, NODE_ID});
+    this->socket->send(opMessage);
+}
+
 BusResponse* MoviDriveService::sync()
 {
     BusResponse* response = nullptr;

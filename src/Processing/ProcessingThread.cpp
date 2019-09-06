@@ -18,6 +18,8 @@ void ProcessingThread::start(BrakeInputThread* brakeThread, Websocket::ServerThr
     this->brakeInputThread = brakeThread;
     this->websocketThread = serverThread;
 
+    this->service->init();
+
     std::chrono::milliseconds period(this->cycleInterval);
     std::chrono::high_resolution_clock::time_point next;
 

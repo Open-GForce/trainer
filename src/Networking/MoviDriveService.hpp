@@ -21,6 +21,8 @@ class MoviDriveService
     const int CAN_SYNC_INDEX      = 0x080;
     const int CAN_HEARTBEAT_INDEX = 0x702;
 
+    const uint8_t NODE_ID = 0x2;
+
     private:
         CAN::SocketInterface* socket;
         LoggerInterface* logger;
@@ -83,6 +85,11 @@ class MoviDriveService
     public:
         explicit MoviDriveService(CAN::SocketInterface* socket, LoggerInterface* logger);
         virtual ~MoviDriveService();
+
+        /**
+         * Switches MoviDrive node to operational mode
+         */
+        virtual void startNode();
 
         /**
          * Sends control status and rotation speed + heartbeat (if interval reached)

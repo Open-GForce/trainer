@@ -76,6 +76,7 @@ class ProcessingService
         ProcessingService(MoviDriveService* driveService, UserSettings* settings);
         virtual ~ProcessingService();
 
+        virtual void init();
         virtual void run();
 
         virtual void setFirstBrakeInput(int input);
