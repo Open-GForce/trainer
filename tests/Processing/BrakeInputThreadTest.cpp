@@ -26,7 +26,7 @@ TEST_CASE( "BrakeInputThread tests", "[Processing]" )
                     return (1793);
                 case 2:
                     thread->stop();
-                    return (32796);
+                    return (60536);
                 default:
                     FAIL("read() method called more then two times");
             }
@@ -34,7 +34,7 @@ TEST_CASE( "BrakeInputThread tests", "[Processing]" )
 
         thread->start();
         CHECK(thread->getFirstBrake() == 1793);
-        CHECK(thread->getSecondBrake() == 32796);
+        CHECK(thread->getSecondBrake() == -5000);
     }
 
     SECTION("On exception all values set to Zero")

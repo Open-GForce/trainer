@@ -20,6 +20,8 @@ class BrakeInputThread
 
         bool stopped = false;
 
+        static int scaleSignedInt(int value);
+
     public:
         BrakeInputThread(ADCSensorInterface *sensor, LoggerInterface *logger);
 
