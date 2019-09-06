@@ -8,7 +8,20 @@ TEST_CASE( "CAN message factory tests", "[ACL]" )
 {
     SECTION("Correct decoding of message with multiple data bytes")
     {
-        auto messages = MessageFactory::createFromString("< frame 072 23.424242 11 00 ef 01 >");
+        auto messages = MessageFactory::createFromString("< frame 072 23.424242 1100ef01 >");
+
+        REQUIRE(messages.size() == 1);
+        CHECK(messages[0]->getIndex() == 0x72);
+        CHECK(messages[0]->getData().size() == 4);
+        CHECK(messages[0]->getData()[0] == 0x11);
+        CHECK(messages[0]->getData()[1] == 0x00);
+        CHECK(messages[0]->getData()[2] == 0xef);
+        CHECK(messages[0]->getData()[3] == 0x01);
+    }
+
+    SECTION("Incomplete Byte pair => ignored")
+    {
+        auto messages = MessageFactory::createFromString("< frame 072 23.424242 1100ef012 >");
 
         REQUIRE(messages.size() == 1);
         CHECK(messages[0]->getIndex() == 0x72);

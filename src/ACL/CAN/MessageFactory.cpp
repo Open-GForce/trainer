@@ -57,7 +57,7 @@ std::vector<std::string> MessageFactory::split(const std::string& data)
 }
 
 /**
- * Typical message: frame 123 23.424242 11 22 33 44
+ * Typical message: frame 123 23.424242 11223344
  */
 MessageInterface *MessageFactory::decode(const std::string& frame)
 {
@@ -70,10 +70,18 @@ MessageInterface *MessageFactory::decode(const std::string& frame)
 
     int index = hexToString(items[1]);
     std::vector<uint8_t> words = {};
-    words.reserve(items.size() - 3);
 
-    for (int i = 3; i < items.size(); ++i) {
-        words.push_back((uint8_t) hexToString(items[i]));
+    std::string wordBuffer = "00";
+
+    if (items.size() > 3) {
+        for (auto singleChar : items[3]) {
+            if (wordBuffer.size() == 2) {
+                wordBuffer = singleChar;
+            } else {
+                wordBuffer += singleChar;
+                words.push_back((uint8_t) hexToString(wordBuffer));
+            }
+        }
     }
 
     return new Message(index, words);
