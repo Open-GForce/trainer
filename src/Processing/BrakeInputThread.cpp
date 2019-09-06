@@ -15,7 +15,7 @@ void BrakeInputThread::start()
 {
     while (!stopped) {
         try {
-            this->firstBrake = scaleSignedInt(this->sensor->read(0));
+            this->firstBrake = scaleSignedInt(this->sensor->read(1));
             this->secondBrake = scaleSignedInt(this->sensor->read(3));
         } catch (std::exception &e) {
             this->firstBrake = 0;
