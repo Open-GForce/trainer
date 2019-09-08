@@ -1,8 +1,10 @@
 #include <thread>
 #include "ACL/I2C/Device.hpp"
+#include "Sensors/ADS1115.hpp"
 #include "ACL/CAN/CANSocket.hpp"
 #include "ACL/CAN/DummyCANSocket.hpp"
 #include "Processing/BrakeInput/BrakeInputReceiveThread.hpp"
+#include "Processing/BrakeInput/BrakeInputTransmissionThread.hpp"
 #include "Utils/Logging/StandardLogger.hpp"
 #include "API/Controller/ConfigurationController.hpp"
 #include "API/Controller/OperationsController.hpp"
@@ -22,6 +24,7 @@ using namespace GForce::ACL::CAN;
 using namespace GForce::API::Websocket;
 using namespace GForce::API::Controller;
 using namespace GForce::Processing;
+using namespace GForce::Sensors;
 using namespace GForce::Processing::BrakeInput;
 using namespace GForce::Utils::Logging;
 
@@ -99,4 +102,14 @@ void runControllerMode(bool CANDummyMode)
 
 void runBrakeInputMode()
 {
+    auto logger = new StandardLogger();
+    logger->info("Running brake input mode");
+
+    auto device = new Device(1, 0x48);
+    device->open();
+
+    auto sensor = new ADS1115(device);
+    auto thread = new BrakeInputTransmissionThread(logger, sensor);
+
+    thread->start();
 }
