@@ -1,10 +1,11 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_BRAKEINPUTRECEIVETHREAD_HPP
 #define GFORCE_TRAINER_CONTROLLER_BRAKEINPUTRECEIVETHREAD_HPP
 
-#include "../../Sensors/ADCSensorInterface.hpp"
+#include <mutex>
 #include "../../Utils/Logging/LoggerInterface.hpp"
+#include "../../ACL/TCP/TCPSocketInterface.hpp"
 
-using namespace GForce::Sensors;
+using namespace GForce::ACL::TCP;
 using namespace GForce::Utils::Logging;
 
 namespace GForce::Processing::BrakeInput {
@@ -12,24 +13,36 @@ namespace GForce::Processing::BrakeInput {
 class BrakeInputReceiveThread
 {
     private:
-        ADCSensorInterface* sensor;
         LoggerInterface* logger;
+        TCPSocketInterface* socket;
 
         int firstBrake;
         int secondBrake;
 
         bool stopped = false;
 
-        static int scaleSignedInt(int value);
+        /**
+         * Gets incremented on every received message
+         */
+        int messageCount;
+
+        /**
+         * Will be unlocked when started
+         */
+        std::mutex startMutex;
 
     public:
-        BrakeInputReceiveThread(ADCSensorInterface *sensor, LoggerInterface *logger);
+        explicit BrakeInputReceiveThread(LoggerInterface *logger);
 
         void start();
         void stop();
+        void waitUntilStarted();
 
-        virtual int getFirstBrake() const;
-        virtual int getSecondBrake() const;
+        [[nodiscard]] virtual int getFirstBrake() const;
+        [[nodiscard]] virtual int getSecondBrake() const;
+        [[nodiscard]] virtual int getMessageCount() const;
+
+        void setSocket(TCPSocketInterface *value);
 };
 
 }

@@ -2,8 +2,6 @@
 #include "ACL/I2C/Device.hpp"
 #include "ACL/CAN/CANSocket.hpp"
 #include "ACL/CAN/DummyCANSocket.hpp"
-#include "ACL/CAN/Message.hpp"
-#include "Sensors/ADS1115.hpp"
 #include "Processing/BrakeInput/BrakeInputReceiveThread.hpp"
 #include "Utils/Logging/StandardLogger.hpp"
 #include "API/Controller/ConfigurationController.hpp"
@@ -23,27 +21,37 @@ using namespace GForce::ACL::I2C;
 using namespace GForce::ACL::CAN;
 using namespace GForce::API::Websocket;
 using namespace GForce::API::Controller;
-using namespace GForce::Sensors;
 using namespace GForce::Processing;
 using namespace GForce::Processing::BrakeInput;
 using namespace GForce::Utils::Logging;
 
+void runControllerMode(bool CANDummyMode);
+void runBrakeInputMode();
+
 int main(int argc, char *argv[])
 {
     bool dummyMode = argc > 1 && std::string(argv[1]) == "--dummy";
+    bool brakeInputMode = argc > 1 && std::string(argv[1]) == "--brake_input";
 
+    if (brakeInputMode) {
+        runBrakeInputMode();
+    } else {
+        runControllerMode(dummyMode);
+    }
+}
+
+void runControllerMode(bool CANDummyMode)
+{
     auto logger = new StandardLogger();
+    std::string canMode = (CANDummyMode ? "Dummy" : "Regular");
+    logger->info("Running main controller mode [" + canMode + " CAN]");
+
     auto configRepository = new ConfigRepository();
     auto userConfig = configRepository->loadUserSettings();
 
-    auto device = new Device(1, 0x48);
-    auto sensor = new ADS1115(device);
-    auto brakeThread = new BrakeInputReceiveThread(sensor, logger);
-
     MoviDriveService* moviDriveService = nullptr;
 
-    if (dummyMode) {
-        std::cout << "Running in CAN dummy mode!\n";
+    if (CANDummyMode) {
         auto canSocket = new DummyCANSocket();
         moviDriveService = new MoviDriveService(canSocket, logger);
     } else {
@@ -54,7 +62,9 @@ int main(int argc, char *argv[])
     }
 
     auto processingService = new ProcessingService(moviDriveService, userConfig);
-    auto processingThread = new ProcessingThread(processingService);
+    auto processingThread = new ProcessingThread(logger, processingService);
+
+    auto brakeThread = new BrakeInputReceiveThread(logger);
 
     auto configController = new ConfigurationController(processingThread, configRepository);
     auto operationsController = new OperationsController(processingThread);
@@ -69,20 +79,24 @@ int main(int argc, char *argv[])
     std::thread t1([webSocketThread] {
         webSocketThread->start();
     });
-    std::cout << "Websocket thread started\n";
+    logger->info("Websocket thread started");
 
-    device->open();
     std::thread t2([brakeThread] {
         brakeThread->start();
     });
-    std::cout << "Brake input thread started\n";
+    brakeThread->waitUntilStarted();
+    logger->info("Brake input thread started");
 
     std::thread t3([processingThread, brakeThread, webSocketThread] {
         processingThread->start(brakeThread, webSocketThread);
     });
-    std::cout << "Processing thread started\n";
+    logger->info("Processing thread started");
 
     while (true) {
         usleep(50000);
     }
+}
+
+void runBrakeInputMode()
+{
 }

@@ -1,10 +1,12 @@
 #include "../../../catch2/catch.hpp"
 #include "../../../fake_it/single_header/catch/fakeit.hpp"
 #include "../../src/Processing/ProcessingThread.hpp"
+#include "../../src/Utils/Logging/NullLogger.hpp"
 
 using namespace GForce::Processing;
 using namespace GForce::Processing::BrakeInput;
 using namespace GForce::API;
+using namespace GForce::Utils::Logging;
 
 TEST_CASE( "ProcessingThread tests", "[Processing]" )
 {
@@ -18,18 +20,20 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
     fakeit::Mock<BrakeInputReceiveThread> brakeThreadMock;
     fakeit::Fake(Method(brakeThreadMock, getFirstBrake));
     fakeit::Fake(Method(brakeThreadMock, getSecondBrake));
+    fakeit::Fake(Method(brakeThreadMock, getMessageCount));
     BrakeInputReceiveThread* brakeThread = &brakeThreadMock.get();
 
     fakeit::Mock<Websocket::ServerThread> serverThreadMock;
     fakeit::Fake(Method(serverThreadMock, addBroadcastMessage));
     Websocket::ServerThread* serverThread = &serverThreadMock.get();
 
-    auto thread = new ProcessingThread(service);
+    auto thread = new ProcessingThread(new NullLogger(), service);
 
     SECTION("Brake inputs sent to service")
     {
         fakeit::When(Method(serviceMock, getStatus)).Return(nullptr);
 
+        fakeit::When(Method(brakeThreadMock, getMessageCount)).Return(0);
         fakeit::When(Method(brakeThreadMock, getFirstBrake)).Return(4381);
         fakeit::When(Method(brakeThreadMock, getSecondBrake)).AlwaysDo([thread] () {
             thread->stop();
@@ -55,6 +59,7 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
 
         fakeit::When(Method(serviceMock, getStatus)).AlwaysReturn(status);
 
+        fakeit::When(Method(brakeThreadMock, getMessageCount)).AlwaysReturn(0);
         fakeit::When(Method(brakeThreadMock, getFirstBrake)).AlwaysReturn(4381);
         fakeit::When(Method(brakeThreadMock, getSecondBrake)).AlwaysDo([thread, &cycleCount] () {
             cycleCount++;
@@ -74,5 +79,59 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
         thread->start(brakeThread, serverThread);
 
         fakeit::Verify(Method(serverThreadMock, addBroadcastMessage)).Once();
+    }
+
+
+    SECTION("Correct timeout logic")
+    {
+        fakeit::When(Method(serviceMock, getStatus)).AlwaysReturn(nullptr);
+
+        int cycleCount = 0;
+
+        fakeit::When(Method(brakeThreadMock, getMessageCount)).AlwaysDo([thread, &cycleCount] () {
+            cycleCount++;
+
+            if (cycleCount > 80) {
+                thread->stop();
+            }
+
+            return cycleCount > 60 ? cycleCount : 0;
+        });
+        fakeit::When(Method(brakeThreadMock, getFirstBrake)).AlwaysReturn(4381);
+        fakeit::When(Method(brakeThreadMock, getSecondBrake)).AlwaysReturn(7167);
+
+        fakeit::When(Method(serviceMock, setFirstBrakeInput)).AlwaysDo([thread, &cycleCount] (int value) {
+            if (cycleCount > 60) {
+                if (value != 4381) {
+                    FAIL("Expected recovered input on cycle " + std::to_string(cycleCount));
+                }
+            } else if (cycleCount >= 50) {
+                if (value != 0) {
+                    FAIL("Expected zero input on cycle " + std::to_string(cycleCount));
+                }
+            } else {
+                if (value != 4381) {
+                    FAIL("Expected not yet timeout on cycle " + std::to_string(cycleCount));
+                }
+            }
+        });
+
+        fakeit::When(Method(serviceMock, setSecondBrakeInput)).AlwaysDo([thread, &cycleCount] (int value) {
+            if (cycleCount > 60) {
+                if (value != 7167) {
+                    FAIL("Expected recovered input on cycle " + std::to_string(cycleCount));
+                }
+            } else if (cycleCount >= 50) {
+                if (value != 0) {
+                    FAIL("Expected zero input on cycle " + std::to_string(cycleCount));
+                }
+            } else {
+                if (value != 7167) {
+                    FAIL("Expected not yet timeout on cycle " + std::to_string(cycleCount));
+                }
+            }
+        });
+
+        thread->start(brakeThread, serverThread);
     }
 }

@@ -14,6 +14,7 @@ namespace GForce::Processing {
 class ProcessingThread
 {
     private:
+        LoggerInterface* logger;
         ProcessingService* service;
 
         GForce::Processing::BrakeInput::BrakeInputReceiveThread* brakeInputThread;
@@ -35,6 +36,23 @@ class ProcessingThread
         int statusInterval;
 
         /**
+         * Number of cycles without new brake input
+         * If Threshold gets exceeded inputs will be set to zero
+         */
+        int brakeInputTimeoutThreshold;
+
+        /**
+         * Gets incremented on empty cycle
+         * Gets reset as soon new brake input arrives
+         */
+        int brakeInputEmptyCount;
+
+        /**
+         * Contains last message count of BrakeInputReceiveThread
+         */
+        int lastBrakeInputMessageCount;
+
+        /**
          * Is Thread stopped?
          */
         bool stopped;
@@ -47,7 +65,7 @@ class ProcessingThread
         void loop();
 
     public:
-        explicit ProcessingThread(ProcessingService *service);
+        explicit ProcessingThread(LoggerInterface* logger, ProcessingService *service);
 
         void start(GForce::Processing::BrakeInput::BrakeInputReceiveThread* brakeThread, Websocket::ServerThread* serverThread);
         void stop();

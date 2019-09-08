@@ -10,6 +10,8 @@ class StandardLogger : public LoggerInterface
 {
     public:
         void error(std::string message) override;
+
+        void info(std::string message) override;
 };
 
 }

@@ -40,7 +40,10 @@ set(SOURCES
         src/Utils/Assertions/AssertionFailedException.cpp
         src/API/Websocket/Request.cpp
         src/API/Websocket/RequestRouter.cpp
-        src/API/Controller/ConfigurationController.cpp)
+        src/API/Controller/ConfigurationController.cpp
+        src/Processing/BrakeInput/BrakeInputMessage.cpp
+        src/ACL/TCP/BoostTCPSocket.cpp
+        src/ACL/TCP/BoostTCPConnection.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -49,7 +52,7 @@ set(TESTS
         tests/Networking/MoviDriveServiceTest.cpp
         tests/ACL/CAN/MessageFactoryTest.cpp
         tests/Networking/ResponseTest.cpp
-        tests/Processing/BrakeInput/BrakeInputThreadTest.cpp
+        tests/Processing/BrakeInput/BrakeInputThreadReceiveTest.cpp
         tests/Processing/RangeTest.cpp
         tests/Processing/ProcessingServiceTest.cpp
         tests/Processing/ProcessingThreadTest.cpp
@@ -58,7 +61,8 @@ set(TESTS
         tests/API/Websocket/ServerThreadTest.cpp
         tests/API/Controller/OperationsControllerTest.cpp
         tests/API/Websocket/RequestRouterTest.cpp
-        tests/API/Controller/ConfigurationControllerTest.cpp)
+        tests/API/Controller/ConfigurationControllerTest.cpp
+        tests/Processing/BrakeInput/BrakeInputMessageTest.cpp src/ACL/TCP/TCPConnectionInterface.hpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 

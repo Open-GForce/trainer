@@ -7,3 +7,8 @@ void StandardLogger::error(std::string message)
 {
     std::cerr << "Error: " << message << "\n";
 }
+
+void StandardLogger::info(std::string message)
+{
+    std::cout << "Info: " << message << "\n";
+}

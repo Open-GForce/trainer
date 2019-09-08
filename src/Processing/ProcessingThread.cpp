@@ -3,7 +3,7 @@
 
 using namespace GForce::Processing;
 
-ProcessingThread::ProcessingThread(ProcessingService *service) : service(service)
+ProcessingThread::ProcessingThread(LoggerInterface* logger, ProcessingService *service) : service(service), logger(logger)
 {
     this->brakeInputThread = nullptr;
     this->websocketThread = nullptr;
@@ -11,6 +11,10 @@ ProcessingThread::ProcessingThread(ProcessingService *service) : service(service
     this->statusInterval = 4;
     this->lastStatusSent = 0;
     this->stopped = false;
+
+    this->brakeInputEmptyCount = 0;
+    this->lastBrakeInputMessageCount = 0;
+    this->brakeInputTimeoutThreshold = 50;
 }
 
 void ProcessingThread::start(GForce::Processing::BrakeInput::BrakeInputReceiveThread* brakeThread, Websocket::ServerThread* serverThread)
@@ -35,6 +39,19 @@ void ProcessingThread::loop()
     this->loopMutex.lock();
     int firstInput = this->brakeInputThread->getFirstBrake();
     int secondInput = this->brakeInputThread->getSecondBrake();
+    int currentMessageCount = this->brakeInputThread->getMessageCount();
+
+    // Increment empty cycles count if no new message arrived since last call
+    this->brakeInputEmptyCount = currentMessageCount == this->lastBrakeInputMessageCount
+            ? (this->brakeInputEmptyCount + 1)
+            : 0;
+
+    // Checking if timeout for brake input is reached
+    if (this->brakeInputEmptyCount >= this->brakeInputTimeoutThreshold) {
+        firstInput = 0;
+        secondInput = 0;
+        this->logger->error("Reached timeout for brake input, setting brake values to zero");
+    }
 
     this->service->setFirstBrakeInput(firstInput);
     this->service->setSecondBrakeInput(secondInput);
@@ -48,6 +65,7 @@ void ProcessingThread::loop()
         this->lastStatusSent++;
     }
 
+    this->lastBrakeInputMessageCount = currentMessageCount;
     this->loopMutex.unlock();
 }
 
