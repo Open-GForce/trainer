@@ -1,10 +1,11 @@
-#include "../../../catch2/catch.hpp"
-#include "../../../fake_it/single_header/catch/fakeit.hpp"
-#include "../../src/Processing/BrakeInputThread.hpp"
-#include "../../src/ACL/CAN/Message.hpp"
-#include "../../src/Utils/Logging/NullLogger.hpp"
+#include "../../../../catch2/catch.hpp"
+#include "../../../../fake_it/single_header/catch/fakeit.hpp"
+#include "../../../src/Processing/BrakeInput/BrakeInputReceiveThread.hpp"
+#include "../../../src/ACL/CAN/Message.hpp"
+#include "../../../src/Utils/Logging/NullLogger.hpp"
 
 using namespace GForce::Processing;
+using namespace GForce::Processing::BrakeInput;
 
 TEST_CASE( "BrakeInputThread tests", "[Processing]" )
 {
@@ -12,7 +13,7 @@ TEST_CASE( "BrakeInputThread tests", "[Processing]" )
     fakeit::Fake(Method(sensorMock, read));
     ADCSensorInterface* sensor = &sensorMock.get();
 
-    auto thread = new BrakeInputThread(sensor, new NullLogger());
+    auto thread = new BrakeInputReceiveThread(sensor, new NullLogger());
 
     SECTION("Correct ADC values")
     {

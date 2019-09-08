@@ -1,17 +1,17 @@
 #include <string>
-#include "BrakeInputThread.hpp"
+#include "BrakeInputReceiveThread.hpp"
 #include <exception>
 
-using namespace GForce::Processing;
+using namespace GForce::Processing::BrakeInput;
 
-BrakeInputThread::BrakeInputThread(ADCSensorInterface *sensor, LoggerInterface *logger) : sensor(sensor), logger(logger)
+BrakeInputReceiveThread::BrakeInputReceiveThread(ADCSensorInterface *sensor, LoggerInterface *logger) : sensor(sensor), logger(logger)
 {
     this->firstBrake = 0;
     this->secondBrake = 0;
     this->stopped = false;
 }
 
-void BrakeInputThread::start()
+void BrakeInputReceiveThread::start()
 {
     while (!stopped) {
         try {
@@ -26,19 +26,19 @@ void BrakeInputThread::start()
     }
 }
 
-int BrakeInputThread::scaleSignedInt(int value)
+int BrakeInputReceiveThread::scaleSignedInt(int value)
 {
     return value > 32768 ? (0 - (65536 - value)) : value;
 }
 
-void BrakeInputThread::stop() {
+void BrakeInputReceiveThread::stop() {
     this->stopped = true;
 }
 
-int BrakeInputThread::getFirstBrake() const {
+int BrakeInputReceiveThread::getFirstBrake() const {
     return firstBrake;
 }
 
-int BrakeInputThread::getSecondBrake() const {
+int BrakeInputReceiveThread::getSecondBrake() const {
     return secondBrake;
 }

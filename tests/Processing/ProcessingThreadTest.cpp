@@ -3,6 +3,7 @@
 #include "../../src/Processing/ProcessingThread.hpp"
 
 using namespace GForce::Processing;
+using namespace GForce::Processing::BrakeInput;
 using namespace GForce::API;
 
 TEST_CASE( "ProcessingThread tests", "[Processing]" )
@@ -14,10 +15,10 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
     fakeit::Fake(Method(serviceMock, run));
     ProcessingService* service = &serviceMock.get();
 
-    fakeit::Mock<BrakeInputThread> brakeThreadMock;
+    fakeit::Mock<BrakeInputReceiveThread> brakeThreadMock;
     fakeit::Fake(Method(brakeThreadMock, getFirstBrake));
     fakeit::Fake(Method(brakeThreadMock, getSecondBrake));
-    BrakeInputThread* brakeThread = &brakeThreadMock.get();
+    BrakeInputReceiveThread* brakeThread = &brakeThreadMock.get();
 
     fakeit::Mock<Websocket::ServerThread> serverThreadMock;
     fakeit::Fake(Method(serverThreadMock, addBroadcastMessage));

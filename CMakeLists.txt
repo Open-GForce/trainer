@@ -24,7 +24,7 @@ set(SOURCES
         src/ACL/CAN/MessageFactory.cpp
         src/Networking/EngineStatus.cpp
         src/Networking/BusResponse.cpp
-        src/Processing/BrakeInputThread.cpp
+        src/Processing/BrakeInput/BrakeInputReceiveThread.cpp
         src/Processing/Range.cpp
         src/Processing/ProcessingThread.cpp
         src/Configuration/UserSettings.cpp
@@ -49,7 +49,7 @@ set(TESTS
         tests/Networking/MoviDriveServiceTest.cpp
         tests/ACL/CAN/MessageFactoryTest.cpp
         tests/Networking/ResponseTest.cpp
-        tests/Processing/BrakeInputThreadTest.cpp
+        tests/Processing/BrakeInput/BrakeInputThreadTest.cpp
         tests/Processing/RangeTest.cpp
         tests/Processing/ProcessingServiceTest.cpp
         tests/Processing/ProcessingThreadTest.cpp

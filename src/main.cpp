@@ -4,7 +4,7 @@
 #include "ACL/CAN/DummyCANSocket.hpp"
 #include "ACL/CAN/Message.hpp"
 #include "Sensors/ADS1115.hpp"
-#include "Processing/BrakeInputThread.hpp"
+#include "Processing/BrakeInput/BrakeInputReceiveThread.hpp"
 #include "Utils/Logging/StandardLogger.hpp"
 #include "API/Controller/ConfigurationController.hpp"
 #include "API/Controller/OperationsController.hpp"
@@ -25,6 +25,7 @@ using namespace GForce::API::Websocket;
 using namespace GForce::API::Controller;
 using namespace GForce::Sensors;
 using namespace GForce::Processing;
+using namespace GForce::Processing::BrakeInput;
 using namespace GForce::Utils::Logging;
 
 int main(int argc, char *argv[])
@@ -37,7 +38,7 @@ int main(int argc, char *argv[])
 
     auto device = new Device(1, 0x48);
     auto sensor = new ADS1115(device);
-    auto brakeThread = new BrakeInputThread(sensor, logger);
+    auto brakeThread = new BrakeInputReceiveThread(sensor, logger);
 
     MoviDriveService* moviDriveService = nullptr;
 

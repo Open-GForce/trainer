@@ -2,7 +2,7 @@
 #define GFORCE_TRAINER_CONTROLLER_PROCESSINGTHREAD_HPP
 
 #include "ProcessingService.hpp"
-#include "BrakeInputThread.hpp"
+#include "BrakeInput/BrakeInputReceiveThread.hpp"
 #include "../Configuration/UserSettings.hpp"
 #include "../API/Websocket/ServerThread.hpp"
 
@@ -16,7 +16,7 @@ class ProcessingThread
     private:
         ProcessingService* service;
 
-        BrakeInputThread* brakeInputThread;
+        GForce::Processing::BrakeInput::BrakeInputReceiveThread* brakeInputThread;
         Websocket::ServerThread* websocketThread;
 
         /**
@@ -49,7 +49,7 @@ class ProcessingThread
     public:
         explicit ProcessingThread(ProcessingService *service);
 
-        void start(BrakeInputThread* brakeThread, Websocket::ServerThread* serverThread);
+        void start(GForce::Processing::BrakeInput::BrakeInputReceiveThread* brakeThread, Websocket::ServerThread* serverThread);
         void stop();
 
         /**
