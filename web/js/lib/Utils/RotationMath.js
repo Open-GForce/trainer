@@ -28,4 +28,4 @@ class RotationMath
  *
  * @type {number}
  */
-RotationMath.trainerRadius = 4;
+RotationMath.trainerRadius = 4.3;
