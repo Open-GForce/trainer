@@ -75,12 +75,10 @@ add_executable(controller ${SOURCES} src/main.cpp src/API/Websocket/Server.cpp s
 target_link_libraries (controller ${PROJECT_SOURCE_DIR}/../can-utils/build/libcan.a)
 target_link_libraries (controller pthread)
 target_link_libraries (controller m)
-target_link_libraries (controller tacopie)
 target_link_libraries (controller ${Boost_LIBRARIES} )
 
 add_executable(run_tests ${SOURCES} ${TESTS} tests/main.cpp)
 target_link_libraries (run_tests ${PROJECT_SOURCE_DIR}/../can-utils/build/libcan.a)
 target_link_libraries (run_tests pthread)
 target_link_libraries (run_tests m)
-target_link_libraries (run_tests tacopie)
 target_link_libraries (run_tests ${Boost_LIBRARIES} )

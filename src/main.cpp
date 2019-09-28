@@ -14,11 +14,6 @@
 #include "Processing/ProcessingThread.hpp"
 #include "Configuration/ConfigRepository.hpp"
 
-extern  "C"
-{
-#include <pigpio.h>
-}
-
 using namespace GForce::ACL::I2C;
 using namespace GForce::ACL::CAN;
 using namespace GForce::API::Websocket;
@@ -59,7 +54,7 @@ void runControllerMode(bool CANDummyMode)
         moviDriveService = new MoviDriveService(canSocket, logger);
     } else {
         auto canSocket = new CANSocket();
-        canSocket->connect("10.0.0.1", 29536);
+        canSocket->connect("192.168.2.201", 29536);
         canSocket->open();
         moviDriveService = new MoviDriveService(canSocket, logger);
     }

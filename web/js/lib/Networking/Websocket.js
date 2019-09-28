@@ -16,7 +16,7 @@ class Websocket
 
     start() {
         let handler = this;
-        this.connection = new WebSocket('ws://192.168.2.102:8763');
+        this.connection = new WebSocket('ws://192.168.2.201:8763');
 
         this.connection.onopen = function ()
         {

@@ -8,6 +8,7 @@ BrakeInputTransmissionThread::BrakeInputTransmissionThread(LoggerInterface *logg
 {
     this->socket = nullptr;
     this->stopped = false;
+    this->mainControllerAddress = "192.168.2.201";
 }
 
 void BrakeInputTransmissionThread::start()
@@ -36,10 +37,10 @@ void BrakeInputTransmissionThread::loop()
 void BrakeInputTransmissionThread::connect()
 {
     while (this->socket == nullptr) {
-        this->logger->info("Connecting to 127.0.0.1:8519");
+        this->logger->info("Connecting to " + this->mainControllerAddress + ":8519");
 
         try {
-            this->socket = BoostTCPConnection::connect("127.0.0.1", 8519);
+            this->socket = BoostTCPConnection::connect(this->mainControllerAddress, 8519);
             this->logger->info("Successfully connected!");
         } catch (std::exception &e) {
             this->logger->error("Connection failed => " + std::string(e.what()));

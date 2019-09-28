@@ -20,6 +20,11 @@ class BrakeInputTransmissionThread
         TCPConnectionInterface* socket;
 
         /**
+         * IP address of main controller
+         */
+        std::string mainControllerAddress;
+
+        /**
          * Is thread stopped?
          */
         bool stopped;
