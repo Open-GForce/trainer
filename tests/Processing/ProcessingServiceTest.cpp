@@ -46,7 +46,7 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
     SECTION("RegularSpiralMode => Correct speed calculation based on brakes")
     {
         service->setOperationMode(new Mode::RegularSpiralMode());
-        
+
         fakeit::When(Method(driveServiceMock, setControlStatus)).AlwaysDo([] (ControlStatus* status) {
             CHECK(!status->isSoftBrakeActivated());
         });
@@ -119,6 +119,7 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
     {
         fakeit::When(Method(driveServiceMock, sync)).Return(new BusResponse(new EngineStatus(true, false, false, false, false, false, false, false), 500));
 
+        service->setOperationMode(new RegularSpiralMode());
         service->setDirection(RotationDirection::right);
         service->setFirstBrakeInput(115); // Inner brake => 0.4118
         service->setSecondBrakeInput(55); // Outer brake => 0.3333
@@ -138,5 +139,6 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
         CHECK(status->getInnerBrakePercentage() == Approx(0.5));
         CHECK(status->getOuterBrakePercentage() == Approx(0.25));
         CHECK(status->getRotationDirection() == RotationDirection::right);
+        CHECK(status->getOperationMode() == "regularSpiral");
     }
 }

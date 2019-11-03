@@ -7,6 +7,11 @@ class OperationMode
 {
     public:
         /**
+         * Returns a unique identifier which describes the inheritance
+         */
+        virtual std::string getIdentifier() = 0;
+
+        /**
          * Calculates the target speed bases on brake inputs
          *
          * @param innerBrake Percentage value (0-1) of inner brake input

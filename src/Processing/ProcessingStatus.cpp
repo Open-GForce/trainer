@@ -1,16 +1,17 @@
 #include "ProcessingStatus.hpp"
 
+#include <utility>
+
 using namespace GForce::Processing;
 
-ProcessingStatus::ProcessingStatus(EngineStatus *engineStatus, double rotationSpeed, double maxSpeed, double targetSpeed,
+ProcessingStatus::ProcessingStatus(EngineStatus *engineStatus, double rotationSpeed, double maxSpeed,
+                                   double targetSpeed,
                                    int innerBrakeRawValue, int outerBrakeRawValue, double innerBrakePercentage,
-                                   double outerBrakePercentage, RotationDirection rotationDirection) : engineStatus(
-        engineStatus), rotationSpeed(rotationSpeed), maxSpeed(maxSpeed), targetSpeed(targetSpeed), innerBrakeRawValue(
-        innerBrakeRawValue), outerBrakeRawValue(outerBrakeRawValue), innerBrakePercentage(innerBrakePercentage),
-                                                                                                       outerBrakePercentage(
-                                                                                                               outerBrakePercentage),
-                                                                                                       rotationDirection(
-                                                                                                               rotationDirection) {}
+                                   double outerBrakePercentage, RotationDirection rotationDirection,
+                                   std::string operationMode) : engineStatus(engineStatus), rotationSpeed(rotationSpeed),
+                                                                maxSpeed(maxSpeed), targetSpeed(targetSpeed), innerBrakeRawValue(innerBrakeRawValue),
+                                                                outerBrakeRawValue(outerBrakeRawValue), innerBrakePercentage(innerBrakePercentage),
+                                                                outerBrakePercentage(outerBrakePercentage), rotationDirection(rotationDirection), operationMode(std::move(operationMode)) {}
 
 ProcessingStatus::~ProcessingStatus()
 {
@@ -31,7 +32,8 @@ Websocket::Response *ProcessingStatus::toResponse()
            {"raw", this->outerBrakeRawValue},
            {"scaled", this->outerBrakePercentage},
         }},
-        {"rotationDirection", this->rotationDirection == RotationDirection::right ? "right" : "left"}
+        {"rotationDirection", this->rotationDirection == RotationDirection::right ? "right" : "left"},
+        {"operationMode", this->operationMode}
     };
 
     if (this->engineStatus == nullptr) {
@@ -77,4 +79,8 @@ double ProcessingStatus::getTargetSpeed() const {
 
 RotationDirection ProcessingStatus::getRotationDirection() const {
     return rotationDirection;
+}
+
+const std::string &ProcessingStatus::getOperationMode() const {
+    return operationMode;
 }

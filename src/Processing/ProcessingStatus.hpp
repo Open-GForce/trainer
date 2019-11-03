@@ -55,29 +55,36 @@ class ProcessingStatus : public Websocket::ResponseCastInterface
          */
         RotationDirection rotationDirection;
 
+        /**
+         * String identifier of current operation mode
+         */
+        std::string operationMode;
+
     public:
         ProcessingStatus(EngineStatus *engineStatus, double rotationSpeed, double maxSpeed, double targetSpeed,
                          int innerBrakeRawValue, int outerBrakeRawValue, double innerBrakePercentage,
-                         double outerBrakePercentage, RotationDirection rotationDirection);
+                         double outerBrakePercentage, RotationDirection rotationDirection, std::string operationMode);
 
         ~ProcessingStatus() override;
 
         Websocket::Response *toResponse() override;
 
-        EngineStatus *getEngineStatus() const;
+        [[nodiscard]] EngineStatus *getEngineStatus() const;
 
-        double getRotationSpeed() const;
-        double getMaxSpeed() const;
+        [[nodiscard]] double getRotationSpeed() const;
+        [[nodiscard]] double getMaxSpeed() const;
 
-        double getTargetSpeed() const;
+        [[nodiscard]] double getTargetSpeed() const;
 
-        int getInnerBrakeRawValue() const;
-        int getOuterBrakeRawValue() const;
+        [[nodiscard]] int getInnerBrakeRawValue() const;
+        [[nodiscard]] int getOuterBrakeRawValue() const;
 
-        double getInnerBrakePercentage() const;
-        double getOuterBrakePercentage() const;
+        [[nodiscard]] double getInnerBrakePercentage() const;
+        [[nodiscard]] double getOuterBrakePercentage() const;
 
-        RotationDirection getRotationDirection() const;
+        [[nodiscard]] RotationDirection getRotationDirection() const;
+
+        [[nodiscard]] const std::string &getOperationMode() const;
 };
 
 }

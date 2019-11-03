@@ -2,6 +2,11 @@
 
 using namespace GForce::Processing::Mode;
 
+std::string RegularSpiralMode::getIdentifier()
+{
+    return RegularSpiralMode::IDENTIFIER;
+}
+
 double RegularSpiralMode::getTargetSpeed(double innerBrake, double outerBrake)
 {
     double speed = innerBrake - outerBrake;

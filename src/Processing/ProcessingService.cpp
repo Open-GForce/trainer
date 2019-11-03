@@ -97,8 +97,8 @@ ProcessingStatus *ProcessingService::getStatus()
             this->outerBrake,
             this->innerBrakeRange->getLimitedPercentage(this->innerBrake),
             this->outerBrakeRange->getLimitedPercentage(this->outerBrake),
-            this->direction
-    );
+            this->direction,
+            this->operationMode->getIdentifier());
 }
 
 BusResponse* ProcessingService::cloneStatus()
