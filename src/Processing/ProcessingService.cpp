@@ -1,5 +1,6 @@
 #include <iostream>
 #include "ProcessingService.hpp"
+#include "Mode/RegularSpiralMode.hpp"
 
 using namespace GForce::Processing;
 
@@ -18,12 +19,15 @@ ProcessingService::ProcessingService(MoviDriveService* driveService, UserSetting
     this->outerBrakeRange = nullptr;
     this->loadUserConfig(settings);
     this->direction = RotationDirection::right;
+
+    this->operationMode = new RegularSpiralMode();
 }
 
 ProcessingService::~ProcessingService()
 {
     delete this->innerBrakeRange;
     delete this->outerBrakeRange;
+    delete this->operationMode;
 }
 
 void ProcessingService::init()
@@ -46,8 +50,8 @@ double ProcessingService::calcTargetSpeed()
     double innerValue = this->innerBrakeRange->getLimitedPercentage(this->innerBrake);
     double outerValue = this->outerBrakeRange->getLimitedPercentage(this->outerBrake);
 
-    double delta = innerValue - outerValue;
-    return delta * this->maxSpeed;
+    double throttle = this->operationMode->getTargetSpeed(innerValue, outerValue);
+    return throttle * this->maxSpeed;
 }
 
 void ProcessingService::sync(ControlStatus *controlStatus, double rotationSpeed)
@@ -126,5 +130,7 @@ void ProcessingService::setDirection(RotationDirection value) {
     ProcessingService::direction = value;
 }
 
-
-
+void ProcessingService::setOperationMode(OperationMode *mode) {
+    delete this->operationMode;
+    this->operationMode = mode;
+}

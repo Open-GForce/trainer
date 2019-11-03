@@ -1,6 +1,7 @@
 #include "../../../catch2/catch.hpp"
 #include "../../../fake_it/single_header/catch/fakeit.hpp"
 #include "../../src/Processing/ProcessingService.hpp"
+#include "../../src/Processing/Mode/RegularSpiralMode.hpp"
 
 using namespace GForce::Processing;
 using namespace GForce::Networking;
@@ -42,8 +43,10 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
         fakeit::Verify(Method(driveServiceMock, setControlStatus)).Once();
     }
 
-    SECTION("Correct speed calculation based on brakes")
+    SECTION("RegularSpiralMode => Correct speed calculation based on brakes")
     {
+        service->setOperationMode(new Mode::RegularSpiralMode());
+        
         fakeit::When(Method(driveServiceMock, setControlStatus)).AlwaysDo([] (ControlStatus* status) {
             CHECK(!status->isSoftBrakeActivated());
         });

@@ -44,7 +44,8 @@ set(SOURCES
         src/Processing/BrakeInput/BrakeInputMessage.cpp
         src/ACL/TCP/BoostTCPSocket.cpp
         src/ACL/TCP/BoostTCPConnection.cpp
-        src/ACL/TCP/TCPConnectionInterface.hpp src/Processing/BrakeInput/BrakeInputTransmissionThread.cpp)
+        src/Processing/BrakeInput/BrakeInputTransmissionThread.cpp
+        src/Processing/Mode/RegularSpiralMode.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -64,7 +65,8 @@ set(TESTS
         tests/API/Websocket/RequestRouterTest.cpp
         tests/API/Controller/ConfigurationControllerTest.cpp
         tests/Processing/BrakeInput/BrakeInputMessageTest.cpp
-        tests/Processing/BrakeInput/BrakeInputTransmissionThreadTest.cpp)
+        tests/Processing/BrakeInput/BrakeInputTransmissionThreadTest.cpp
+        tests/Processing/Mode/RegularSpiralModeTest.cpp)
 
 set_source_files_properties(../nlohmann_json/json.hpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
 
