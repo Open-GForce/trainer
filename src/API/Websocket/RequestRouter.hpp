@@ -12,9 +12,10 @@ namespace GForce::API::Websocket {
 
 class RequestRouter : public RouterInterface
 {
-    const std::string TYPE_SET_MAX_SPEED = "setMaxSpeed";
-    const std::string TYPE_SET_DIRECTION = "setRotationDirection";
-    const std::string TYPE_SET_RELEASE   = "setReleaseStatus";
+    const std::string TYPE_SET_MAX_SPEED      = "setMaxSpeed";
+    const std::string TYPE_SET_DIRECTION      = "setRotationDirection";
+    const std::string TYPE_SET_RELEASE        = "setReleaseStatus";
+    const std::string TYPE_SET_OPERATION_MODE = "setOperationMode";
 
     const std::string TYPE_GET_USER_CONFIG        = "getUserSettings";
     const std::string TYPE_SET_CONFIG_INNER_BRAKE = "setInnerBrakeRange";

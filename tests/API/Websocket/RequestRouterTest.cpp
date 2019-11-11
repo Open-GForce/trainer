@@ -13,6 +13,7 @@ TEST_CASE( "Request router tests", "[Websocket]" )
     fakeit::Fake(Method(operationsControllerMock, handleSpeedLimit));
     fakeit::Fake(Method(operationsControllerMock, handleRotationDirection));
     fakeit::Fake(Method(operationsControllerMock, handleReleaseStatus));
+    fakeit::Fake(Method(operationsControllerMock, handleOperationMode));
     OperationsController* operationsController = &operationsControllerMock.get();
 
     fakeit::Mock<ConfigurationController> configControllerMock;
@@ -118,6 +119,20 @@ TEST_CASE( "Request router tests", "[Websocket]" )
 
         router->handle(data.dump());
         fakeit::Verify(Method(operationsControllerMock, handleReleaseStatus)).Once();
+    }
+
+
+    SECTION("OperationsController->handleOperationMode() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "setOperationMode";
+
+        fakeit::When(Method(operationsControllerMock, handleOperationMode)).AlwaysDo([] (Request* request) {
+            CHECK(request->getType() == "setOperationMode");
+        });
+
+        router->handle(data.dump());
+        fakeit::Verify(Method(operationsControllerMock, handleOperationMode)).Once();
     }
 
     SECTION("ConfigurationController->setInnerBrakeRange() called")

@@ -23,6 +23,7 @@ class OperationsController
         virtual void handleSpeedLimit(Request* request);
         virtual void handleRotationDirection(Request* request);
         virtual void handleReleaseStatus(Request* request);
+        virtual void handleOperationMode(Request* request);
 
 };
 

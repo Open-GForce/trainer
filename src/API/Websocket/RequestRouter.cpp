@@ -45,6 +45,11 @@ ResponseCastInterface* RequestRouter::route(Request *request)
         return nullptr;
     }
 
+    if (request->getType() == RequestRouter::TYPE_SET_OPERATION_MODE) {
+        this->operationsController->handleOperationMode(request);
+        return nullptr;
+    }
+
     if (request->getType() == RequestRouter::TYPE_SET_CONFIG_INNER_BRAKE) {
         this->configurationController->setInnerBrakeRange(request);
         return nullptr;

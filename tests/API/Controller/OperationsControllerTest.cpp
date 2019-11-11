@@ -132,4 +132,67 @@ TEST_CASE( "OperationsController tests", "[Controller]" )
         fakeit::Verify(Method(processingThreadMock, setReleased)).Once();
         fakeit::Verify(Method(processingThreadMock, setReleased).Using(false));
     }
+
+    SECTION("setOperationMode() => mode field is missing")
+    {
+        auto request = new Request("setOperationMode", {{}});
+
+        try {
+            controller->handleOperationMode(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field mode");
+        }
+    }
+
+    SECTION("setOperationMode() => speed field is not string")
+    {
+        auto request = new Request("setOperationMode", {{"mode", 12893}});
+
+        try {
+            controller->handleOperationMode(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field mode is not a string");
+        }
+    }
+
+    SECTION("setOperationMode() => processing thread called => static max speed")
+    {
+        fakeit::When(Method(processingThreadMock, setOperationMode)).AlwaysDo([] (OperationMode* mode) {
+            REQUIRE(mode != nullptr);
+            CHECK(mode->getIdentifier() == "staticMaxSpeed");
+        });
+
+        auto request = new Request("setOperationMode", {{"mode", "staticMaxSpeed"}});
+        controller->handleOperationMode(request);
+
+        fakeit::Verify(Method(processingThreadMock, setOperationMode)).Once();
+    }
+
+    SECTION("setOperationMode() => processing thread called => regular spiral")
+    {
+        fakeit::When(Method(processingThreadMock, setOperationMode)).AlwaysDo([] (OperationMode* mode) {
+            REQUIRE(mode != nullptr);
+            CHECK(mode->getIdentifier() == "regularSpiral");
+        });
+
+        auto request = new Request("setOperationMode", {{"mode", "regularSpiral"}});
+        controller->handleOperationMode(request);
+
+        fakeit::Verify(Method(processingThreadMock, setOperationMode)).Once();
+    }
+
+
+    SECTION("setOperationMode() => speed field is not string")
+    {
+        auto request = new Request("setOperationMode", {{"mode", "crazyMode"}});
+
+        try {
+            controller->handleOperationMode(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Invalid mode identifier given");
+        }
+    }
 }

@@ -105,8 +105,13 @@ void ProcessingThread::reloadUserConfig(UserSettings *settings)
     this->loopMutex.unlock();
 }
 
+void ProcessingThread::setOperationMode(OperationMode *mode)
+{
+    this->loopMutex.lock();
+    this->service->setOperationMode(mode);
+    this->loopMutex.unlock();
+}
+
 void ProcessingThread::setStatusInterval(int interval) {
     this->statusInterval = interval;
 }
-
-

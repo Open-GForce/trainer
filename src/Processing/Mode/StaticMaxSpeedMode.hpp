@@ -8,7 +8,8 @@ namespace GForce::Processing::Mode {
 
 class StaticMaxSpeedMode : public OperationMode
 {
-    const std::string IDENTIFIER = "staticMaxSpeed";
+    public:
+        inline static const std::string IDENTIFIER = "staticMaxSpeed";
 
     public:
         std::string getIdentifier() override;

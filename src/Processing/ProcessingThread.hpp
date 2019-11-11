@@ -79,6 +79,7 @@ class ProcessingThread
         virtual void setMaxSpeed(double speed);
         virtual void setDirection(RotationDirection direction);
         virtual void setReleased(bool isReleased);
+        virtual void setOperationMode(OperationMode* mode);
 
         void setCycleInterval(int value);
 

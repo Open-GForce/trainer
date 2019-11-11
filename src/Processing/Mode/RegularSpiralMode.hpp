@@ -8,7 +8,8 @@ namespace GForce::Processing::Mode {
 
 class RegularSpiralMode : public OperationMode
 {
-    const std::string IDENTIFIER = "regularSpiral";
+    public:
+        inline static const std::string IDENTIFIER = "regularSpiral";
 
     public:
         std::string getIdentifier() override;
