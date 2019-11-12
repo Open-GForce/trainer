@@ -33,6 +33,14 @@ class OperationsPage extends AbstractPage
         };
 
         /**
+         * @type {{simulation: {jQuery}, staticSpeed: {jQuery}}}
+         */
+        this.modeButtons = {
+            simulation: undefined,
+            staticSpeed: undefined
+        };
+
+        /**
          * @type {jQuery}
          */
         this.releaseButton = undefined;
@@ -75,6 +83,10 @@ class OperationsPage extends AbstractPage
 
         this.directionButtons.right = this.controlSegment.find('.direction.buttons .right');
         this.directionButtons.left = this.controlSegment.find('.direction.buttons .left');
+
+        this.modeButtons.simulation = this.controlSegment.find('.operation-mode.buttons .simulation');
+        this.modeButtons.staticSpeed = this.controlSegment.find('.operation-mode.buttons .static-speed');
+
         this.releaseButton = this.controlSegment.find('.release.button');
 
         this.brakeChart = new BrakeInputChart();
@@ -92,6 +104,8 @@ class OperationsPage extends AbstractPage
      */
     onSystemStatus(status)
     {
+        this.controlSegment.removeClass('loading');
+
         if (!this.firstStatusHandled) {
             this.speedSliderElement.slider("set value", RotationMath.speedToForce(status.maxSpeed));
             this.firstStatusHandled = true;
@@ -110,6 +124,7 @@ class OperationsPage extends AbstractPage
 
         this._renderStatus(status);
         this._renderForce(status);
+        this._renderControlButtons(status);
         this._renderReleaseButton(status);
     }
 
@@ -141,6 +156,14 @@ class OperationsPage extends AbstractPage
             this._sendDirectionMessage('left');
         });
 
+        this.modeButtons.staticSpeed.click(() => {
+            this._sendOperationModeMessage('staticMaxSpeed');
+        });
+
+        this.modeButtons.simulation.click(() => {
+            this._sendOperationModeMessage('regularSpiral');
+        });
+
         this.releaseButton.click(() => {
             let message = new Message(Message.REQUEST_TYPE_RELEASE_STATUS, {
                 released: !this.released
@@ -155,22 +178,51 @@ class OperationsPage extends AbstractPage
      */
     _sendDirectionMessage(direction)
     {
+        this.controlSegment.addClass('loading');
+
         let message = new Message(Message.REQUEST_TYPE_DIRECTION, {
             direction: direction
         });
         app.socket.send(message);
 
-        let toggleButtons = (active, passive) => {
-           active.addClass('active').addClass('white');
-           passive.removeClass('active').removeClass('white');
-        };
-
         if (direction === 'right') {
-            toggleButtons(this.directionButtons.right, this.directionButtons.left);
+            this._toggleButtons(this.directionButtons.right, this.directionButtons.left);
         } else {
-            toggleButtons(this.directionButtons.left, this.directionButtons.right);
+            this._toggleButtons(this.directionButtons.left, this.directionButtons.right);
         }
     }
+
+
+    /**
+     * @param {string} mode
+     * @private
+     */
+    _sendOperationModeMessage(mode)
+    {
+        this.controlSegment.addClass('loading');
+
+        let message = new Message(Message.REQUEST_TYPE_OPERATION_MODE, {
+            mode: mode
+        });
+        app.socket.send(message);
+
+        if (mode === 'staticMaxSpeed') {
+            this._toggleButtons(this.modeButtons.staticSpeed, this.modeButtons.simulation);
+        } else {
+            this._toggleButtons(this.modeButtons.simulation, this.modeButtons.staticSpeed);
+        }
+    }
+
+    /**
+     * @param {jQuery} active
+     * @param {jQuery} passive
+     * @private
+     */
+    _toggleButtons(active, passive)
+    {
+        active.addClass('active').addClass('white');
+        passive.removeClass('active').removeClass('white');
+    };
 
     /**
      * @param {SystemStatus|undefined} status
@@ -230,6 +282,24 @@ class OperationsPage extends AbstractPage
 
             app.currentPage.forceSegment.html(rendered);
         });
+    }
+
+    /**
+     * @param {SystemStatus|undefined} status
+     */
+    _renderControlButtons(status)
+    {
+        if (status.direction === "right") {
+            this._toggleButtons(this.directionButtons.right, this.directionButtons.left);
+        } else {
+            this._toggleButtons(this.directionButtons.left, this.directionButtons.right);
+        }
+
+        if (status.operationMode === "staticMaxSpeed") {
+            this._toggleButtons(this.modeButtons.staticSpeed, this.modeButtons.simulation);
+        } else {
+            this._toggleButtons(this.modeButtons.simulation, this.modeButtons.staticSpeed);
+        }
     }
 
     /**

@@ -52,7 +52,7 @@ body {
 
 .pilot.segment {
     padding: 11px 0 0;
-    height: 424px;
+    height: 543px;
     padding-right: 8px;
 }
 
@@ -61,7 +61,7 @@ body {
 }
 
 .speed.segment {
-    height: 263px;
+    height: 383px;
     padding: 0;
 }
 
@@ -118,7 +118,7 @@ body {
 }
 
 #speedChart svg:nth-child(2) .dial {
-   stroke: transparent;
+    stroke: transparent;
 }
 
 #speedChart svg:nth-child(2) .value {

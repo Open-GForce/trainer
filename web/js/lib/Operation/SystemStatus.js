@@ -8,8 +8,9 @@ class SystemStatus
      * @param {number} currentSpeed
      * @param {number} maxSpeed
      * @param {number} targetSpeed
+     * @param {string }operationMode
      */
-    constructor(engineStatus, innerBrake, outerBrake, direction, currentSpeed, maxSpeed, targetSpeed)
+    constructor(engineStatus, innerBrake, outerBrake, direction, currentSpeed, maxSpeed, targetSpeed, operationMode)
     {
         this.engineStatus = engineStatus;
         this.innerBrake = innerBrake;
@@ -18,5 +19,6 @@ class SystemStatus
         this.currentSpeed = currentSpeed;
         this.maxSpeed = maxSpeed;
         this.targetSpeed = targetSpeed;
+        this.operationMode = operationMode;
     }
 }

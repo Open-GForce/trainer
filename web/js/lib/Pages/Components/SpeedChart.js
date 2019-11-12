@@ -23,7 +23,7 @@ class SpeedChart
         this.container = $('#speedChart');
 
         let outerWidth = $('.speed.segment').width();
-        let containerWidth = this.container.height() * 1.2;
+        let containerWidth = this.container.height() * 1.08;
         let margin = (outerWidth - containerWidth) / 2;
 
         this.container.css('width',  containerWidth + 'px');

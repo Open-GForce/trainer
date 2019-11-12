@@ -73,6 +73,7 @@ class Websocket
             message.data['rotationSpeed'],
             message.data.maxSpeed,
             message.data.targetSpeed,
+            message.data.operationMode
         );
 
         this.iteration++;

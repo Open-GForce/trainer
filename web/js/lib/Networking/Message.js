@@ -13,6 +13,7 @@ class Message
 
 Message.REQUEST_TYPE_MAX_SPEED      = 'setMaxSpeed';
 Message.REQUEST_TYPE_DIRECTION      = 'setRotationDirection';
+Message.REQUEST_TYPE_OPERATION_MODE = 'setOperationMode';
 Message.REQUEST_TYPE_RELEASE_STATUS = 'setReleaseStatus';
 
 Message.REQUEST_GET_USER_SETTINGS     = 'getUserSettings';
