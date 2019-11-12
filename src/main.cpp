@@ -82,7 +82,7 @@ void runControllerMode(bool CANDummyMode)
     std::thread t2([brakeThread] {
         brakeThread->start();
     });
-    //brakeThread->waitUntilStarted();
+    brakeThread->waitUntilStarted();
     logger->info("Brake input thread started");
 
     std::thread t3([processingThread, brakeThread, webSocketThread] {

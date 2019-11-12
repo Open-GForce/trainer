@@ -165,6 +165,8 @@ class OperationsPage extends AbstractPage
         });
 
         this.releaseButton.click(() => {
+            this.releaseButton.addClass('disabled').addClass('loading');
+
             let message = new Message(Message.REQUEST_TYPE_RELEASE_STATUS, {
                 released: !this.released
             });
@@ -307,7 +309,14 @@ class OperationsPage extends AbstractPage
      */
     _renderReleaseButton(status)
     {
-        this.released = status.engineStatus === undefined ? false : status.engineStatus.isFullyReleased();
+        let released = status.engineStatus === undefined ? false : status.engineStatus.isFullyReleased();
+        let statusChanged = released !== this.released;
+
+        if (statusChanged && this.releaseButton.hasClass('loading')) {
+            this.releaseButton.removeClass('loading').removeClass('disabled');
+        }
+
+        this.released = released;
 
         if (this.released) {
             this.releaseButton
