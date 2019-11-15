@@ -39,7 +39,7 @@ void CANSocket::open()
     usleep(50000);
     std::string response = this->fetch();
 
-    if (response != "< hi >< ok >< ok >") {
+    if (response.substr(18, 0) != "< hi >< ok >< ok >") {
         throw RuntimeException("Handshake failed. Response[" + std::to_string(response.size()) + "]: " + response);
     }
 }

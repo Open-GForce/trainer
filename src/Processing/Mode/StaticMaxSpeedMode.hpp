@@ -1,7 +1,7 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_STATICMAXSPEEDMODE_HPP
 #define GFORCE_TRAINER_CONTROLLER_STATICMAXSPEEDMODE_HPP
 
-#include <c++/7/string>
+#include <string>
 #include "OperationMode.hpp"
 
 namespace GForce::Processing::Mode {
