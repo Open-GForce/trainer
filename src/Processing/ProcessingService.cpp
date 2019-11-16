@@ -70,7 +70,7 @@ void ProcessingService::sync(ControlStatus *controlStatus, double rotationSpeed)
 
 void ProcessingService::setFirstBrakeInput(int input)
 {
-    if (this->direction == RotationDirection::right) {
+    if (this->direction == RotationDirection::left) {
         this->innerBrake = input;
     } else {
         this->outerBrake = input;
@@ -79,7 +79,7 @@ void ProcessingService::setFirstBrakeInput(int input)
 
 void ProcessingService::setSecondBrakeInput(int input)
 {
-    if (this->direction == RotationDirection::right) {
+    if (this->direction == RotationDirection::left) {
         this->outerBrake = input;
     } else {
         this->innerBrake = input;

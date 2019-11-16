@@ -3,6 +3,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <iostream>
+#include <fcntl.h>
 #include "CANSocket.hpp"
 #include "../../Utils/Exceptions/RuntimeException.hpp"
 #include "MessageFactory.hpp"
@@ -39,9 +40,11 @@ void CANSocket::open()
     usleep(50000);
     std::string response = this->fetch();
 
-    if (response.substr(18, 0) != "< hi >< ok >< ok >") {
+    if (response.substr(0, 18) != "< hi >< ok >< ok >") {
         throw RuntimeException("Handshake failed. Response[" + std::to_string(response.size()) + "]: " + response);
     }
+
+    fcntl(this->handle, F_SETFL, fcntl(this->handle, F_GETFL, 0) | O_NONBLOCK);
 }
 
 void CANSocket::send(MessageInterface *message)
@@ -65,7 +68,7 @@ std::string CANSocket::fetch()
 
     int status = recv(this->handle, buffer, sizeof(buffer), 0);
     if (status < 0) {
-        throw RuntimeException("CAN socket => call to recv() failed with RC " + std::to_string(status));
+        return "";
     }
 
     std::string data = buffer;

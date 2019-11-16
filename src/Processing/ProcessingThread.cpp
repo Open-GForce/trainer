@@ -27,10 +27,17 @@ void ProcessingThread::start(GForce::Processing::BrakeInput::BrakeInputReceiveTh
     std::chrono::milliseconds period(this->cycleInterval);
     std::chrono::high_resolution_clock::time_point next;
 
+    bool firstLoop = true;
+
     while (!stopped) {
         next = std::chrono::high_resolution_clock::now() + period;
         this->loop();
         std::this_thread::sleep_until(next);
+
+        if (firstLoop) {
+            this->logger->info("First loop executed");
+            firstLoop = false;
+        }
     }
 }
 
