@@ -1,6 +1,7 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_BRAKEINPUTTRANSMISSIONTHREAD_HPP
 #define GFORCE_TRAINER_CONTROLLER_BRAKEINPUTTRANSMISSIONTHREAD_HPP
 
+#include <vector>
 #include "../../Sensors/ADCSensorInterface.hpp"
 #include "../../Utils/Logging/LoggerInterface.hpp"
 #include "../../ACL/TCP/TCPConnectionInterface.hpp"
@@ -29,10 +30,26 @@ class BrakeInputTransmissionThread
          */
         bool stopped;
 
+        /**
+         * Lists with input values
+         */
+        std::vector<int> firstBrake;
+        std::vector<int> secondBrake;
+
+        /**
+         * Length of inputs used for normalizing/averaging
+         */
+        int normalizeLength;
+
         void connect();
         void loop();
 
         static int scaleSignedInput(int value);
+
+        /**
+         * @return Average of the given list
+         */
+        static int calcAverage(std::vector<int> values);
 
     public:
         BrakeInputTransmissionThread(LoggerInterface *logger, ADCSensorInterface *sensor);

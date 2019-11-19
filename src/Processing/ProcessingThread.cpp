@@ -7,8 +7,8 @@ ProcessingThread::ProcessingThread(LoggerInterface* logger, ProcessingService *s
 {
     this->brakeInputThread = nullptr;
     this->websocketThread = nullptr;
-    this->cycleInterval = 10;
-    this->statusInterval = 4;
+    this->cycleInterval = 20;
+    this->statusInterval = 2;
     this->lastStatusSent = 0;
     this->stopped = false;
 
