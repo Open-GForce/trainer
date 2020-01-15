@@ -1,5 +1,4 @@
-#include "../../../../catch2/catch.hpp"
-#include "../../../../fake_it/single_header/catch/fakeit.hpp"
+#include "../../../includes/catch2/catch.hpp"
 #include "../../../src/ACL/CAN/MessageFactory.hpp"
 
 using namespace GForce::ACL::CAN;

@@ -1,5 +1,5 @@
-#include "../../../catch2/catch.hpp"
-#include "../../../fake_it/single_header/catch/fakeit.hpp"
+#include "../../includes/catch2/catch.hpp"
+#include "../../includes/fake_it/single_header/catch/fakeit.hpp"
 #include "../../src/Sensors/ADS1115.hpp"
 
 using namespace GForce::ACL::I2C;

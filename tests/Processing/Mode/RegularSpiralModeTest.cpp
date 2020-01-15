@@ -1,5 +1,5 @@
-#include "../../../../catch2/catch.hpp"
-#include "../../../../fake_it/single_header/catch/fakeit.hpp"
+#include "../../../includes/catch2/catch.hpp"
+#include "../../../includes/fake_it/single_header/catch/fakeit.hpp"
 #include "../../../src/Processing/Mode/RegularSpiralMode.hpp"
 
 using namespace GForce::Processing::Mode;

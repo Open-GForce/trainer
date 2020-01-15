@@ -1,5 +1,5 @@
-#include "../../../../catch2/catch.hpp"
-#include "../../../../fake_it/single_header/catch/fakeit.hpp"
+#include "../../../includes/catch2/catch.hpp"
+#include "../../../includes/fake_it/single_header/catch/fakeit.hpp"
 #include "../../../src/API/Websocket/RequestRouter.hpp"
 #include "../../../src/Utils/Assertions/AssertionFailedException.hpp"
 #include "../../../src/Processing/ProcessingStatus.hpp"
