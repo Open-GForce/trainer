@@ -141,4 +141,23 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
         CHECK(status->getRotationDirection() == RotationDirection::right);
         CHECK(status->getOperationMode() == "regularSpiral");
     }
+
+    SECTION("Rotation speed of processing status is always absolute")
+    {
+        double rotationSpeed = -500;
+        fakeit::When(Method(driveServiceMock, sync)).Return(new BusResponse(new EngineStatus(true, false, false, false, false, false, false, false), rotationSpeed));
+
+        service->setOperationMode(new RegularSpiralMode());
+        service->setDirection(RotationDirection::right);
+        service->setSecondBrakeInput(115); // Inner brake => 0.4118
+        service->setFirstBrakeInput(55); // Outer brake => 0.3333
+        service->setMaxSpeed(3500);
+        service->setReleased(true);
+        service->run();
+
+        auto status = service->getStatus();
+
+        REQUIRE(status->getEngineStatus() != nullptr);
+        CHECK(status->getRotationSpeed() == 500);
+    }
 }

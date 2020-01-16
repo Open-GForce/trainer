@@ -147,6 +147,25 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
         CHECK(response->getRotationSpeed() == Approx(4.7762));
     }
 
+    SECTION("Correct response decoding => negative speed")
+    {
+        /**
+         * 2^16 - 500 = 65036 => 0xFE0C
+         * 500 / scale factor = ~ 3.0012
+         */
+
+        fakeit::When(Method(socketMock, receive)).AlwaysReturn({
+            new CAN::Message(0x182, {0x07, 0x04, 0x0c, 0xFE})
+        });
+
+        service->setControlStatus(ControlStatus::release());
+        service->setRotationSpeed(0);
+        auto response = service->sync();
+
+        REQUIRE(response != nullptr);
+        CHECK(response->getRotationSpeed() == Approx(-3.000120005));
+    }
+
     SECTION("Heartbeat sent")
     {
         int callCount = 0;
