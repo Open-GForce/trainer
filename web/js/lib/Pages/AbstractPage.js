@@ -10,9 +10,13 @@ class AbstractPage
 
     start()
     {
-        app.templates.load(this.mainTemplateName, (template) => {
-            $('#content').html(template);
-            this._initialize();
+        app.templates.load(this.mainTemplateName, (mainTemplate) => {
+            app.templates.load('connectionDimmer', (dimmerTemplate) => {
+                let template = mainTemplate + dimmerTemplate;
+                $('#content').html(template);
+                app.socket.onPageChange();
+                this._initialize();
+            });
         })
     }
 
