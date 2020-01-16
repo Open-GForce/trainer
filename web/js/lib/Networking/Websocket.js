@@ -168,6 +168,7 @@ class Websocket
         let rotationSpeed = message.data['rotationSpeed'] < 1000 || message.data['rotationSpeed'] > 0
             ? message.data['rotationSpeed']
             : 0;
+        console.log(rotationSpeed);
         
         let status = new SystemStatus(
             message.data.engineStatus !== undefined ? new EngineStatus(message.data.engineStatus) : undefined,

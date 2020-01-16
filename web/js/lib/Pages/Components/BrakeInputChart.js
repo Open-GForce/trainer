@@ -4,7 +4,7 @@ class BrakeInputChart extends BarChart
     {
         super("Steuerimpulse");
 
-        this.labels = ['Außen', 'Innen'];
+        this.labels = ['Aussen', 'Innen'];
         this.colors = ['#b71c1c', '#689f38', '#1976d2'];
         this.data = [0, 0];
     }

@@ -253,7 +253,7 @@ class OperationsPage extends AbstractPage
                     inverterColor: status.engineStatus.inverterReady ? 'green' : 'red',
                     fieldBusText: status.engineStatus.powerAmplifierReleased ? 'Feldbus bereit' : 'Feldbus deaktiviert',
                     fieldBusColor: status.engineStatus.inputDataReady ? 'green' : 'red',
-                    malfunctionText: status.engineStatus.malfunction ? 'Störung' : 'Keine Störung',
+                    malfunctionText: status.engineStatus.malfunction ? 'Stoerung' : 'Keine Stoerung',
                     malfunctionColor: status.engineStatus.malfunction ? 'red' : 'green',
                 });
             }
