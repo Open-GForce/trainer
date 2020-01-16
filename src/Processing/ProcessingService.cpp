@@ -1,4 +1,3 @@
-#include <iostream>
 #include "ProcessingService.hpp"
 #include "Mode/RegularSpiralMode.hpp"
 
@@ -93,9 +92,11 @@ void ProcessingService::setSecondBrakeInput(int input)
 
 ProcessingStatus *ProcessingService::getStatus()
 {
+    double rotationSpeed = std::abs(this->status->getRotationSpeed());
+
     return new ProcessingStatus(
             this->status != nullptr ? this->status->getEngineStatus()->clone() : nullptr,
-            this->status != nullptr ? this->status->getRotationSpeed() : -1,
+            this->status != nullptr ? rotationSpeed : -1,
             this->maxSpeed,
             this->calcTargetSpeed(),
             this->innerBrake,

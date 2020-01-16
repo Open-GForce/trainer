@@ -27,6 +27,9 @@ BusResponse* BusResponse::fromMessage(CAN::MessageInterface* message)
     );
 
     double speed = message->getData()[2] | (message->getData()[3] << 8);
+    if (speed > 32768) {
+        speed =  speed - 65536;
+    }
 
     speed /= SPEED_SCALE_FACTOR;
 
