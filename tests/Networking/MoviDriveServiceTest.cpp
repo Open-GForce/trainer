@@ -58,10 +58,10 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
         /**
          * Speed conversion:
          * PDO resolution: 1 digit = 1/SPEED_SCALE_FACTOR/min
-         * So -1000 1/min => -5000
+         * So -50 1/min => -8333
          *
-         * PDO is using 16bit signed, so 65536 - 5000 => 60536
-         * 60536 => 0xEC78
+         * PDO is using 16bit signed, so 65536 - 8333 => 57203
+         * 57203 => 0xDF73
          * Low byte is sent first
          */
 
@@ -72,7 +72,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                    CHECK(message->toFrame() == "< send 202 6 06 00 FC 74 00 00 >");
+                    CHECK(message->toFrame() == "< send 202 6 06 00 73 DF 00 00 >");
                     break;
                 case 2:
                     CHECK(message->toFrame() == "< send 080 0 >");
@@ -83,7 +83,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
         });
 
         service->setControlStatus(ControlStatus::release());
-        service->setRotationSpeed(-1000);
+        service->setRotationSpeed(-50);
         service->sync();
 
         fakeit::Verify(Method(socketMock, send)).Exactly(2);

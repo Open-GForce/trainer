@@ -50,8 +50,13 @@ double ProcessingService::calcTargetSpeed()
     double innerValue = this->innerBrakeRange->getLimitedPercentage(this->innerBrake);
     double outerValue = this->outerBrakeRange->getLimitedPercentage(this->outerBrake);
 
-    double throttle = this->operationMode->getTargetSpeed(innerValue, outerValue);
-    return throttle * this->maxSpeed;
+    double speed = this->operationMode->getTargetSpeed(innerValue, outerValue);
+    speed = speed * this->maxSpeed;
+
+    // Direction is determined via sign of speed
+    return this->direction == RotationDirection::right
+           ? speed
+           : 0 - speed;
 }
 
 void ProcessingService::sync(ControlStatus *controlStatus, double rotationSpeed)
