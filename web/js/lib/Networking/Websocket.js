@@ -97,6 +97,10 @@ class Websocket
 
     _renderDimmer()
     {
+        if (this.dimmer === undefined) {
+            return;
+        }
+
         if (this.connected) {
             this.dimmer.removeClass('active');
         } else {
@@ -137,12 +141,16 @@ class Websocket
      */
     _handleSystemStatus(message)
     {
+        let rotationSpeed = message.data['rotationSpeed'] < 1000 || message.data['rotationSpeed'] > 0
+            ? message.data['rotationSpeed']
+            : 0;
+        
         let status = new SystemStatus(
             message.data.engineStatus !== undefined ? new EngineStatus(message.data.engineStatus) : undefined,
             new BrakeInput(message.data.innerBrake),
             new BrakeInput(message.data.outerBrake),
             message.data['rotationDirection'],
-            message.data['rotationSpeed'],
+            rotationSpeed,
             message.data.maxSpeed,
             message.data.targetSpeed,
             message.data.operationMode

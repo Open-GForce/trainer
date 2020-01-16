@@ -32,7 +32,7 @@ class SpeedChart
         this.targetChart = Gauge(
             this.container[0], {
                 max: 3400,
-                value: 1800,
+                value: 0,
                 showValue: false,
             },
         );
@@ -40,7 +40,7 @@ class SpeedChart
         this.currentChart = Gauge(
             this.container[0], {
                 max: 3400,
-                value: 1400,
+                value: 0,
                 showValue: true,
                 label: function(value) {
                     return Math.round(value) + ' 1/min'
