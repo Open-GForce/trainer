@@ -1,6 +1,7 @@
 #include "../../../includes/catch2/catch.hpp"
 #include "../../../includes/fake_it/single_header/catch/fakeit.hpp"
 #include "../../../src/API/Websocket/RequestRouter.hpp"
+#include "../../../src/API/Controller/HeartbeatResponse.hpp"
 #include "../../../src/Utils/Assertions/AssertionFailedException.hpp"
 #include "../../../src/Processing/ProcessingStatus.hpp"
 
@@ -174,5 +175,20 @@ TEST_CASE( "Request router tests", "[Websocket]" )
 
         REQUIRE(response != nullptr);
         CHECK(response->toResponse()->getType() == "userSettings");
+    }
+
+    SECTION("ConfigurationController->handleHeartbeat() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "heartbeat";
+
+        fakeit::When(Method(operationsControllerMock, handleHeartbeat)).AlwaysDo([] () {
+            return new HeartbeatResponse();
+        });
+
+        auto response = router->handle(data.dump());
+
+        REQUIRE(response != nullptr);
+        CHECK(response->toResponse()->getType() == "heartbeat");
     }
 }

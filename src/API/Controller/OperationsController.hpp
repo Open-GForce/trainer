@@ -3,6 +3,7 @@
 
 #include "../../Processing/ProcessingThread.hpp"
 #include "../Websocket/Request.hpp"
+#include "HeartbeatResponse.hpp"
 
 using namespace GForce::Processing;
 using namespace GForce::API::Websocket;
@@ -18,12 +19,13 @@ class OperationsController
         explicit OperationsController(ProcessingThread *processingThread);
 
         /**
-         * Ownership of request stays at caller
-         */
+        * Ownership of request stays at caller
+        */
         virtual void handleSpeedLimit(Request* request);
         virtual void handleRotationDirection(Request* request);
         virtual void handleReleaseStatus(Request* request);
         virtual void handleOperationMode(Request* request);
+        virtual HeartbeatResponse* handleHeartbeat();
 
 };
 

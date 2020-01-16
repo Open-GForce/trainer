@@ -1,6 +1,7 @@
 #include "../../../includes/catch2/catch.hpp"
 #include "../../../includes/fake_it/single_header/catch/fakeit.hpp"
 #include "../../../src/API/Controller/OperationsController.hpp"
+#include "../../../src/API/Controller/HeartbeatResponse.hpp"
 #include "../../../src/Utils/Assertions/AssertionFailedException.hpp"
 
 using namespace GForce::API::Controller;
@@ -194,5 +195,13 @@ TEST_CASE( "OperationsController tests", "[Controller]" )
         } catch (AssertionFailedException &e) {
             CHECK(e.getMessage() == "Invalid mode identifier given");
         }
+    }
+
+    SECTION("Correct heartbeat handling")
+    {
+        auto request = new Request("heartbeat", {});
+        HeartbeatResponse* response = controller->handleHeartbeat();
+
+        REQUIRE(response != nullptr);
     }
 }

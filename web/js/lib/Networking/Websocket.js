@@ -21,6 +21,11 @@ class Websocket
          * @type {jquery}
          */
         this.dimmer = undefined;
+
+        /**
+         * @type {int}
+         */
+        this.heartBeatTimeout = undefined;
     }
 
     start() {
@@ -37,6 +42,19 @@ class Websocket
                 handler._connect();
             }
         }, 3000);
+        
+        // Every 2s a heartbeat is sent with a timeout of 1s
+        setInterval(function () {
+            if (!handler.connected) {
+                return;
+            }
+
+            handler.send(new Message("heartbeat", {}));
+            handler.heartBeatTimeout = setTimeout(function () {
+                handler.heartBeatTimeout = undefined;
+                handler._disconnect();
+            }, 1000);
+        }, 2000);
     }
 
     /**
@@ -61,14 +79,7 @@ class Websocket
     _connect()
     {
         let handler = this;
-        if (this.connection !== undefined) {
-            this.connection.onopen = function () {};
-            this.connection.onerror = function () {};
-            this.connection.onmessage = function () {};
-            this.connection.onclose = function () {};
-            this.connection.close();
-        }
-
+        this._disconnect();
         this.connection = new WebSocket('ws://192.168.2.201:8763');
 
         this.connection.onopen = function ()
@@ -93,6 +104,17 @@ class Websocket
         {
             handler._handleMessage(message.data);
         };
+    }
+
+    _disconnect()
+    {
+        if (this.connection !== undefined) {
+            this.connection.onopen = function () {};
+            this.connection.onerror = function () {};
+            this.connection.onmessage = function () {};
+            this.connection.onclose = function () {};
+            this.connection.close();
+        }
     }
 
     _renderDimmer()
@@ -130,6 +152,8 @@ class Websocket
                 return this._handleSystemStatus(data);
             case "userSettings":
                 return this._handleUserSettings(data);
+            case "heartbeat":
+                return this._handleHeartbeat();
             default:
                 console.log("Received unknown message type " + type);
         }
@@ -168,5 +192,11 @@ class Websocket
     {
         let settings = new UserSettings(message.data);
         app.currentPage.onUserSettings(settings);
+    }
+
+    _handleHeartbeat()
+    {
+        clearTimeout(this.heartBeatTimeout);
+        this.heartBeatTimeout = undefined;
     }
 }

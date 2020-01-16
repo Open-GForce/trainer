@@ -3,6 +3,7 @@
 #include "../../Utils/Assertions/AssertionFailedException.hpp"
 #include "../../Processing/Mode/RegularSpiralMode.hpp"
 #include "../../Processing/Mode/StaticMaxSpeedMode.hpp"
+#include "HeartbeatResponse.hpp"
 
 using namespace GForce::Utils::Assertions;
 using namespace GForce::API::Controller;
@@ -54,4 +55,9 @@ void Controller::OperationsController::handleOperationMode(Request *request)
     }
 
     throw AssertionFailedException("Invalid mode identifier given");
+}
+
+HeartbeatResponse* Controller::OperationsController::handleHeartbeat()
+{
+    return new HeartbeatResponse();
 }

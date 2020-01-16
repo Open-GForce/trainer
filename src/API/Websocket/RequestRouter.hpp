@@ -21,6 +21,8 @@ class RequestRouter : public RouterInterface
     const std::string TYPE_SET_CONFIG_INNER_BRAKE = "setInnerBrakeRange";
     const std::string TYPE_SET_CONFIG_OUTER_BRAKE = "setOuterBrakeRange";
 
+    const std::string TYPE_HEARTBEAT = "heartbeat";
+
     private:
         OperationsController* operationsController;
         ConfigurationController* configurationController;
@@ -28,8 +30,6 @@ class RequestRouter : public RouterInterface
         ResponseCastInterface* route(Request* request);
 
     public:
-        explicit RequestRouter(OperationsController *operationsController);
-
         RequestRouter(OperationsController *operationsController, ConfigurationController *configurationController);
 
         /**

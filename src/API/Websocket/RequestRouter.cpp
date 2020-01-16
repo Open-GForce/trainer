@@ -64,5 +64,9 @@ ResponseCastInterface* RequestRouter::route(Request *request)
         return this->configurationController->getUserSettings();
     }
 
+    if (request->getType() == RequestRouter::TYPE_HEARTBEAT) {
+        return this->operationsController->handleHeartbeat();
+    }
+
     throw RuntimeException("No route defined for " + request->getType());
 }
