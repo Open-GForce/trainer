@@ -9,6 +9,8 @@ set (CMAKE_BUILD_TYPE Debug)
 include_directories(../includes/can-utils)
 include_directories(../includes/websocketpp)
 include_directories(../includes/nlohmann_json)
+include_directories(../includes/spdlog)
+include_directories(../includes/rang)
 
 set(SOURCES
         src/ACL/I2C/Device.cpp
