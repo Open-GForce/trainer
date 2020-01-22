@@ -42,7 +42,8 @@ void runControllerMode(bool CANDummyMode)
 {
     auto logger = new StandardLogger();
     std::string canMode = (CANDummyMode ? "Dummy" : "Regular");
-    logger->info("Running main controller mode [" + canMode + " CAN]");
+    logger->setGlobalContext("main", "main_controller");
+    logger->info(LOG_CHANNEL_MAIN, "Running main controller mode [" + canMode + " CAN]", {});
 
     auto configRepository = new ConfigRepository();
     auto userConfig = configRepository->loadUserSettings();
@@ -77,18 +78,18 @@ void runControllerMode(bool CANDummyMode)
     std::thread t1([webSocketThread] {
         webSocketThread->start();
     });
-    logger->info("Websocket thread started");
+    logger->info(LOG_CHANNEL_MAIN, "Websocket thread started", {});
 
     std::thread t2([brakeThread] {
         brakeThread->start();
     });
     brakeThread->waitUntilStarted();
-    logger->info("Brake input thread started");
+    logger->info(LOG_CHANNEL_MAIN, "Brake input thread started", {});
 
     std::thread t3([processingThread, brakeThread, webSocketThread] {
         processingThread->start(brakeThread, webSocketThread);
     });
-    logger->info("Processing thread started");
+    logger->info(LOG_CHANNEL_MAIN, "Processing thread started", {});
 
     while (true) {
         usleep(50000);
@@ -98,7 +99,8 @@ void runControllerMode(bool CANDummyMode)
 void runBrakeInputMode()
 {
     auto logger = new StandardLogger();
-    logger->info("Running brake input mode");
+    logger->setGlobalContext("mode", "brake_input");
+    logger->info(LOG_CHANNEL_MAIN, "Running brake input mode", {});
 
     auto device = new Device(1, 0x48);
     device->open();

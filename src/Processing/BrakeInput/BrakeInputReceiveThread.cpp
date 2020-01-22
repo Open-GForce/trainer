@@ -3,6 +3,7 @@
 #include <exception>
 #include "../../ACL/TCP/BoostTCPSocket.hpp"
 #include "BrakeInputMessage.hpp"
+#include "../../Utils/Logging/StandardLogger.hpp"
 
 using namespace GForce::Processing::BrakeInput;
 
@@ -19,9 +20,9 @@ BrakeInputReceiveThread::BrakeInputReceiveThread(LoggerInterface *logger): logge
 void BrakeInputReceiveThread::start()
 {
     if (this->socket == nullptr) {
-        logger->info("Listening on port 8519 for brake inputs, waiting for connections");
+        logger->info(LOG_CHANNEL_BRAKE_INPUT_RX, "Listening on port 8519 for brake inputs, waiting for connections", {});
         this->socket = BoostTCPSocket::listen(8519);
-        logger->info("Client connected!");
+        logger->info(LOG_CHANNEL_BRAKE_INPUT_RX, "Client connected!", {});
     }
 
     this->startMutex.unlock();
@@ -35,7 +36,12 @@ void BrakeInputReceiveThread::start()
             this->secondBrake = message.getSecondBrake();
             this->messageCount++;
         } catch (std::exception &e) {
-            this->logger->error("Error while receiving brake input message => " + std::string(e.what()));
+            this->logger->error(LOG_CHANNEL_BRAKE_INPUT_RX, "Error while receiving brake input message => " + std::string(e.what()), {
+                    {"messageCount", this->messageCount},
+                    {"lastFirstBrakeInput", this->firstBrake},
+                    {"lastSecondBrakeInput", this->secondBrake},
+                    {"exceptionMessage", std::string(e.what())}
+            });
         }
     }
 }

@@ -2,6 +2,7 @@
 #include "../../Utils/Exceptions/RuntimeException.hpp"
 #include "../../Utils/Assertions/AssertionFailedException.hpp"
 #include "../../Utils/Exceptions/InvalidArgumentException.hpp"
+#include "../../Utils/Logging/StandardLogger.hpp"
 
 using namespace GForce::Utils::Exceptions;
 using namespace GForce::Utils::Assertions;
@@ -34,20 +35,20 @@ void Server::onMessage(const connection_hdl &connection, const server::message_p
     Response* response = nullptr;
 
     try {
-        responseSource = this->router->handle(message->get_payload());
 
+        responseSource = this->router->handle(message->get_payload());
         if (responseSource != nullptr) {
             response = responseSource->toResponse();
             this->broadcast(response);
         }
     } catch (RuntimeException &e) {
-        this->logger->error("Error[RuntimeException] while handling websocket request => " + e.getMessage());
+        this->logException("RuntimeException", e.getMessage(), message->get_payload());
     } catch (AssertionFailedException &e) {
-        this->logger->error("Error[AssertionFailedException] while handling websocket request => " + e.getMessage());
+        this->logException("AssertionFailedException", e.getMessage(), message->get_payload());
     } catch (InvalidArgumentException &e) {
-        this->logger->error("Error[InvalidArgumentException] while handling websocket request => " + e.getMessage());
+        this->logException("InvalidArgumentException", e.getMessage(), message->get_payload());
     } catch (std::exception &e) {
-        this->logger->error("Error[Unknown] while handling websocket request => " + std::string(e.what()));
+        this->logException("Unknown", std::string(e.what()), message->get_payload());
     }
 
     delete responseSource;
@@ -68,4 +69,13 @@ void Server::broadcast(Response *response)
     for (const auto& connection : this->connections) {
         this->websocket.send(connection, data, websocketpp::frame::opcode::text);
     }
+}
+
+void Server::logException(const std::string& exceptionClass, const std::string &exceptionMessage, const std::string &requestPayload)
+{
+    this->logger->error(LOG_CHANNEL_WEBSOCKET, "Error[" + exceptionClass + "] while handling websocket request => " + exceptionMessage, {
+            {"exceptionClass", exceptionClass},
+            {"exceptionMessage", exceptionMessage},
+            {"requestPayload", requestPayload}
+    });
 }

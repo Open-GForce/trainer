@@ -2,6 +2,7 @@
 #define GFORCE_TRAINER_CONTROLLER_CONTROLSTATUS_HPP
 
 #include <cstdint>
+#include <json.hpp>
 
 namespace GForce::Networking {
 
@@ -43,6 +44,8 @@ class ControlStatus
         static ControlStatus* hardBrake();
         static ControlStatus* holdingBrake();
         static ControlStatus* holdingControl();
+
+        nlohmann::json toJson();
 
         bool isSoftBrakeActivated() const;
 

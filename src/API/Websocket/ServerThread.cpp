@@ -1,4 +1,5 @@
 #include "ServerThread.hpp"
+#include "../../Utils/Logging/StandardLogger.hpp"
 
 using namespace GForce::API::Websocket;
 
@@ -37,7 +38,10 @@ void ServerThread::sendMessage(ResponseCastInterface *message)
         response = message->toResponse();
         this->server->broadcast(response);
     } catch (std::exception &e) {
-        this->logger->error("Failed broadcasting message => " + std::string(e.what()));
+        this->logger->error(LOG_CHANNEL_WEBSOCKET, "Failed broadcasting message => " + std::string(e.what()), {
+                {"exceptionMessage", std::string(e.what())},
+                {"responseType", (response != nullptr ? response->getType() : "null")},
+        });
     }
 
     delete message;
