@@ -33,8 +33,8 @@ class BrakeInputTransmissionThread
         /**
          * Lists with input values
          */
-        std::vector<int> firstBrake;
-        std::vector<int> secondBrake;
+        std::vector<int> firstBrakeHistory;
+        std::vector<int> secondBrakeHistory;
 
         /**
          * Length of inputs used for normalizing/averaging
@@ -49,7 +49,7 @@ class BrakeInputTransmissionThread
         /**
          * @return Average of the given list
          */
-        static int calcAverage(std::vector<int> values);
+        static int calcAverage(const std::vector<int>& values);
 
     public:
         BrakeInputTransmissionThread(LoggerInterface *logger, ADCSensorInterface *sensor);

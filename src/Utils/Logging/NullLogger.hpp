@@ -9,9 +9,6 @@ namespace GForce::Utils::Logging {
 class NullLogger : public LoggerInterface
 {
     public:
-        void error(std::string message) override {}
-        void info(std::string message) override {}
-
         void setGlobalContext(std::string key, std::string value) override {}
 
         void info(const std::string &channel, const std::string &message, const nlohmann::json &context) override {}

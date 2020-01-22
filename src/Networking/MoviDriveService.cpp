@@ -4,6 +4,7 @@
 #include <cmath>
 #include "MoviDriveService.hpp"
 #include "../ACL/CAN/Message.hpp"
+#include "../Utils/Logging/StandardLogger.hpp"
 
 using namespace GForce::Networking;
 
@@ -43,8 +44,15 @@ BusResponse* MoviDriveService::sync()
 
         this->errorCount = 0;
     } catch (std::exception &e) {
-        this->logger->error("Communication error: " + std::string(e.what()));
         this->errorCount++;
+        this->logger->error(LOG_CHANNEL_MOVI_DRIVE, "Communication error: " + std::string(e.what()), {
+                {"exceptionMessage", std::string(e.what())},
+                {"errorCount", errorCount},
+                {"errorThreshold", errorThreshold},
+                {"lastHeartbeat", lastHeartbeat},
+                {"heartbeatInterval", heartbeatInterval},
+                {"controlStatus", (this->controlStatus != nullptr ? this->controlStatus->toJson() : "null")},
+        });
     }
 
     this->handleErrors();

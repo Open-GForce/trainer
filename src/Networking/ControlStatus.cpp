@@ -50,3 +50,15 @@ ControlStatus* ControlStatus::holdingControl() {
 bool ControlStatus::isSoftBrakeActivated() const {
     return softBrakeActivated;
 }
+
+nlohmann::json ControlStatus::toJson()
+{
+    nlohmann::json data = {
+            {"softBrakeActivated", softBrakeActivated},
+            {"hardBrakeActivated", hardBrakeActivated},
+            {"holdingBrakeActivated", holdingBrakeActivated},
+            {"holdControlActivated", holdControlActivated},
+    };
+
+    return data;
+}

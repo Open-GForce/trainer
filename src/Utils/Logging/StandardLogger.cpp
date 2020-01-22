@@ -14,20 +14,9 @@ StandardLogger::StandardLogger()
 
     // 5 generations of max. 50 MiB size each
     this->fileLogger = spdlog::rotating_logger_mt("fileLogger", "/var/log/gforce/controller.log", 1048576 * 20, 5);
-    this->fileLogger->error("test big");
     this->fileLogger->set_level(spdlog::level::debug);
 
     spdlog::flush_every(std::chrono::seconds(3));
-}
-
-void StandardLogger::error(std::string message)
-{
-    this->error(LOG_CHANNEL_UNKNOWN, message, {});
-}
-
-void StandardLogger::info(std::string message)
-{
-    this->info(LOG_CHANNEL_UNKNOWN, message, {});
 }
 
 void StandardLogger::setGlobalContext(std::string key, std::string value)

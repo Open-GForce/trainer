@@ -30,6 +30,8 @@ class Server
         server websocket;
         con_list connections;
 
+        void logException(const std::string& exceptionClass, const std::string &exceptionMessage, const std::string &requestPayload);
+
     public:
         Server(RouterInterface *router, LoggerInterface *logger);
 

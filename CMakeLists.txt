@@ -48,7 +48,8 @@ set(SOURCES
         src/ACL/TCP/BoostTCPConnection.cpp
         src/Processing/BrakeInput/BrakeInputTransmissionThread.cpp
         src/Processing/Mode/RegularSpiralMode.cpp
-        src/Processing/Mode/StaticMaxSpeedMode.cpp)
+        src/Processing/Mode/StaticMaxSpeedMode.cpp
+        src/Utils/Algorithms.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -70,7 +71,8 @@ set(TESTS
         tests/Processing/BrakeInput/BrakeInputMessageTest.cpp
         tests/Processing/BrakeInput/BrakeInputTransmissionThreadTest.cpp
         tests/Processing/Mode/RegularSpiralModeTest.cpp
-        tests/Processing/Mode/StaticMaxSpeedModeTest.cpp)
+        tests/Processing/Mode/StaticMaxSpeedModeTest.cpp
+        tests/General/AlgorithmsTest.cpp)
 
 FIND_PACKAGE( Boost 1.62 COMPONENTS system filesystem REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )

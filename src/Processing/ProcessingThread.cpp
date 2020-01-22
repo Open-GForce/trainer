@@ -1,5 +1,6 @@
 #include <thread>
 #include "ProcessingThread.hpp"
+#include "../Utils/Logging/StandardLogger.hpp"
 
 using namespace GForce::Processing;
 
@@ -35,7 +36,7 @@ void ProcessingThread::start(GForce::Processing::BrakeInput::BrakeInputReceiveTh
         std::this_thread::sleep_until(next);
 
         if (firstLoop) {
-            this->logger->info("First loop executed");
+            this->logger->info(LOG_CHANNEL_PROCESSING, "First loop executed", {});
             firstLoop = false;
         }
     }
@@ -55,9 +56,19 @@ void ProcessingThread::loop()
 
     // Checking if timeout for brake input is reached
     if (this->brakeInputEmptyCount >= this->brakeInputTimeoutThreshold) {
+        int lastFirstInput = firstInput;
+        int lastSecondInput = secondInput;
+
         firstInput = 0;
         secondInput = 0;
-        this->logger->error("Reached timeout for brake input, setting brake values to zero");
+
+        this->logger->error(LOG_CHANNEL_PROCESSING, "Reached timeout for brake input, setting brake values to zero", {
+            {"lastBrakeInputMessageCount", this->lastBrakeInputMessageCount},
+            {"brakeInputEmptyCount", this->brakeInputEmptyCount},
+            {"brakeInputTimeoutThreshold", this->brakeInputTimeoutThreshold},
+            {"lastFirstBrakeInput", lastFirstInput},
+            {"lastSecondBrakeInput", lastSecondInput},
+        });
     }
 
     this->service->setFirstBrakeInput(firstInput);

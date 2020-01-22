@@ -7,7 +7,13 @@
 
 namespace GForce::Utils::Logging {
 
-static const std::string LOG_CHANNEL_UNKNOWN = "unknown";
+static const std::string LOG_CHANNEL_UNKNOWN        = "unknown";
+static const std::string LOG_CHANNEL_MAIN           = "main";
+static const std::string LOG_CHANNEL_PROCESSING     = "processing";
+static const std::string LOG_CHANNEL_BRAKE_INPUT_RX = "brakeInputRX";
+static const std::string LOG_CHANNEL_BRAKE_INPUT_TX = "brakeInputTX";
+static const std::string LOG_CHANNEL_WEBSOCKET      = "websocket";
+static const std::string LOG_CHANNEL_MOVI_DRIVE     = "moviDrive";
 
 class StandardLogger : public LoggerInterface
 {
@@ -38,9 +44,6 @@ class StandardLogger : public LoggerInterface
 
     public:
         StandardLogger();
-
-        void error(std::string message) override;
-        void info(std::string message) override;
 
         void setGlobalContext(std::string key, std::string value) override;
 

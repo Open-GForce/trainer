@@ -10,15 +10,6 @@ class LoggerInterface
 {
     public:
         /**
-         * @deprecated
-         */
-        virtual void info(std::string message) = 0;
-        /**
-         * @deprecated
-         */
-        virtual void error(std::string message) = 0;
-
-        /**
          * Sets a global context field which gets logged with every message
          */
         virtual void setGlobalContext(std::string key, std::string value) = 0;
