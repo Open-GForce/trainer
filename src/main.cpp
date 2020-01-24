@@ -42,7 +42,7 @@ void runControllerMode(bool CANDummyMode)
 {
     auto logger = new StandardLogger();
     std::string canMode = (CANDummyMode ? "Dummy" : "Regular");
-    logger->setGlobalContext("main", "main_controller");
+    logger->setGlobalContext("mode", "main_controller");
     logger->info(LOG_CHANNEL_MAIN, "Running main controller mode [" + canMode + " CAN]", {});
 
     auto configRepository = new ConfigRepository();

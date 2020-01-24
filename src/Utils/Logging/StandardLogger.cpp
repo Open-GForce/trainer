@@ -15,6 +15,7 @@ StandardLogger::StandardLogger()
     // 5 generations of max. 50 MiB size each
     this->fileLogger = spdlog::rotating_logger_mt("fileLogger", "/var/log/gforce/controller.log", 1048576 * 20, 5);
     this->fileLogger->set_level(spdlog::level::debug);
+    this->fileLogger->set_pattern("%v");
 
     spdlog::flush_every(std::chrono::seconds(3));
 }
@@ -51,7 +52,7 @@ void StandardLogger::warning(const std::string &channel, const std::string &mess
 std::string StandardLogger::encode(const std::string &level, const std::string &channel, const std::string &message, nlohmann::json context)
 {
     try {
-        context["timestamp"] = this->timestamp;
+        context["eventTimestamp"] = this->timestamp;
         context["level"] = level;
         context["channel"] = channel;
         context["message"] = message;
