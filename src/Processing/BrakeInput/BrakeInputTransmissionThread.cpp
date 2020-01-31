@@ -87,6 +87,7 @@ void BrakeInputTransmissionThread::reconnect()
     if (this->socket != nullptr) {
         try {
             this->logger->info(LOG_CHANNEL_BRAKE_INPUT_TX, "Trying to close socket", {});
+            this->socket->close();
         } catch (std::exception &e) {
             this->logger->warning(LOG_CHANNEL_BRAKE_INPUT_TX, "Error while closing socket => " + std::string(e.what()), {
                 {"exceptionMessage", std::string(e.what())}

@@ -13,6 +13,11 @@ namespace GForce::Processing::BrakeInput {
 class BrakeInputReceiveThread
 {
     private:
+        /**
+         * If continuousFailureCount exceeds this limit, sockets gets closed and reopened
+         */
+        const static int FAILURE_THRESHOLD = 50;
+
         LoggerInterface* logger;
         TCPSocketInterface* socket;
 
@@ -27,9 +32,24 @@ class BrakeInputReceiveThread
         int messageCount;
 
         /**
+         * Get incremented on every errors, gets reset on successful loop
+         */
+        int continuousFailureCount;
+
+        /**
          * Will be unlocked when started
          */
         std::mutex startMutex;
+
+        /**
+         * Opens socket and listens for incoming connections
+         */
+        void listen();
+
+        /**
+         * Tries to close the socket, catches and logs exceptions
+         */
+        void closeSocket();
 
     public:
         explicit BrakeInputReceiveThread(LoggerInterface *logger);

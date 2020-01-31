@@ -11,6 +11,7 @@ TEST_CASE( "BrakeInputReceiveThread tests", "[Processing]" )
 {
     fakeit::Mock<TCPSocketInterface> socketMock;
     fakeit::Fake(Method(socketMock, read));
+    fakeit::Fake(Method(socketMock, close));
     TCPSocketInterface* socket = &socketMock.get();
 
     auto thread = new BrakeInputReceiveThread(new NullLogger());

@@ -24,6 +24,7 @@ class BoostTCPSocket : public TCPSocketInterface
         static BoostTCPSocket* listen(int port);
 
         std::string read() override;
+        void close() override;
 };
 
 }

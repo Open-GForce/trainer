@@ -22,3 +22,8 @@ std::string BoostTCPSocket::read()
     string data = boost::asio::buffer_cast<const char*>(buf.data());
     return data;
 }
+
+void BoostTCPSocket::close()
+{
+    this->acceptor.close();
+}

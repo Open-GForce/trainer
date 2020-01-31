@@ -7,10 +7,19 @@ namespace GForce::ACL::TCP {
 
 class TCPSocketInterface {
     public:
+        virtual ~TCPSocketInterface() = default;
+
         /**
          * Reads next \n seperated message in pipe
          */
         virtual std::string read() = 0;
+
+        /**
+         * Closes the socket
+         *
+         * @throw May throw implementation specific exceptions
+         */
+        virtual void close() = 0;
 };
 
 }
