@@ -25,6 +25,14 @@ class BoostTCPConnection : public TCPConnectionInterface
         void close() override;
 };
 
+class BoostTCPConnectionFactory : public TCPConnectionFactory
+{
+    public:
+        BoostTCPConnection* connect(const std::string& address, int port) override {
+            return BoostTCPConnection::connect(address, port);
+        }
+};
+
 }
 
 

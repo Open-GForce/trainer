@@ -14,6 +14,7 @@ using namespace GForce::Utils;
 BrakeInputTransmissionThread::BrakeInputTransmissionThread(LoggerInterface *logger, ADCSensorInterface *sensor): logger(logger), sensor(sensor)
 {
     this->socket = nullptr;
+    this->factory = new BoostTCPConnectionFactory;
     this->stopped = false;
     this->mainControllerAddress = "192.168.2.201";
 
@@ -71,7 +72,7 @@ void BrakeInputTransmissionThread::connect()
         this->logger->info(LOG_CHANNEL_BRAKE_INPUT_TX, "Connecting to " + this->mainControllerAddress + ":8519", {});
 
         try {
-            this->socket = BoostTCPConnection::connect(this->mainControllerAddress, 8519);
+            this->socket = this->factory->connect(this->mainControllerAddress, 8519);
             this->logger->info(LOG_CHANNEL_BRAKE_INPUT_TX, "Successfully connected!", {});
         } catch (std::exception &e) {
             this->logger->error(LOG_CHANNEL_BRAKE_INPUT_TX, "Connection failed => " + std::string(e.what()), {{"exceptionMessage", std::string(e.what())}});
@@ -111,6 +112,11 @@ void BrakeInputTransmissionThread::stop() {
 
 void BrakeInputTransmissionThread::setSocket(TCPConnectionInterface *value){
     this->socket = value;
+}
+
+void BrakeInputTransmissionThread::setSocketFactory(TCPConnectionFactory *socketFactory) {
+    delete this->factory;
+    BrakeInputTransmissionThread::factory = socketFactory;
 }
 
 int BrakeInputTransmissionThread::calcAverage(const std::vector<int>& values)

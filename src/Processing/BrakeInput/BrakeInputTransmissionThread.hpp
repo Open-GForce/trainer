@@ -19,6 +19,7 @@ class BrakeInputTransmissionThread
         ADCSensorInterface* sensor;
 
         TCPConnectionInterface* socket;
+        TCPConnectionFactory* factory;
 
         /**
          * IP address of main controller
@@ -68,6 +69,8 @@ class BrakeInputTransmissionThread
         void stop();
 
         void setSocket(TCPConnectionInterface *value);
+
+        void setSocketFactory(TCPConnectionFactory *socketFactory);
 };
 
 }

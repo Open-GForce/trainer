@@ -23,6 +23,13 @@ class TCPConnectionInterface
         virtual void close() = 0;
 };
 
+class TCPConnectionFactory
+{
+    public:
+        virtual ~TCPConnectionFactory() = default;
+        virtual TCPConnectionInterface* connect(const std::string& address, int port) = 0;
+};
+
 }
 
 #endif //GFORCE_TRAINER_CONTROLLER_TCPCONNECTIONINTERFACE_HPP
