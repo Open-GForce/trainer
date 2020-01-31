@@ -22,6 +22,7 @@ class BoostTCPConnection : public TCPConnectionInterface
         static BoostTCPConnection* connect(const std::string& address, int port);
 
         void send(const std::string& data) override;
+        void close() override;
 };
 
 }

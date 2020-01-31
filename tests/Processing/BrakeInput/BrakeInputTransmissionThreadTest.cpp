@@ -23,7 +23,7 @@ TEST_CASE( "BrakeInputTransmissionThread tests", "[Processing]" )
     SECTION("Correct message sent")
     {
         fakeit::When(Method(sensorMock, read)).Return(1697, 60000);
-        fakeit::When(Method(socketMock, send)).Do([thread] (std::string message) {
+        fakeit::When(Method(socketMock, send)).Do([thread] (const std::string& message) {
             thread->stop();
             CHECK(message == "{\"firstBrake\":1697,\"secondBrake\":-5536}");
         });

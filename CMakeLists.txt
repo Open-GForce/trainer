@@ -49,7 +49,7 @@ set(SOURCES
         src/Processing/BrakeInput/BrakeInputTransmissionThread.cpp
         src/Processing/Mode/RegularSpiralMode.cpp
         src/Processing/Mode/StaticMaxSpeedMode.cpp
-        src/Utils/Algorithms.cpp)
+        src/Utils/Algorithms.cpp src/ACL/TCP/BrokenPipeException.hpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp

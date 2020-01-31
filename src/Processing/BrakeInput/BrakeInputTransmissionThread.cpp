@@ -3,9 +3,12 @@
 #include "../../ACL/TCP/BoostTCPConnection.hpp"
 #include "BrakeInputMessage.hpp"
 #include "../../Utils/Logging/StandardLogger.hpp"
+#include "../../Utils/Exceptions/RuntimeException.hpp"
 #include "../../Utils/Algorithms.hpp"
+#include "../../ACL/TCP/BrokenPipeException.hpp"
 
 using namespace GForce::Processing::BrakeInput;
+using namespace GForce::Utils::Exceptions;
 using namespace GForce::Utils;
 
 BrakeInputTransmissionThread::BrakeInputTransmissionThread(LoggerInterface *logger, ADCSensorInterface *sensor): logger(logger), sensor(sensor)
@@ -26,13 +29,16 @@ void BrakeInputTransmissionThread::start()
     while (!stopped) {
         try {
             this->loop();
+        } catch (BrokenPipeException &e) {
+            this->logger->error(LOG_CHANNEL_BRAKE_INPUT_TX, "Detected broken pipe, performing reconnect procedure.", this->getErrorContext(e.getMessage()));
+            this->reconnect();
+        } catch (RuntimeException &e) {
+            auto context = this->getErrorContext(e.getMessage());
+            context["errorCode"] = e.getCode();
+            this->logger->error(LOG_CHANNEL_BRAKE_INPUT_TX, "Generic Failure in BrakeInputTransmission thread => " + e.getMessage(), context);
+            usleep(10000);
         } catch (std::exception &e) {
-            this->logger->error(LOG_CHANNEL_BRAKE_INPUT_TX, "Failure in BrakeInputTransmission thread => " + std::string(e.what()), {
-                    {"exceptionMessage", std::string(e.what())},
-                    {"normalizationLength", this->normalizeLength},
-                    {"firstBrakeHistory", Algorithms::implodeVector(this->firstBrakeHistory)},
-                    {"secondBrakeHistory", Algorithms::implodeVector(this->secondBrakeHistory)},
-            });
+            this->logger->error(LOG_CHANNEL_BRAKE_INPUT_TX, "Generic Failure in BrakeInputTransmission thread => " + std::string(e.what()), this->getErrorContext(std::string(e.what())));
             usleep(10000);
         }
     }
@@ -69,12 +75,29 @@ void BrakeInputTransmissionThread::connect()
             this->logger->info(LOG_CHANNEL_BRAKE_INPUT_TX, "Successfully connected!", {});
         } catch (std::exception &e) {
             this->logger->error(LOG_CHANNEL_BRAKE_INPUT_TX, "Connection failed => " + std::string(e.what()), {{"exceptionMessage", std::string(e.what())}});
+            delete this->socket;
             this->socket = nullptr;
             sleep(1);
         }
     }
 }
 
+void BrakeInputTransmissionThread::reconnect()
+{
+    if (this->socket != nullptr) {
+        try {
+            this->logger->info(LOG_CHANNEL_BRAKE_INPUT_TX, "Trying to close socket", {});
+        } catch (std::exception &e) {
+            this->logger->warning(LOG_CHANNEL_BRAKE_INPUT_TX, "Error while closing socket => " + std::string(e.what()), {
+                {"exceptionMessage", std::string(e.what())}
+            });
+        }
+        delete this->socket;
+        this->socket = nullptr;
+    }
+
+    this->connect();
+}
 
 int BrakeInputTransmissionThread::scaleSignedInput(int value)
 {
@@ -98,4 +121,14 @@ int BrakeInputTransmissionThread::calcAverage(const std::vector<int>& values)
     }
 
     return (int) round(sum / values.size());
+}
+
+
+nlohmann::json BrakeInputTransmissionThread::getErrorContext(std::string errorMessage) {
+    return {
+        {"exceptionMessage", errorMessage},
+        {"normalizationLength", this->normalizeLength},
+        {"firstBrakeHistory", Algorithms::implodeVector(this->firstBrakeHistory)},
+        {"secondBrakeHistory", Algorithms::implodeVector(this->secondBrakeHistory)},
+    };
 }

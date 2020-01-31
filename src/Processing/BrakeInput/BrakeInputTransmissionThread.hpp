@@ -44,6 +44,16 @@ class BrakeInputTransmissionThread
         void connect();
         void loop();
 
+        /**
+         * Will try to close the socket if exists and performs reconnect
+         */
+        void reconnect();
+
+        /**
+         * Returns general state data which may be used for enhancing exceptions
+         */
+        nlohmann::json getErrorContext(std::string errorMessage);
+
         static int scaleSignedInput(int value);
 
         /**

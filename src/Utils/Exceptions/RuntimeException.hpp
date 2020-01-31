@@ -8,14 +8,18 @@ namespace GForce::Utils::Exceptions {
 
 class RuntimeException : public std::exception
 {
-    protected:
+    private:
+        int code;
         std::string message;
 
     public:
         explicit RuntimeException(std::string message);
+        RuntimeException(std::string message, int code);
 
-        std::string getMessage();
-        const char *what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_USE_NOEXCEPT override;
+        [[nodiscard]] std::string getMessage();
+
+        [[nodiscard]] const char *what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_USE_NOEXCEPT override;
+        [[nodiscard]] int getCode() const;
 };
 
 }
