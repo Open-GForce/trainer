@@ -27,6 +27,14 @@ class BoostTCPSocket : public TCPSocketInterface
         void close() override;
 };
 
+class BoostTCPSocketFactory : public TCPSocketFactory
+{
+    public:
+        BoostTCPSocket* listen(int port) override {
+            return BoostTCPSocket::listen(port);
+        }
+};
+
 }
 
 #endif //GFORCE_TRAINER_CONTROLLER_BOOSTTCPSOCKET_HPP

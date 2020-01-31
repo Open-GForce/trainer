@@ -11,10 +11,12 @@ BrakeInputReceiveThread::BrakeInputReceiveThread(LoggerInterface *logger): logge
 {
     this->messageCount = 0;
     this->continuousFailureCount = 0;
+    this->failureThreshold = DEFAULT_FAILURE_THRESHOLD;
     this->firstBrake = 0;
     this->secondBrake = 0;
     this->stopped = false;
     this->socket = nullptr;
+    this->factory = new BoostTCPSocketFactory();
     this->startMutex.lock();
 }
 
@@ -44,7 +46,7 @@ void BrakeInputReceiveThread::start()
             usleep(10000);
 
             this->continuousFailureCount++;
-            if (this->continuousFailureCount >= FAILURE_THRESHOLD) {
+            if (this->continuousFailureCount >= this->failureThreshold) {
                 this->logger->info(LOG_CHANNEL_BRAKE_INPUT_RX, "Error threshold exceeded, performing socket rebuild procedure.", {});
                 this->closeSocket();
                 this->listen();
@@ -59,7 +61,7 @@ void BrakeInputReceiveThread::listen()
 {
     if (this->socket == nullptr) {
         logger->info(LOG_CHANNEL_BRAKE_INPUT_RX, "Listening on port 8519 for brake inputs, waiting for connections", {});
-        this->socket = BoostTCPSocket::listen(8519);
+        this->socket = this->factory->listen(8519);
         logger->info(LOG_CHANNEL_BRAKE_INPUT_RX, "Client connected!", {});
     }
 }
@@ -71,6 +73,15 @@ void BrakeInputReceiveThread::waitUntilStarted()
 
 void BrakeInputReceiveThread::setSocket(TCPSocketInterface *value) {
     this->socket = value;
+}
+
+void BrakeInputReceiveThread::setFactory(TCPSocketFactory *socketFactory) {
+    delete this->factory;
+    this->factory = socketFactory;
+}
+
+void BrakeInputReceiveThread::setFailureThreshold(int threshold) {
+    this->failureThreshold = threshold;
 }
 
 void BrakeInputReceiveThread::stop() {

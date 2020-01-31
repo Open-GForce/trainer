@@ -13,13 +13,11 @@ namespace GForce::Processing::BrakeInput {
 class BrakeInputReceiveThread
 {
     private:
-        /**
-         * If continuousFailureCount exceeds this limit, sockets gets closed and reopened
-         */
-        const static int FAILURE_THRESHOLD = 50;
+        const static int DEFAULT_FAILURE_THRESHOLD = 50;
 
         LoggerInterface* logger;
         TCPSocketInterface* socket;
+        TCPSocketFactory* factory;
 
         int firstBrake;
         int secondBrake;
@@ -35,6 +33,11 @@ class BrakeInputReceiveThread
          * Get incremented on every errors, gets reset on successful loop
          */
         int continuousFailureCount;
+
+        /**
+         * If continuousFailureCount exceeds this limit, sockets gets closed and reopened
+         */
+        int failureThreshold;
 
         /**
          * Will be unlocked when started
@@ -62,7 +65,10 @@ class BrakeInputReceiveThread
         [[nodiscard]] virtual int getSecondBrake() const;
         [[nodiscard]] virtual int getMessageCount() const;
 
+        void setFailureThreshold(int threshold);
+
         void setSocket(TCPSocketInterface *value);
+        void setFactory(TCPSocketFactory *socketFactory);
 };
 
 }

@@ -22,6 +22,16 @@ class TCPSocketInterface {
         virtual void close() = 0;
 };
 
+class TCPSocketFactory {
+    public:
+        virtual ~TCPSocketFactory() = default;
+
+        /**
+         * Listens for new connections on the given port, waits until connection received
+         */
+        virtual TCPSocketInterface* listen(int port) = 0;
+};
+
 }
 
 #endif //GFORCE_TRAINER_CONTROLLER_TCPSOCKETINTERFACE_HPP
