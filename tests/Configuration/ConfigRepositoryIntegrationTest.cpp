@@ -27,6 +27,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
                {"min", 500},
                {"max", 1400},
            }},
+           {"rotationRadius", 7.6},
     };
 
     SECTION("Exception thrown if config file is missing")
@@ -84,6 +85,34 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(config->getInnerBrakeRange()->getMax() == 10000);
     }
 
+    SECTION("Default values for rotation radius if key is missing")
+    {
+        nlohmann::json data = correctConfig;
+        data.erase("rotationRadius");
+
+        std::ofstream configFile(basePath + "/user_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadUserSettings();
+
+        CHECK(config->getRotationRadius() == 3.87);
+    }
+
+    SECTION("Default values for rotation radius if value is not number")
+    {
+        nlohmann::json data = correctConfig;
+        data["rotationRadius"] = "abc";
+
+        std::ofstream configFile(basePath + "/user_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadUserSettings();
+
+        CHECK(config->getRotationRadius() == 3.87);
+    }
+
     SECTION("Config correctly decoded")
     {
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -96,11 +125,12 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(config->getInnerBrakeRange()->getMax() == 2500);
         CHECK(config->getOuterBrakeRange()->getMin() == 500);
         CHECK(config->getOuterBrakeRange()->getMax() == 1400);
+        CHECK(config->getRotationRadius() == 7.6);
     }
 
     SECTION("Config saved correctly")
     {
-        auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792));
+        auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 5.2);
         repository->saveUserSettings(saved);
 
         auto loaded = repository->loadUserSettings();
@@ -109,6 +139,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(loaded->getInnerBrakeRange()->getMax() == 720);
         CHECK(loaded->getOuterBrakeRange()->getMin() == 550);
         CHECK(loaded->getOuterBrakeRange()->getMax() == 3792);
+        CHECK(loaded->getRotationRadius() == 5.2);
     }
 
     boost::filesystem::remove_all(basePath);

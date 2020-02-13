@@ -9,6 +9,9 @@ namespace GForce::Configuration {
 
 class ConfigRepository
 {
+    protected:
+        constexpr const static double DEFAULT_ROTATION_RADIUS = 3.87;
+
     private:
         std::string basePath;
 
@@ -16,6 +19,7 @@ class ConfigRepository
 
         static UserSettings* decode(const std::string& fileContent);
         static Range* parseRange(nlohmann::json data, const std::string& key);
+        static double parseRotationRadius(nlohmann::json data);
 
     public:
         ConfigRepository();

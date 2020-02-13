@@ -88,7 +88,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
     
     SECTION("setInnerBrakeRange() => config merged and reloaded")
     {
-        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(new Range(1000, 2000), new Range(3000, 4000)));
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1673);
@@ -173,7 +173,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setOuterBrakeRange() => config merged and reloaded")
     {
-        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(new Range(1000, 2000), new Range(3000, 4000)));
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);

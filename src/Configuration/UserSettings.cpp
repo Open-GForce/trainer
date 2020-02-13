@@ -2,7 +2,10 @@
 
 using namespace GForce::Configuration;
 
-UserSettings::UserSettings(Range *innerBrakeRange, Range *outerBrakeRange) : innerBrakeRange(innerBrakeRange), outerBrakeRange(outerBrakeRange) {}
+const std::string UserSettings::JSON_KEY_ROT_RADIUS = "rotationRadius";
+
+UserSettings::UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius) : innerBrakeRange(
+        innerBrakeRange), outerBrakeRange(outerBrakeRange), rotationRadius(trainerRadius) {}
 
 UserSettings::~UserSettings()
 {
@@ -26,6 +29,7 @@ nlohmann::json UserSettings::toJSON()
                 {"min", this->outerBrakeRange->getMin()},
                 {"max", this->outerBrakeRange->getMax()},
             }},
+            {JSON_KEY_ROT_RADIUS, this->rotationRadius}
     };
 
     return data;
@@ -37,6 +41,10 @@ Range *UserSettings::getInnerBrakeRange() const {
 
 Range *UserSettings::getOuterBrakeRange() const {
     return outerBrakeRange;
+}
+
+double UserSettings::getRotationRadius() const {
+    return rotationRadius;
 }
 
 

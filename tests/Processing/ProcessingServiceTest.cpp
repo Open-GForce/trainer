@@ -15,9 +15,8 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
     fakeit::Fake(Method(driveServiceMock, sync));
     MoviDriveService* driveService = &driveServiceMock.get();
 
-    auto settings = new UserSettings(new Range(30, 200), new Range(40, 100));
+    auto settings = new UserSettings(new Range(30, 200), new Range(40, 100), 6.3);
     auto service = new ProcessingService(driveService, settings);
-
 
     SECTION("Node started during init")
     {

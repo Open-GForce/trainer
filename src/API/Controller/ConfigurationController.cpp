@@ -17,7 +17,7 @@ void ConfigurationController::setInnerBrakeRange(Request *request)
     auto range = buildRange(request);
 
     auto oldConfig = this->configRepository->loadUserSettings();
-    auto newConfig = new UserSettings(range, oldConfig->getOuterBrakeRange()->clone());
+    auto newConfig = new UserSettings(range, oldConfig->getOuterBrakeRange()->clone(), oldConfig->getRotationRadius());
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -27,7 +27,7 @@ void ConfigurationController::setOuterBrakeRange(Request *request)
     auto range = buildRange(request);
 
     auto oldConfig = this->configRepository->loadUserSettings();
-    auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(), range);
+    auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(), range, oldConfig->getRotationRadius());
 
     this->saveConfig(newConfig, oldConfig);
 }

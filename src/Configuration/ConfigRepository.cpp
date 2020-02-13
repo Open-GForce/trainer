@@ -49,7 +49,8 @@ UserSettings* ConfigRepository::decode(const std::string& fileContent)
 
     return new UserSettings(
             ConfigRepository::parseRange(data, "innerBrakeRange"),
-            ConfigRepository::parseRange(data, "outerBrakeRange")
+            ConfigRepository::parseRange(data, "outerBrakeRange"),
+            parseRotationRadius(data)
     );
 }
 
@@ -64,6 +65,15 @@ Range* ConfigRepository::parseRange(nlohmann::json data, const std::string& key)
     }
 
     return new Range(0, 10000);
+}
+
+double ConfigRepository::parseRotationRadius(nlohmann::json data)
+{
+    if (data.find(UserSettings::JSON_KEY_ROT_RADIUS) != data.end() && data[UserSettings::JSON_KEY_ROT_RADIUS].is_number()) {
+        return data[UserSettings::JSON_KEY_ROT_RADIUS];
+    }
+
+    return DEFAULT_ROTATION_RADIUS;
 }
 
 
