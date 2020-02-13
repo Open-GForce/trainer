@@ -25,6 +25,13 @@ class AbstractPage
     }
 
     /**
+     * Gets called as soon socket connection has been established
+     */
+    onSocketConnected()
+    {
+    }
+
+    /**
      * @param {SystemStatus} status
      */
     onSystemStatus(status)

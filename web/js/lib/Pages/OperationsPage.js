@@ -99,6 +99,12 @@ class OperationsPage extends AbstractPage
         this._bindControls();
     }
 
+    onSocketConnected()
+    {
+        let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
+        app.socket.send(configRequest);
+    }
+
     /**
      * @param {SystemStatus} status
      */
@@ -126,6 +132,15 @@ class OperationsPage extends AbstractPage
         this._renderForce(status);
         this._renderControlButtons(status);
         this._renderReleaseButton(status);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    onUserSettings(settings)
+    {
+        RotationMath.trainerRadius = settings.rotationRadius;
+        console.log(RotationMath.trainerRadius);
     }
 
     _bindControls()

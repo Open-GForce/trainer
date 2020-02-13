@@ -20,5 +20,10 @@ class UserSettings
             min: props.outerBrakeRange.min,
             max: props.outerBrakeRange.max,
         };
+
+        /**
+         * @type {number}
+         */
+        this.rotationRadius = props.rotationRadius;
     }
 }
