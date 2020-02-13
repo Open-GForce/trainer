@@ -20,6 +20,11 @@ class SettingsPage extends AbstractPage
         this.outerBrakeSegment = undefined;
 
         /**
+         * @type {jQuery}
+         */
+        this.forceCalculationSegment = undefined;
+
+        /**
          * @type {SystemStatus}
          */
         this.lastSystemStatus = undefined;
@@ -32,6 +37,7 @@ class SettingsPage extends AbstractPage
 
         this.innerBrakeSegment = $('#innerBrakeSegment');
         this.outerBrakeSegment = $('#outerBrakeSegment');
+        this.forceCalculationSegment = $('#forceCalculationSegment');
 
         this._configureBrakeRangeSegment(this.innerBrakeSegment, Message.REQUEST_TYPE_CONF_INNER_BRAKE, () => {
             return this.lastSystemStatus.innerBrake
@@ -40,6 +46,8 @@ class SettingsPage extends AbstractPage
         this._configureBrakeRangeSegment(this.outerBrakeSegment, Message.REQUEST_TYPE_CONF_OUTER_BRAKE, () => {
             return this.lastSystemStatus.outerBrake
         });
+
+        this._configureForceCalculationSegment();
 
         let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
         app.socket.send(configRequest);
@@ -75,6 +83,23 @@ class SettingsPage extends AbstractPage
     }
 
     /**
+     * @private
+     */
+    _configureForceCalculationSegment()
+    {
+        let radiusInput = this.forceCalculationSegment.find('.radius.input input');
+        let saveButton = this.forceCalculationSegment.find('.save.button');
+
+        saveButton.click(() => {
+            let message = new Message(Message.REQUEST_TYPE_CONF_ROT_RADIUS, {
+                rotationRadius: parseFloat(radiusInput.val().replace(',', '.')),
+            });
+            app.socket.send(message);
+            this._saveAnimation(saveButton);
+        });
+    }
+
+    /**
      * @inheritDoc
      */
     onSystemStatus(status)
@@ -93,6 +118,8 @@ class SettingsPage extends AbstractPage
 
         this.outerBrakeSegment.find('.minimum.input input').val(settings.outerBrakeRange.min);
         this.outerBrakeSegment.find('.maximum.input input').val(settings.outerBrakeRange.max);
+
+        this.forceCalculationSegment.find('.radius.input input').val(settings.rotationRadius);
     }
 
     /**

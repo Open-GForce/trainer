@@ -19,3 +19,4 @@ Message.REQUEST_TYPE_RELEASE_STATUS = 'setReleaseStatus';
 Message.REQUEST_GET_USER_SETTINGS     = 'getUserSettings';
 Message.REQUEST_TYPE_CONF_INNER_BRAKE = 'setInnerBrakeRange';
 Message.REQUEST_TYPE_CONF_OUTER_BRAKE = 'setOuterBrakeRange';
+Message.REQUEST_TYPE_CONF_ROT_RADIUS   = 'setRotationRadius';

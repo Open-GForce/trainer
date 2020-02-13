@@ -162,6 +162,19 @@ TEST_CASE( "Request router tests", "[Websocket]" )
         fakeit::Verify(Method(configControllerMock, setOuterBrakeRange)).Once();
     }
 
+    SECTION("ConfigurationController->setRotationRadius() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "setRotationRadius";
+
+        fakeit::When(Method(configControllerMock, setRotationRadius)).AlwaysDo([] (Request* request) {
+            CHECK(request->getType() == "setRotationRadius");
+        });
+
+        router->handle(data.dump());
+        fakeit::Verify(Method(configControllerMock, setRotationRadius)).Once();
+    }
+
     SECTION("ConfigurationController->loadUserSettings() called")
     {
         nlohmann::json data = correctMessage;
