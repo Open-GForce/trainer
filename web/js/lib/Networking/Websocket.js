@@ -86,6 +86,7 @@ class Websocket
         {
             handler.connected = true;
             handler._renderDimmer();
+            app.currentPage.onSocketConnected();
         };
 
         this.connection.onerror = function (error)

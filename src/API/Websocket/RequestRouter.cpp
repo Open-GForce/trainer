@@ -60,6 +60,11 @@ ResponseCastInterface* RequestRouter::route(Request *request)
         return nullptr;
     }
 
+    if (request->getType() == RequestRouter::TYPE_SET_CONFIG_ROT_RADIUS) {
+        this->configurationController->setRotationRadius(request);
+        return nullptr;
+    }
+
     if (request->getType() == RequestRouter::TYPE_GET_USER_CONFIG) {
         return this->configurationController->getUserSettings();
     }

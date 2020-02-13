@@ -12,19 +12,29 @@ namespace GForce::Configuration {
 
 class UserSettings : public ResponseCastInterface
 {
+    public:
+        const static std::string JSON_KEY_ROT_RADIUS;
+
     private:
         Range* innerBrakeRange;
         Range* outerBrakeRange;
 
+        /**
+         * Distance in meters between the center of the trainer and the passenger
+         */
+        double rotationRadius;
+
     public:
-        UserSettings(Range *innerBrakeRange, Range *outerBrakeRange);
+        UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius);
+
         ~UserSettings() override;
 
         nlohmann::json toJSON();
         Response *toResponse() override;
 
-        Range* getInnerBrakeRange() const;
-        Range* getOuterBrakeRange() const;
+        [[nodiscard]] Range* getInnerBrakeRange() const;
+        [[nodiscard]] Range* getOuterBrakeRange() const;
+        [[nodiscard]] double getRotationRadius() const;
 };
 
 }

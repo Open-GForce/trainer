@@ -41,6 +41,8 @@ class ConfigurationController
          */
         virtual void setInnerBrakeRange(Request *request);
         virtual void setOuterBrakeRange(Request *request);
+
+        virtual void setRotationRadius(Request* request);
 };
 
 }

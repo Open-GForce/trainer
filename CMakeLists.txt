@@ -37,12 +37,12 @@ set(SOURCES
         src/API/Websocket/ServerThread.cpp
         src/Processing/ProcessingService.cpp
         src/ACL/CAN/DummyCANSocket.cpp
+        src/API/Controller/ConfigurationController.cpp
         src/API/Controller/OperationsController.cpp
         src/Utils/Assertions/Assertion.cpp
         src/Utils/Assertions/AssertionFailedException.cpp
         src/API/Websocket/Request.cpp
         src/API/Websocket/RequestRouter.cpp
-        src/API/Controller/ConfigurationController.cpp
         src/Processing/BrakeInput/BrakeInputMessage.cpp
         src/ACL/TCP/BoostTCPSocket.cpp
         src/ACL/TCP/BoostTCPConnection.cpp
