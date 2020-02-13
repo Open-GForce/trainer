@@ -2,17 +2,17 @@
 #include "../../Utils/Assertions/Assertion.hpp"
 
 using namespace GForce::Utils::Assertions;
-using namespace GForce::API::Controller;
+using namespace GForce::API;
 
-ConfigurationController::ConfigurationController(ProcessingThread *processingThread,ConfigRepository *configRepository) :
+Controller::ConfigurationController::ConfigurationController(ProcessingThread *processingThread, ConfigRepository *configRepository) :
     processingThread(processingThread), configRepository(configRepository) {}
 
-UserSettings* ConfigurationController::getUserSettings()
+UserSettings* Controller::ConfigurationController::getUserSettings()
 {
     return this->configRepository->loadUserSettings();
 }
 
-void ConfigurationController::setInnerBrakeRange(Request *request)
+void Controller::ConfigurationController::setInnerBrakeRange(Request *request)
 {
     auto range = buildRange(request);
 
@@ -22,7 +22,7 @@ void ConfigurationController::setInnerBrakeRange(Request *request)
     this->saveConfig(newConfig, oldConfig);
 }
 
-void ConfigurationController::setOuterBrakeRange(Request *request)
+void Controller::ConfigurationController::setOuterBrakeRange(Request *request)
 {
     auto range = buildRange(request);
 
@@ -32,7 +32,17 @@ void ConfigurationController::setOuterBrakeRange(Request *request)
     this->saveConfig(newConfig, oldConfig);
 }
 
-Range *ConfigurationController::buildRange(Request *request)
+void Controller::ConfigurationController::setRotationRadius(Request *request)
+{
+    Assertion::jsonExistsAndNumber(request->getData(), "rotationRadius");
+
+    auto oldConfig = this->configRepository->loadUserSettings();
+    auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(), oldConfig->getOuterBrakeRange()->clone(), request->getData()["rotationRadius"]);
+
+    this->saveConfig(newConfig, oldConfig);
+}
+
+Range* Controller::ConfigurationController::buildRange(Request *request)
 {
     Assertion::jsonExistsAndNumber(request->getData(), "min");
     Assertion::jsonExistsAndNumber(request->getData(), "max");
@@ -40,7 +50,7 @@ Range *ConfigurationController::buildRange(Request *request)
     return new Range(request->getData()["min"], request->getData()["max"]);
 }
 
-void ConfigurationController::saveConfig(UserSettings *newConfig, UserSettings *oldConfig)
+void Controller::ConfigurationController::saveConfig(UserSettings *newConfig, UserSettings *oldConfig)
 {
     this->configRepository->saveUserSettings(newConfig);
     this->processingThread->reloadUserConfig(newConfig);

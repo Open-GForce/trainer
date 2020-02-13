@@ -21,14 +21,18 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     auto controller = new ConfigurationController(processingThread, configRepository);
 
-    nlohmann::json correctData = {
+    nlohmann::json correctRangeData = {
             {"min", 1673},
             {"max", 4434}
     };
 
+    nlohmann::json correctRadiusData = {
+            {"rotationRadius", 2.53},
+    };
+
     SECTION("setInnerBrakeRange() => min field is missing")
     {
-        auto data = correctData;
+        auto data = correctRangeData;
         data.erase("min");
 
         auto request = new Request("test", data);
@@ -43,7 +47,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setInnerBrakeRange() => max field is missing")
     {
-        auto data = correctData;
+        auto data = correctRangeData;
         data.erase("max");
 
         auto request = new Request("test", data);
@@ -58,7 +62,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setInnerBrakeRange() => min field not a number")
     {
-        auto data = correctData;
+        auto data = correctRangeData;
         data["min"] = "abc";
 
         auto request = new Request("test", data);
@@ -73,7 +77,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setInnerBrakeRange() => max field not a number")
     {
-        auto data = correctData;
+        auto data = correctRangeData;
         data["max"] = "abc";
 
         auto request = new Request("test", data);
@@ -104,7 +108,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
         });
 
-        auto request = new Request("test", correctData);
+        auto request = new Request("test", correctRangeData);
         controller->setInnerBrakeRange(request);
         
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
@@ -113,7 +117,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setOuterBrakeRange() => min field is missing")
     {
-        auto data = correctData;
+        auto data = correctRangeData;
         data.erase("min");
 
         auto request = new Request("test", data);
@@ -128,7 +132,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setOuterBrakeRange() => max field is missing")
     {
-        auto data = correctData;
+        auto data = correctRangeData;
         data.erase("max");
 
         auto request = new Request("test", data);
@@ -143,7 +147,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setOuterBrakeRange() => min field not a number")
     {
-        auto data = correctData;
+        auto data = correctRangeData;
         data["min"] = "abc";
 
         auto request = new Request("test", data);
@@ -158,7 +162,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setOuterBrakeRange() => max field not a number")
     {
-        auto data = correctData;
+        auto data = correctRangeData;
         data["max"] = "abc";
 
         auto request = new Request("test", data);
@@ -189,11 +193,67 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getOuterBrakeRange()->getMax() == 4434);
         });
 
-        auto request = new Request("test", correctData);
+        auto request = new Request("test", correctRangeData);
         controller->setOuterBrakeRange(request);
 
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
         fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
     }
 
+    SECTION("setRotationRadius() => rotationRadius field is missing")
+    {
+        auto data = correctRadiusData;
+        data.erase("rotationRadius");
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setRotationRadius(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field rotationRadius");
+        }
+    }
+
+    SECTION("setRotationRadius() => rotationRadius field not a number")
+    {
+        auto data = correctRadiusData;
+        data["rotationRadius"] = "abc";
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setRotationRadius(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field rotationRadius is not a number");
+        }
+    }
+
+    SECTION("setRotationRadius() => config merged and reloaded")
+    {
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0));
+
+        fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
+            CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
+            CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
+            CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
+            CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->getRotationRadius() == 2.53);
+        });
+
+        fakeit::When(Method(processingThreadMock, reloadUserConfig)).AlwaysDo([] (UserSettings* settings) {
+            CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
+            CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
+            CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
+            CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->getRotationRadius() == 2.53);
+        });
+
+        auto request = new Request("test", correctRadiusData);
+        controller->setRotationRadius(request);
+
+        fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
+        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
+    }
 }
