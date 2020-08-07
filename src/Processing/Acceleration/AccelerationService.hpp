@@ -34,7 +34,7 @@ class AccelerationService
          * @param targetSpeed  Target speed in 1/min
          * @return Raw acceleration
          */
-        int getAcceleration(double currentSpeed, double targetSpeed);
+        virtual int getAcceleration(double currentSpeed, double targetSpeed);
 
         void setStages(const std::list<AccelerationStage> &newStages);
         void setSoftStartSpeed(double speed);

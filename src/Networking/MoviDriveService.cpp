@@ -12,6 +12,7 @@ MoviDriveService::MoviDriveService(CAN::SocketInterface* socket, LoggerInterface
 {
     this->controlStatus = nullptr;
     this->rotationSpeed = 0;
+    this->acceleration = 0;
     this->errorCount = 0;
     this->errorThreshold = 10;
     this->lastHeartbeat = 0;
@@ -76,6 +77,8 @@ void MoviDriveService::send()
     data[1] = highByte(status);
     data[2] = lowByte(speed);
     data[3] = highByte(speed);
+    data[4] = lowByte((uint16_t) acceleration);
+    data[5] = highByte((uint16_t) acceleration);
 
     auto pdoMessage = new CAN::Message(CAN_TX_PDO_INDEX, data);
     this->socket->send(pdoMessage);
@@ -164,4 +167,8 @@ void MoviDriveService::resetErrorCount() {
 
 void MoviDriveService::setErrorThreshold(int threshold) {
     this->errorThreshold = threshold;
+}
+
+void MoviDriveService::setAcceleration(int value) {
+    this->acceleration = value;
 }

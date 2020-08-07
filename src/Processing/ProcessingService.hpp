@@ -9,10 +9,12 @@
 #include "Range.hpp"
 #include "ProcessingStatus.hpp"
 #include "Mode/OperationMode.hpp"
+#include "Acceleration/AccelerationService.hpp"
 
 using namespace GForce::Networking;
 using namespace GForce::Configuration;
 using namespace GForce::Processing::Mode;
+using namespace GForce::Processing::Acceleration;
 
 namespace GForce::Processing {
 
@@ -20,6 +22,7 @@ class ProcessingService
 {
     private:
         MoviDriveService* driveService;
+        AccelerationService* accelerationService;
 
         /**
          * Release and start engine?
@@ -80,7 +83,7 @@ class ProcessingService
         double calcTargetSpeed();
 
     public:
-        ProcessingService(MoviDriveService* driveService, UserSettings* settings);
+        ProcessingService(MoviDriveService *driveService, UserSettings *settings, AccelerationService *accelerationService);
         virtual ~ProcessingService();
 
         virtual void init();

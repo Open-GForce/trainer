@@ -12,11 +12,16 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
     fakeit::Fake(Method(driveServiceMock, startNode));
     fakeit::Fake(Method(driveServiceMock, setRotationSpeed));
     fakeit::Fake(Method(driveServiceMock, setControlStatus));
+    fakeit::Fake(Method(driveServiceMock, setAcceleration));
     fakeit::Fake(Method(driveServiceMock, sync));
     MoviDriveService* driveService = &driveServiceMock.get();
 
+    fakeit::Mock<AccelerationService> accelerationServiceMock;
+    fakeit::Fake(Method(accelerationServiceMock, getAcceleration));
+    AccelerationService* accelerationService = &accelerationServiceMock.get();
+
     auto settings = new UserSettings(new Range(30, 200), new Range(40, 100), 6.3);
-    auto service = new ProcessingService(driveService, settings);
+    auto service = new ProcessingService(driveService, settings, accelerationService);
 
     SECTION("Node started during init")
     {
@@ -29,6 +34,8 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
         fakeit::When(Method(driveServiceMock, setControlStatus)).AlwaysDo([] (ControlStatus* status) {
             CHECK(status->isSoftBrakeActivated());
         });
+
+        fakeit::When(Method(accelerationServiceMock, getAcceleration)).AlwaysReturn(1000);
 
         service->setFirstBrakeInput(50);
         service->setSecondBrakeInput(80);
@@ -54,6 +61,8 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
             CHECK(speed == Approx(274.51));
         });
 
+        fakeit::When(Method(accelerationServiceMock, getAcceleration)).AlwaysReturn(1000);
+
         service->setDirection(RotationDirection::right);
         service->setSecondBrakeInput(100); // Inner brake => 0.4118
         service->setFirstBrakeInput(60); // Outer brake => 0.3333
@@ -66,6 +75,46 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
         fakeit::Verify(Method(driveServiceMock, setControlStatus)).Once();
     }
 
+    SECTION("Correct acceleration handling")
+    {
+        service->setOperationMode(new Mode::RegularSpiralMode());
+
+        int callCount = 0;
+
+        fakeit::When(Method(accelerationServiceMock, getAcceleration)).AlwaysDo([&callCount] (double currentSpeed, double targetSpeed) {
+            callCount++;
+
+            if (callCount == 1) {
+                CHECK(currentSpeed == 0); // No response received yet, so current speed is not known yet
+                CHECK(targetSpeed == Approx(274.51));
+                return 1000;
+            }
+
+            if (callCount == 2) {
+                CHECK(currentSpeed == 50); // Response of last sync() call used
+                CHECK(targetSpeed == Approx(274.51));
+                return 2000;
+            }
+
+            return 0;
+        });
+
+        fakeit::When(Method(driveServiceMock, sync)).AlwaysReturn(new BusResponse(new EngineStatus(true, false, false, false, false, false, false, false), 50));
+
+        service->setDirection(RotationDirection::right);
+        service->setSecondBrakeInput(100); // Inner brake => 0.4118
+        service->setFirstBrakeInput(60); // Outer brake => 0.3333
+        service->setMaxSpeed(3500);
+        service->setReleased(true);
+        service->run();
+        service->run();
+
+        fakeit::Verify(Method(driveServiceMock, sync)).Exactly(2);
+        fakeit::Verify(Method(driveServiceMock, setAcceleration)).Exactly(2);
+        fakeit::Verify(Method(driveServiceMock, setAcceleration).Using(1000).Using(2000));
+        fakeit::Verify(Method(accelerationServiceMock, getAcceleration)).Exactly(2);
+    }
+
     SECTION("Negative speed and inverted brake order for left direction")
     {
         fakeit::When(Method(driveServiceMock, setControlStatus)).AlwaysDo([] (ControlStatus* status) {
@@ -75,6 +124,8 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
         fakeit::When(Method(driveServiceMock, setRotationSpeed)).AlwaysDo([] (double speed) {
             CHECK(std::round(speed) == -60);
         });
+
+        fakeit::When(Method(accelerationServiceMock, getAcceleration)).AlwaysReturn(1000);
 
         service->setDirection(RotationDirection::left);
         service->setSecondBrakeInput(0);   // Outer brake => 0
@@ -102,6 +153,8 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
 
     SECTION("Response object saved only if not null")
     {
+        fakeit::When(Method(accelerationServiceMock, getAcceleration)).AlwaysReturn(1000);
+
         fakeit::When(Method(driveServiceMock, sync)).Return(new BusResponse(new EngineStatus(false, false, false, false, false, false, false, false), 500));
         service->setDirection(RotationDirection::left);
         service->run();
@@ -116,6 +169,8 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
 
     SECTION("Correct processing status")
     {
+        fakeit::When(Method(accelerationServiceMock, getAcceleration)).AlwaysReturn(1000);
+
         fakeit::When(Method(driveServiceMock, sync)).Return(new BusResponse(new EngineStatus(true, false, false, false, false, false, false, false), 500));
 
         service->setOperationMode(new RegularSpiralMode());
@@ -143,6 +198,8 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
 
     SECTION("Rotation speed of processing status is always absolute")
     {
+        fakeit::When(Method(accelerationServiceMock, getAcceleration)).AlwaysReturn(1000);
+
         double rotationSpeed = -500;
         fakeit::When(Method(driveServiceMock, sync)).Return(new BusResponse(new EngineStatus(true, false, false, false, false, false, false, false), rotationSpeed));
 
