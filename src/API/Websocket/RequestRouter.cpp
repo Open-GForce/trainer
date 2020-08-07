@@ -65,6 +65,11 @@ ResponseCastInterface* RequestRouter::route(Request *request)
         return nullptr;
     }
 
+    if (request->getType() == RequestRouter::TYPE_SET_CONFIG_SOFT_START) {
+        this->configurationController->setSoftStart(request);
+        return nullptr;
+    }
+
     if (request->getType() == RequestRouter::TYPE_GET_USER_CONFIG) {
         return this->configurationController->getUserSettings();
     }

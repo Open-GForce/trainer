@@ -59,6 +59,23 @@ void Controller::ConfigurationController::setRotationRadius(Request *request)
     this->saveConfig(newConfig, oldConfig);
 }
 
+
+void Controller::ConfigurationController::setSoftStart(Request *request)
+{
+    Assertion::jsonExistsAndNumber(request->getData(), "speed");
+    Assertion::jsonExistsAndNumber(request->getData(), "acceleration");
+
+    auto oldConfig = this->configRepository->loadUserSettings();
+    auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
+                                      oldConfig->getOuterBrakeRange()->clone(),
+                                      oldConfig->getRotationRadius(),
+                                      request->getData()["speed"],
+                                      request->getData()["acceleration"],
+                                      oldConfig->getAccelerationStages());
+
+    this->saveConfig(newConfig, oldConfig);
+}
+
 Range* Controller::ConfigurationController::buildRange(Request *request)
 {
     Assertion::jsonExistsAndNumber(request->getData(), "min");
