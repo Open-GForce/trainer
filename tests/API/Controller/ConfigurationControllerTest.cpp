@@ -92,13 +92,24 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
     
     SECTION("setInnerBrakeRange() => config merged and reloaded")
     {
-        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0));
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
+                new Range(1000, 2000),
+                new Range(3000, 4000),
+                5.0,
+                100,
+                1000,
+                {AccelerationStage(500, 1250)}));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1673);
             CHECK(settings->getInnerBrakeRange()->getMax() == 4434);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->getSoftStartSpeed() == 100);
+            CHECK(settings->getSoftStartAcceleration() == 1000);
+            CHECK(settings->getAccelerationStages().size() == 1);
+            CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
+            CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
         });
 
         fakeit::When(Method(processingThreadMock, reloadUserConfig)).AlwaysDo([] (UserSettings* settings) {
@@ -106,6 +117,11 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getInnerBrakeRange()->getMax() == 4434);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->getSoftStartSpeed() == 100);
+            CHECK(settings->getSoftStartAcceleration() == 1000);
+            CHECK(settings->getAccelerationStages().size() == 1);
+            CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
+            CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
         });
 
         auto request = new Request("test", correctRangeData);
@@ -177,13 +193,26 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setOuterBrakeRange() => config merged and reloaded")
     {
-        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0));
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
+                new Range(1000, 2000),
+                new Range(3000, 4000),
+                5.0,
+                100,
+                1000,
+                {AccelerationStage(500, 1250)}
+                ));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 1673);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4434);
+            CHECK(settings->getSoftStartSpeed() == 100);
+            CHECK(settings->getSoftStartAcceleration() == 1000);
+            CHECK(settings->getAccelerationStages().size() == 1);
+            CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
+            CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
+
         });
 
         fakeit::When(Method(processingThreadMock, reloadUserConfig)).AlwaysDo([] (UserSettings* settings) {
@@ -191,6 +220,11 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 1673);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4434);
+            CHECK(settings->getSoftStartSpeed() == 100);
+            CHECK(settings->getSoftStartAcceleration() == 1000);
+            CHECK(settings->getAccelerationStages().size() == 1);
+            CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
+            CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
         });
 
         auto request = new Request("test", correctRangeData);
@@ -232,7 +266,14 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setRotationRadius() => config merged and reloaded")
     {
-        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0));
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
+                new Range(1000, 2000),
+                new Range(3000, 4000),
+                5.0,
+                100,
+                1000,
+                {AccelerationStage(500, 1250)}
+                ));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
@@ -240,6 +281,11 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
             CHECK(settings->getRotationRadius() == 2.53);
+            CHECK(settings->getSoftStartSpeed() == 100);
+            CHECK(settings->getSoftStartAcceleration() == 1000);
+            CHECK(settings->getAccelerationStages().size() == 1);
+            CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
+            CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
         });
 
         fakeit::When(Method(processingThreadMock, reloadUserConfig)).AlwaysDo([] (UserSettings* settings) {
@@ -248,6 +294,11 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
             CHECK(settings->getRotationRadius() == 2.53);
+            CHECK(settings->getSoftStartSpeed() == 100);
+            CHECK(settings->getSoftStartAcceleration() == 1000);
+            CHECK(settings->getAccelerationStages().size() == 1);
+            CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
+            CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
         });
 
         auto request = new Request("test", correctRadiusData);

@@ -36,9 +36,9 @@ class AccelerationService
          */
         virtual int getAcceleration(double currentSpeed, double targetSpeed);
 
-        void setStages(const std::list<AccelerationStage> &newStages);
-        void setSoftStartSpeed(double speed);
-        void setSoftStartAcceleration(int value);
+        virtual void setStages(const std::list<AccelerationStage> &newStages);
+        virtual void setSoftStartSpeed(double speed);
+        virtual void setSoftStartAcceleration(int value);
 };
 
 }

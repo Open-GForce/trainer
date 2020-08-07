@@ -17,7 +17,13 @@ void Controller::ConfigurationController::setInnerBrakeRange(Request *request)
     auto range = buildRange(request);
 
     auto oldConfig = this->configRepository->loadUserSettings();
-    auto newConfig = new UserSettings(range, oldConfig->getOuterBrakeRange()->clone(), oldConfig->getRotationRadius());
+    auto newConfig = new UserSettings(
+          range,
+          oldConfig->getOuterBrakeRange()->clone(),
+          oldConfig->getRotationRadius(),
+          oldConfig->getSoftStartSpeed(),
+          oldConfig->getSoftStartAcceleration(),
+          oldConfig->getAccelerationStages());
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -27,7 +33,13 @@ void Controller::ConfigurationController::setOuterBrakeRange(Request *request)
     auto range = buildRange(request);
 
     auto oldConfig = this->configRepository->loadUserSettings();
-    auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(), range, oldConfig->getRotationRadius());
+    auto newConfig = new UserSettings(
+            oldConfig->getInnerBrakeRange()->clone(),
+            range,
+            oldConfig->getRotationRadius(),
+            oldConfig->getSoftStartSpeed(),
+            oldConfig->getSoftStartAcceleration(),
+            oldConfig->getAccelerationStages());
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -37,7 +49,12 @@ void Controller::ConfigurationController::setRotationRadius(Request *request)
     Assertion::jsonExistsAndNumber(request->getData(), "rotationRadius");
 
     auto oldConfig = this->configRepository->loadUserSettings();
-    auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(), oldConfig->getOuterBrakeRange()->clone(), request->getData()["rotationRadius"]);
+    auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
+                                      oldConfig->getOuterBrakeRange()->clone(),
+                                      request->getData()["rotationRadius"],
+                                      oldConfig->getSoftStartSpeed(),
+                                      oldConfig->getSoftStartAcceleration(),
+                                      oldConfig->getAccelerationStages());
 
     this->saveConfig(newConfig, oldConfig);
 }

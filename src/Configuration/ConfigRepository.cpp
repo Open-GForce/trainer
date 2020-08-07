@@ -50,8 +50,10 @@ UserSettings* ConfigRepository::decode(const std::string& fileContent)
     return new UserSettings(
             ConfigRepository::parseRange(data, "innerBrakeRange"),
             ConfigRepository::parseRange(data, "outerBrakeRange"),
-            parseRotationRadius(data)
-    );
+            parseRotationRadius(data),
+            parseSoftStartSpeed(data),
+            parseSoftStartAcceleration(data),
+            parseAccelerationStages(data));
 }
 
 Range* ConfigRepository::parseRange(nlohmann::json data, const std::string& key) {
@@ -74,6 +76,47 @@ double ConfigRepository::parseRotationRadius(nlohmann::json data)
     }
 
     return DEFAULT_ROTATION_RADIUS;
+}
+
+double ConfigRepository::parseSoftStartSpeed(nlohmann::json data)
+{
+    if (data.find(UserSettings::JSON_KEY_SOFT_START_SPEED) != data.end() && data[UserSettings::JSON_KEY_SOFT_START_SPEED].is_number()) {
+        return data[UserSettings::JSON_KEY_SOFT_START_SPEED];
+    }
+
+    return DEFAULT_SOFT_START_SPEED;
+}
+
+int ConfigRepository::parseSoftStartAcceleration(nlohmann::json data)
+{
+    if (data.find(UserSettings::JSON_KEY_SOFT_START_ACC) != data.end() && data[UserSettings::JSON_KEY_SOFT_START_ACC].is_number()) {
+        return data[UserSettings::JSON_KEY_SOFT_START_ACC];
+    }
+
+    return DEFAULT_SOFT_START_ACCELERATION;
+}
+
+std::list<AccelerationStage> ConfigRepository::parseAccelerationStages(nlohmann::json data)
+{
+    if (data.find(UserSettings::JSON_KEY_ACC_STAGES) == data.end()
+        || !data.find(UserSettings::JSON_KEY_ACC_STAGES)->is_array()
+        || data.find(UserSettings::JSON_KEY_ACC_STAGES)->empty()) {
+
+        return {AccelerationStage(0, DEFAULT_SOFT_START_ACCELERATION)};
+    }
+
+    std::list<AccelerationStage> stages = {};
+
+    for (auto& item : data[UserSettings::JSON_KEY_ACC_STAGES]) {
+        if (item.find("speed") == item.end() || !item.find("speed")->is_number()
+         || item.find("acceleration") == item.end() || !item.find("acceleration")->is_number()) {
+            return {AccelerationStage(0, DEFAULT_SOFT_START_ACCELERATION)};
+        }
+
+        stages.push_back(AccelerationStage(item["speed"], item["acceleration"]));
+    }
+
+    return stages;
 }
 
 
