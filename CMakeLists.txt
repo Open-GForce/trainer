@@ -49,7 +49,9 @@ set(SOURCES
         src/Processing/BrakeInput/BrakeInputTransmissionThread.cpp
         src/Processing/Mode/RegularSpiralMode.cpp
         src/Processing/Mode/StaticMaxSpeedMode.cpp
-        src/Utils/Algorithms.cpp src/ACL/TCP/BrokenPipeException.hpp)
+        src/Utils/Algorithms.cpp
+        src/Processing/Acceleration/AccelerationStage.cpp
+        src/Processing/Acceleration/AccelerationService.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -72,7 +74,8 @@ set(TESTS
         tests/Processing/BrakeInput/BrakeInputTransmissionThreadTest.cpp
         tests/Processing/Mode/RegularSpiralModeTest.cpp
         tests/Processing/Mode/StaticMaxSpeedModeTest.cpp
-        tests/General/AlgorithmsTest.cpp)
+        tests/General/AlgorithmsTest.cpp
+        tests/Processing/Acceleration/AccelerationServiceTest.cpp)
 
 FIND_PACKAGE( Boost 1.62 COMPONENTS system filesystem REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
