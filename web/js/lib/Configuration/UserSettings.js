@@ -32,6 +32,12 @@ class UserSettings
         this.softStart = {
             speed: props.softStartSpeed,
             acceleration: props.softStartAcceleration
-        }
+        };
+
+        /**
+         * @type {[{acceleration: number, speed: number]}
+         */
+        this.accelerationStages = props.accelerationStages;
+
     }
 }

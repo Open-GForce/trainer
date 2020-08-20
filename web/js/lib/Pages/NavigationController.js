@@ -29,6 +29,7 @@ class NavigationController
                 app.navigation.navigationElement.find('.item').removeClass('active');
                 item.addClass('active');
 
+                app.currentPage.shutdown();
                 app.currentPage = app.navigation.pages[index];
                 app.currentPage.start();
             });

@@ -80,7 +80,7 @@ class Websocket
     {
         let handler = this;
         this._disconnect();
-        this.connection = new WebSocket('ws://192.168.0.224:8763');
+        this.connection = new WebSocket('ws://192.168.2.201:8763');
 
         this.connection.onopen = function ()
         {
