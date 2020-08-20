@@ -76,6 +76,30 @@ void Controller::ConfigurationController::setSoftStart(Request *request)
     this->saveConfig(newConfig, oldConfig);
 }
 
+void Controller::ConfigurationController::setAccelerationStages(Request *request)
+{
+    Assertion::jsonExistsAndArray(request->getData(), "stages");
+
+    std::list<AccelerationStage> stages = {};
+
+    for (auto& item : request->getData()["stages"]) {
+        Assertion::jsonExistsAndNumber(item, "speed");
+        Assertion::jsonExistsAndNumber(item, "acceleration");
+
+        stages.push_back(AccelerationStage(item["speed"], item["acceleration"]));
+    }
+
+    auto oldConfig = this->configRepository->loadUserSettings();
+    auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
+                                      oldConfig->getOuterBrakeRange()->clone(),
+                                      oldConfig->getRotationRadius(),
+                                      oldConfig->getSoftStartSpeed(),
+                                      oldConfig->getSoftStartAcceleration(),
+                                      stages);
+
+    this->saveConfig(newConfig, oldConfig);
+}
+
 Range* Controller::ConfigurationController::buildRange(Request *request)
 {
     Assertion::jsonExistsAndNumber(request->getData(), "min");

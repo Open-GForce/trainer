@@ -22,6 +22,7 @@ class RequestRouter : public RouterInterface
     const std::string TYPE_SET_CONFIG_OUTER_BRAKE = "setOuterBrakeRange";
     const std::string TYPE_SET_CONFIG_ROT_RADIUS  = "setRotationRadius";
     const std::string TYPE_SET_CONFIG_SOFT_START  = "setSoftStart";
+    const std::string TYPE_SET_CONFIG_ACC_STAGES  = "setAccelerationStages";
 
     const std::string TYPE_HEARTBEAT = "heartbeat";
 

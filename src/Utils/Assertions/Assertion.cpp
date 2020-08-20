@@ -39,6 +39,15 @@ void Assertion::jsonExistsAndObject(const nlohmann::json &data, const std::strin
     }
 }
 
+void Assertion::jsonExistsAndArray(const nlohmann::json &data, const std::string &key)
+{
+    Assertion::jsonKeyExists(data, key);
+
+    if (!data[key].is_array()) {
+        throw AssertionFailedException("Assertion failed. JSON field " + key + " is not an array");
+    }
+}
+
 void Assertion::jsonKeyExists(const nlohmann::json &data, const std::string &key)
 {
     if (data.find(key) == data.end()) {

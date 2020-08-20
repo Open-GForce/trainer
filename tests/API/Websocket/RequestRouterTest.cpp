@@ -21,6 +21,7 @@ TEST_CASE( "Request router tests", "[Websocket]" )
     fakeit::Fake(Method(configControllerMock, setInnerBrakeRange));
     fakeit::Fake(Method(configControllerMock, setOuterBrakeRange));
     fakeit::Fake(Method(configControllerMock, setSoftStart));
+    fakeit::Fake(Method(configControllerMock, setAccelerationStages));
     ConfigurationController* configController = &configControllerMock.get();
 
     auto router = new RequestRouter(operationsController, configController);
@@ -187,6 +188,19 @@ TEST_CASE( "Request router tests", "[Websocket]" )
 
         router->handle(data.dump());
         fakeit::Verify(Method(configControllerMock, setSoftStart)).Once();
+    }
+
+    SECTION("ConfigurationController->setAccelerationStages() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "setAccelerationStages";
+
+        fakeit::When(Method(configControllerMock, setAccelerationStages)).AlwaysDo([] (Request* request) {
+            CHECK(request->getType() == "setAccelerationStages");
+        });
+
+        router->handle(data.dump());
+        fakeit::Verify(Method(configControllerMock, setAccelerationStages)).Once();
     }
 
     SECTION("ConfigurationController->loadUserSettings() called")

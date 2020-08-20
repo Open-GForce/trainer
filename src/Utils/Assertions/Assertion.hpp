@@ -16,6 +16,7 @@ class Assertion
         static void jsonExistsAndString(const nlohmann::json& data, const std::string& key);
         static void jsonExistsAndBool(const nlohmann::json& data, const std::string& key);
         static void jsonExistsAndObject(const nlohmann::json& data, const std::string& key);
+        static void jsonExistsAndArray(const nlohmann::json& data, const std::string& key);
 };
 
 }
