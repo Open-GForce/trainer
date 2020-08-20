@@ -25,6 +25,11 @@ class SettingsPage extends AbstractPage
         this.forceCalculationSegment = undefined;
 
         /**
+         * @type {jQuery}
+         */
+        this.softStartSegment = undefined;
+
+        /**
          * @type {SystemStatus}
          */
         this.lastSystemStatus = undefined;
@@ -38,6 +43,7 @@ class SettingsPage extends AbstractPage
         this.innerBrakeSegment = $('#innerBrakeSegment');
         this.outerBrakeSegment = $('#outerBrakeSegment');
         this.forceCalculationSegment = $('#forceCalculationSegment');
+        this.softStartSegment = $('#softStartSegment');
 
         this._configureBrakeRangeSegment(this.innerBrakeSegment, Message.REQUEST_TYPE_CONF_INNER_BRAKE, () => {
             return this.lastSystemStatus.innerBrake
@@ -48,6 +54,7 @@ class SettingsPage extends AbstractPage
         });
 
         this._configureForceCalculationSegment();
+        this._configureSoftStartSegment();
 
         let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
         app.socket.send(configRequest);
@@ -100,6 +107,25 @@ class SettingsPage extends AbstractPage
     }
 
     /**
+     * @private
+     */
+    _configureSoftStartSegment()
+    {
+        let speedInput = this.softStartSegment.find('.speed input');
+        let accelerationInput = this.softStartSegment.find('.acceleration input');
+        let saveButton = this.softStartSegment.find('.save.button');
+
+        saveButton.click(() => {
+            let message = new Message(Message.REQUEST_TYPE_CONF_SOFT_START, {
+                speed: RotationMath.forceToSpeed(parseFloat(speedInput.val().replace(',', '.'))),
+                acceleration: parseInt(accelerationInput.val())
+            });
+            app.socket.send(message);
+            this._saveAnimation(saveButton);
+        });
+    }
+
+    /**
      * @inheritDoc
      */
     onSystemStatus(status)
@@ -120,6 +146,9 @@ class SettingsPage extends AbstractPage
         this.outerBrakeSegment.find('.maximum.input input').val(settings.outerBrakeRange.max);
 
         this.forceCalculationSegment.find('.radius.input input').val(settings.rotationRadius);
+
+        this.softStartSegment.find('.speed input').val(RotationMath.speedToForce(settings.softStart.speed).toFixed(2));
+        this.softStartSegment.find('.acceleration input').val(settings.softStart.acceleration);
     }
 
     /**

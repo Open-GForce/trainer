@@ -25,5 +25,13 @@ class UserSettings
          * @type {number}
          */
         this.rotationRadius = props.rotationRadius;
+
+        /**
+         * @type {{acceleration: {number}, speed: {number}}}
+         */
+        this.softStart = {
+            speed: props.softStartSpeed,
+            acceleration: props.softStartAcceleration
+        }
     }
 }
