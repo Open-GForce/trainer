@@ -43,6 +43,9 @@ class ConfigurationController
         virtual void setOuterBrakeRange(Request *request);
 
         virtual void setRotationRadius(Request* request);
+
+        virtual void setSoftStart(Request* request);
+        virtual void setAccelerationStages(Request* request);
 };
 
 }

@@ -2,10 +2,12 @@
 
 using namespace GForce::Configuration;
 
-const std::string UserSettings::JSON_KEY_ROT_RADIUS = "rotationRadius";
-
-UserSettings::UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius) : innerBrakeRange(
-        innerBrakeRange), outerBrakeRange(outerBrakeRange), rotationRadius(trainerRadius) {}
+UserSettings::UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius,
+                           double softStartSpeed, int softStartAcceleration, std::list<AccelerationStage> stages)
+        : innerBrakeRange(innerBrakeRange), outerBrakeRange(outerBrakeRange), rotationRadius(trainerRadius),
+          softStartSpeed(softStartSpeed),
+          softStartAcceleration(softStartAcceleration),
+          accelerationStages(stages) {}
 
 UserSettings::~UserSettings()
 {
@@ -29,8 +31,18 @@ nlohmann::json UserSettings::toJSON()
                 {"min", this->outerBrakeRange->getMin()},
                 {"max", this->outerBrakeRange->getMax()},
             }},
-            {JSON_KEY_ROT_RADIUS, this->rotationRadius}
+            {JSON_KEY_ROT_RADIUS, this->rotationRadius},
+            {JSON_KEY_SOFT_START_SPEED, this->softStartSpeed},
+            {JSON_KEY_SOFT_START_ACC, this->softStartAcceleration},
+            {JSON_KEY_ACC_STAGES, {}},
     };
+
+    for (auto const& stage : this->accelerationStages) {
+        data[JSON_KEY_ACC_STAGES].push_back({
+             {"speed", stage.getSpeed()},
+             {"acceleration", stage.getAcceleration()},
+        });
+    }
 
     return data;
 }
@@ -45,6 +57,18 @@ Range *UserSettings::getOuterBrakeRange() const {
 
 double UserSettings::getRotationRadius() const {
     return rotationRadius;
+}
+
+const std::list<AccelerationStage> UserSettings::getAccelerationStages() const {
+    return accelerationStages;
+}
+
+double UserSettings::getSoftStartSpeed() const {
+    return softStartSpeed;
+}
+
+int UserSettings::getSoftStartAcceleration() const {
+    return softStartAcceleration;
 }
 
 

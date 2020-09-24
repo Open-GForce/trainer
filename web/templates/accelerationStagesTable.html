@@ -1,0 +1,29 @@
+<table class="ui very basic relaxed celled inverted table">
+    <thead>
+    <tr>
+        <th>Belastung</th>
+        <th>Beschleunigung</th>
+        <th>Aktion</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#stages}}
+    <tr>
+        <td>{{force}}</td><td>{{acceleration}}</td><td><div class="ui red inverted fluid delete button">Löschen</div></td>
+    </tr>
+    {{/stages}}
+    <tr>
+        <td>
+            <div class="ui fluid action inverted speed input">
+                <input type="number" aria-label="speed" value="">
+            </div>
+        </td>
+        <td>
+            <div class="ui fluid action inverted acceleration input">
+                <input type="number" aria-label="acceleration" value="">
+            </div>
+        </td>
+        <td><div class="ui green inverted fluid add button">Hinzufügen</div></td>
+    </tr>
+    </tbody>
+</table>

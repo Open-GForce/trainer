@@ -3,8 +3,9 @@
 
 using namespace GForce::Processing;
 
-ProcessingService::ProcessingService(MoviDriveService* driveService, UserSettings* settings)
-{
+ProcessingService::ProcessingService(MoviDriveService *driveService, UserSettings *settings,
+                                     AccelerationService *accelerationService)
+        : accelerationService(accelerationService) {
     this->driveService = driveService;
     this->status = nullptr;
 
@@ -62,6 +63,11 @@ void ProcessingService::sync(ControlStatus *controlStatus, double rotationSpeed)
 {
     this->driveService->setControlStatus(controlStatus);
     this->driveService->setRotationSpeed(rotationSpeed);
+
+    double currentSpeed = this->status != nullptr ? this->status->getRotationSpeed() : 0;
+    int acceleration = this->accelerationService->getAcceleration(currentSpeed, rotationSpeed);
+
+    this->driveService->setAcceleration(acceleration);
 
     auto response = this->driveService->sync();
     if (response != nullptr) {
@@ -122,6 +128,10 @@ void ProcessingService::loadUserConfig(UserSettings *settings)
 
     this->innerBrakeRange = settings->getInnerBrakeRange()->clone();
     this->outerBrakeRange = settings->getOuterBrakeRange()->clone();
+
+    this->accelerationService->setSoftStartAcceleration(settings->getSoftStartAcceleration());
+    this->accelerationService->setSoftStartSpeed(settings->getSoftStartSpeed());
+    this->accelerationService->setStages(settings->getAccelerationStages());
 }
 
 void ProcessingService::setReleased(bool isReleased) {

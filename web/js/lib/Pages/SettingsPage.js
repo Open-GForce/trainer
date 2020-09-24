@@ -25,6 +25,21 @@ class SettingsPage extends AbstractPage
         this.forceCalculationSegment = undefined;
 
         /**
+         * @type {jQuery}
+         */
+        this.softStartSegment = undefined;
+
+        /**
+         * @type {jQuery}
+         */
+        this.accelerationStagesSegment = undefined;
+
+        /**
+         * @type {UserSettings}
+         */
+        this.settings = undefined;
+
+        /**
          * @type {SystemStatus}
          */
         this.lastSystemStatus = undefined;
@@ -38,6 +53,8 @@ class SettingsPage extends AbstractPage
         this.innerBrakeSegment = $('#innerBrakeSegment');
         this.outerBrakeSegment = $('#outerBrakeSegment');
         this.forceCalculationSegment = $('#forceCalculationSegment');
+        this.softStartSegment = $('#softStartSegment');
+        this.accelerationStagesSegment = $('#accelerationStagesSegment');
 
         this._configureBrakeRangeSegment(this.innerBrakeSegment, Message.REQUEST_TYPE_CONF_INNER_BRAKE, () => {
             return this.lastSystemStatus.innerBrake
@@ -48,9 +65,18 @@ class SettingsPage extends AbstractPage
         });
 
         this._configureForceCalculationSegment();
+        this._configureSoftStartSegment();
+        this._configureAccelerationStagesSegment();
 
         let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
         app.socket.send(configRequest);
+
+        $('body').css('overflow-y', 'scroll');
+    }
+
+    shutdown()
+    {
+        $('body').css('overflow-y', '');
     }
 
     /**
@@ -100,6 +126,83 @@ class SettingsPage extends AbstractPage
     }
 
     /**
+     * @private
+     */
+    _configureSoftStartSegment()
+    {
+        let speedInput = this.softStartSegment.find('.speed input');
+        let accelerationInput = this.softStartSegment.find('.acceleration input');
+        let saveButton = this.softStartSegment.find('.save.button');
+
+        saveButton.click(() => {
+            let message = new Message(Message.REQUEST_TYPE_CONF_SOFT_START, {
+                speed: RotationMath.forceToSpeed(parseFloat(speedInput.val().replace(',', '.'))),
+                acceleration: parseInt(accelerationInput.val())
+            });
+            app.socket.send(message);
+            this._saveAnimation(saveButton);
+        });
+    }
+
+    /**
+     * @private
+     */
+    _configureAccelerationStagesSegment()
+    {
+        let saveButton = this.accelerationStagesSegment.find('.save.button');
+        saveButton.click(() => {
+            let message = new Message(Message.REQUEST_TYPE_CONF_ACC_STAGES, {
+                stages: this.settings.accelerationStages
+            });
+            app.socket.send(message);
+            this._saveAnimation(saveButton);
+        });
+    }
+
+    /**
+     * @private
+     */
+    _renderAccelerationStages()
+    {
+        let page = this;
+        let segment = this.accelerationStagesSegment;
+        let data = {
+            stages: []
+        };
+
+        for (const stage of this.settings.accelerationStages) {
+            data.stages.push({
+                force: RotationMath.speedToForce(stage.speed).toFixed(2) + ' G',
+                acceleration: stage.acceleration
+            })
+        }
+
+        app.templates.load('accelerationStagesTable', function (template) {
+            let rendered = Mustache.render(template, data);
+            segment.find('table').replaceWith(rendered);
+
+            segment.find('.delete.button').each(function (index) {
+                $(this).click(function () {
+                    page.settings.accelerationStages.splice(index, 1);
+                    page._renderAccelerationStages();
+                });
+            });
+
+            segment.find('.add.button').click(function () {
+                let speedInput = segment.find('.speed input');
+                let accelerationInput = segment.find('.acceleration input');
+
+                page.settings.accelerationStages.push({
+                    speed: RotationMath.forceToSpeed(parseFloat(speedInput.val().replace(',', '.'))),
+                    acceleration: parseInt(accelerationInput.val())
+                });
+
+                page._renderAccelerationStages();
+            });
+        });
+    }
+
+    /**
      * @inheritDoc
      */
     onSystemStatus(status)
@@ -113,6 +216,8 @@ class SettingsPage extends AbstractPage
      */
     onUserSettings(settings)
     {
+        this.settings = settings;
+
         this.innerBrakeSegment.find('.minimum.input input').val(settings.innerBrakeRange.min);
         this.innerBrakeSegment.find('.maximum.input input').val(settings.innerBrakeRange.max);
 
@@ -120,6 +225,11 @@ class SettingsPage extends AbstractPage
         this.outerBrakeSegment.find('.maximum.input input').val(settings.outerBrakeRange.max);
 
         this.forceCalculationSegment.find('.radius.input input').val(settings.rotationRadius);
+
+        this.softStartSegment.find('.speed input').val(RotationMath.speedToForce(settings.softStart.speed).toFixed(2));
+        this.softStartSegment.find('.acceleration input').val(settings.softStart.acceleration);
+
+        this._renderAccelerationStages();
     }
 
     /**

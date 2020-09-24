@@ -27,6 +27,9 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
          *
          * 22500 in hex => 57 E4
          * Low byte is sent first
+         *
+         * 10000 in hex => 27 10
+         * Low byte is sent first
          */
 
         int callCount = 0;
@@ -36,7 +39,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                    CHECK(message->toFrame() == "< send 202 6 06 00 92 71 00 00 >");
+                    CHECK(message->toFrame() == "< send 202 6 06 00 92 71 10 27 >");
                     break;
                 case 2:
                     CHECK(message->toFrame() == "< send 080 0 >");
@@ -48,6 +51,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
         service->setControlStatus(ControlStatus::release());
         service->setRotationSpeed(4500);
+        service->setAcceleration(10000);
         service->sync();
 
         fakeit::Verify(Method(socketMock, send)).Exactly(2);

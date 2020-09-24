@@ -20,6 +20,8 @@ TEST_CASE( "Request router tests", "[Websocket]" )
     fakeit::Mock<ConfigurationController> configControllerMock;
     fakeit::Fake(Method(configControllerMock, setInnerBrakeRange));
     fakeit::Fake(Method(configControllerMock, setOuterBrakeRange));
+    fakeit::Fake(Method(configControllerMock, setSoftStart));
+    fakeit::Fake(Method(configControllerMock, setAccelerationStages));
     ConfigurationController* configController = &configControllerMock.get();
 
     auto router = new RequestRouter(operationsController, configController);
@@ -175,13 +177,40 @@ TEST_CASE( "Request router tests", "[Websocket]" )
         fakeit::Verify(Method(configControllerMock, setRotationRadius)).Once();
     }
 
+    SECTION("ConfigurationController->setSoftStart() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "setSoftStart";
+
+        fakeit::When(Method(configControllerMock, setSoftStart)).AlwaysDo([] (Request* request) {
+            CHECK(request->getType() == "setSoftStart");
+        });
+
+        router->handle(data.dump());
+        fakeit::Verify(Method(configControllerMock, setSoftStart)).Once();
+    }
+
+    SECTION("ConfigurationController->setAccelerationStages() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "setAccelerationStages";
+
+        fakeit::When(Method(configControllerMock, setAccelerationStages)).AlwaysDo([] (Request* request) {
+            CHECK(request->getType() == "setAccelerationStages");
+        });
+
+        router->handle(data.dump());
+        fakeit::Verify(Method(configControllerMock, setAccelerationStages)).Once();
+    }
+
     SECTION("ConfigurationController->loadUserSettings() called")
     {
         nlohmann::json data = correctMessage;
         data["type"] = "getUserSettings";
 
         fakeit::When(Method(configControllerMock, getUserSettings)).AlwaysDo([] () {
-            return new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0);
+            return new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0, 0, 0,
+                                    std::list<AccelerationStage>());
         });
 
         auto response = router->handle(data.dump());

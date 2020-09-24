@@ -60,6 +60,11 @@ class MoviDriveService
         double rotationSpeed;
 
         /**
+         * Raw acceleration, send with every sync() call
+         */
+        int acceleration;
+
+        /**
          * Sends the CAN PDOs
          */
         void send();
@@ -104,6 +109,7 @@ class MoviDriveService
          */
         virtual void setControlStatus(ControlStatus *status);
         virtual void setRotationSpeed(double speed);
+        virtual void setAcceleration(int value);
 
         /**
          * Is service in error state (no recovery possible)

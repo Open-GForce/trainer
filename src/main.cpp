@@ -60,7 +60,8 @@ void runControllerMode(bool CANDummyMode)
         moviDriveService = new MoviDriveService(canSocket, logger);
     }
 
-    auto processingService = new ProcessingService(moviDriveService, userConfig);
+    auto accelerationService = new AccelerationService();
+    auto processingService = new ProcessingService(moviDriveService, userConfig, accelerationService);
     auto processingThread = new ProcessingThread(logger, processingService);
 
     auto brakeThread = new BrakeInputReceiveThread(logger);

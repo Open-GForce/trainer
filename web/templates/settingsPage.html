@@ -70,6 +70,45 @@
     <div class="six wide column"></div>
     <div class="five wide column">
         <h5 class="ui top attached dark header">
+            Sanfter Anlauf
+        </h5>
+        <div class="ui attached inverted segment" id="softStartSegment">
+            <h4 class="ui inverted header">
+                <i class="circle dashboard icon"></i>
+                <div class="content">
+                    Sanfter Anlauf bis zur folgenden Belastung
+                </div>
+            </h4>
+            <div class="ui fluid action inverted speed input">
+                <input type="number" aria-label="soft start speed" value="">
+            </div>
+            <h4 class="ui inverted header">
+                <i class="circle chart line icon"></i>
+                <div class="content">
+                    Beschleunigung
+                </div>
+            </h4>
+            <div class="ui fluid action inverted acceleration input">
+                <input type="number" aria-label="acceleration" value="">
+            </div>
+            <div class="ui divider"></div>
+            <div class="ui blue inverted fluid save button">Speichern</div>
+        </div>
+    </div>
+    <div class="five wide column">
+        <h5 class="ui top attached dark header">
+            Beschleunigung
+        </h5>
+        <div class="ui attached inverted segment" id="accelerationStagesSegment">
+            <table class="ui very basic relaxed celled inverted table">
+            </table>
+            <div class="ui divider"></div>
+            <div class="ui blue inverted fluid save button">Speichern</div>
+        </div>
+    </div>
+    <div class="six wide column"></div>
+    <div class="five wide column">
+        <h5 class="ui top attached dark header">
             Kräfteberechnung
         </h5>
         <div class="ui attached inverted segment" id="forceCalculationSegment">
