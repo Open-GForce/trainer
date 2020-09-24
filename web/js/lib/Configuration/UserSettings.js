@@ -39,5 +39,9 @@ class UserSettings
          */
         this.accelerationStages = props.accelerationStages;
 
+        /**
+         * @type {boolean}
+         */
+        this.useAdaptiveAccelerationUserInterface = props.useAdaptiveAccelerationUserInterface;
     }
 }
