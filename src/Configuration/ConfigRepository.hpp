@@ -10,9 +10,10 @@ namespace GForce::Configuration {
 class ConfigRepository
 {
     protected:
-        constexpr const static double DEFAULT_ROTATION_RADIUS   = 3.87;
-        const static inline double DEFAULT_SOFT_START_SPEED     = 10;
-        const static inline int DEFAULT_SOFT_START_ACCELERATION = 1000;
+        constexpr const static double DEFAULT_ROTATION_RADIUS     = 3.87;
+        const static inline double DEFAULT_SOFT_START_SPEED       = 10;
+        const static inline int DEFAULT_SOFT_START_ACCELERATION   = 1000;
+        const static inline bool DEFAULT_ADAPTIVE_ACCELERATION_UI = false;
 
     private:
         std::string basePath;
@@ -25,6 +26,7 @@ class ConfigRepository
         static double parseSoftStartSpeed(nlohmann::json data);
         static int parseSoftStartAcceleration(nlohmann::json data);
         static std::list<AccelerationStage> parseAccelerationStages(nlohmann::json data);
+        static bool parseAdaptiveAcceleration(nlohmann::json data);
 
     public:
         ConfigRepository();

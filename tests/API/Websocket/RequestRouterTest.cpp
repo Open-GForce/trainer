@@ -203,6 +203,19 @@ TEST_CASE( "Request router tests", "[Websocket]" )
         fakeit::Verify(Method(configControllerMock, setAccelerationStages)).Once();
     }
 
+    SECTION("ConfigurationController->setAccelerationStages() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "setAdaptiveAccelerationUIToggle";
+
+        fakeit::When(Method(configControllerMock, setAdaptiveAccelerationUIToggle)).AlwaysDo([] (Request* request) {
+            CHECK(request->getType() == "setAdaptiveAccelerationUIToggle");
+        });
+
+        router->handle(data.dump());
+        fakeit::Verify(Method(configControllerMock, setAdaptiveAccelerationUIToggle)).Once();
+    }
+
     SECTION("ConfigurationController->loadUserSettings() called")
     {
         nlohmann::json data = correctMessage;
@@ -210,7 +223,7 @@ TEST_CASE( "Request router tests", "[Websocket]" )
 
         fakeit::When(Method(configControllerMock, getUserSettings)).AlwaysDo([] () {
             return new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0, 0, 0,
-                                    std::list<AccelerationStage>());
+                                    std::list<AccelerationStage>(), false);
         });
 
         auto response = router->handle(data.dump());

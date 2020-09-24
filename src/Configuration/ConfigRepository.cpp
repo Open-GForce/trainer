@@ -53,7 +53,8 @@ UserSettings* ConfigRepository::decode(const std::string& fileContent)
             parseRotationRadius(data),
             parseSoftStartSpeed(data),
             parseSoftStartAcceleration(data),
-            parseAccelerationStages(data));
+            parseAccelerationStages(data),
+            parseAdaptiveAcceleration(data));
 }
 
 Range* ConfigRepository::parseRange(nlohmann::json data, const std::string& key) {
@@ -117,6 +118,15 @@ std::list<AccelerationStage> ConfigRepository::parseAccelerationStages(nlohmann:
     }
 
     return stages;
+}
+
+bool ConfigRepository::parseAdaptiveAcceleration(nlohmann::json data)
+{
+    if (data.find(UserSettings::JSON_KEY_ADAP_ACC_UI) != data.end() && data[UserSettings::JSON_KEY_ADAP_ACC_UI].is_boolean()) {
+        return data[UserSettings::JSON_KEY_ADAP_ACC_UI];
+    }
+
+    return DEFAULT_ADAPTIVE_ACCELERATION_UI;
 }
 
 

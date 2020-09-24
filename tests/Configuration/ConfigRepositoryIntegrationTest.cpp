@@ -31,6 +31,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
            {"softStartSpeed", 25},
            {"softStartAcceleration", 2500},
            {"accelerationStages", {}},
+           {"useAdaptiveAccelerationUserInterface", true},
     };
 
     correctConfig["accelerationStages"].push_back({{"speed", 200}, {"acceleration", 5000}});
@@ -176,6 +177,34 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(config->getSoftStartSpeed() == 25);
     }
 
+    SECTION("Default values for adaptive acceleration UI toggle if value is missing")
+    {
+        nlohmann::json data = correctConfig;
+        data.erase("useAdaptiveAccelerationUserInterface");
+
+        std::ofstream configFile(basePath + "/user_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadUserSettings();
+
+        CHECK(!config->isAdaptiveAccelerationUIActivated());
+    }
+
+    SECTION("Default values for adaptive acceleration UI toggle if value is not boolean")
+    {
+        nlohmann::json data = correctConfig;
+        data["useAdaptiveAccelerationUserInterface"] = "abc";
+
+        std::ofstream configFile(basePath + "/user_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadUserSettings();
+
+        CHECK(!config->isAdaptiveAccelerationUIActivated());
+    }
+
     SECTION("Default values for acceleration stages if key is missing")
     {
         nlohmann::json data = correctConfig;
@@ -288,13 +317,14 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(config->getAccelerationStages().front().getAcceleration() == 5000);
         CHECK(config->getAccelerationStages().back().getSpeed() == 300);
         CHECK(config->getAccelerationStages().back().getAcceleration() == 7500);
+        CHECK(config->isAdaptiveAccelerationUIActivated());
     }
 
     SECTION("Config saved correctly")
     {
         auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 5.2, 125, 1500, {
             AccelerationStage(500.5, 7400)
-        });
+        }, true);
         repository->saveUserSettings(saved);
 
         auto loaded = repository->loadUserSettings();
@@ -307,6 +337,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(loaded->getAccelerationStages().size() == 1);
         CHECK(loaded->getAccelerationStages().front().getSpeed() == 500.5);
         CHECK(loaded->getAccelerationStages().front().getAcceleration() == 7400);
+        CHECK(loaded->isAdaptiveAccelerationUIActivated());
     }
 
     boost::filesystem::remove_all(basePath);

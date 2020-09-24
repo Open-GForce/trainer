@@ -107,7 +107,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}));
+                {AccelerationStage(500, 1250)}, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1673);
@@ -208,8 +208,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}
-                ));
+                {AccelerationStage(500, 1250)}, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
@@ -281,8 +280,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}
-                ));
+                {AccelerationStage(500, 1250)}, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
@@ -392,6 +390,36 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         }
     }
 
+    SECTION("setAdaptiveAccelerationUIToggle() => toggle not a boolean")
+    {
+        auto data = correctSoftStartData;
+        data["activate"] = "abc";
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setAdaptiveAccelerationUIToggle(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field activate is not boolean");
+        }
+    }
+
+    SECTION("setAdaptiveAccelerationUIToggle() => toggle not a boolean")
+    {
+        auto data = correctSoftStartData;
+        data.erase("activate");
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setAdaptiveAccelerationUIToggle(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field activate");
+        }
+    }
+
     SECTION("setAccelerationStages() => array field not an array")
     {
         auto data = correctAccelerationStagesData;
@@ -480,8 +508,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}
-        ));
+                {AccelerationStage(500, 1250)}, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
@@ -524,8 +551,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}
-        ));
+                {AccelerationStage(500, 1250)}, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);

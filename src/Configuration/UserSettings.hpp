@@ -20,6 +20,7 @@ class UserSettings : public ResponseCastInterface
         const static inline std::string JSON_KEY_SOFT_START_ACC   = "softStartAcceleration";
         const static inline std::string JSON_KEY_SOFT_START_SPEED = "softStartSpeed";
         const static inline std::string JSON_KEY_ACC_STAGES       = "accelerationStages";
+        const static inline std::string JSON_KEY_ADAP_ACC_UI      = "useAdaptiveAccelerationUserInterface";
 
     private:
         Range* innerBrakeRange;
@@ -45,9 +46,15 @@ class UserSettings : public ResponseCastInterface
          */
         int softStartAcceleration;
 
+        /**
+         * Activate simplified acceleration button during operation
+         */
+        bool useAdaptiveAccelerationUserInterface;
+
     public:
         UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius,
-                     double softStartSpeed, int softStartAcceleration, std::list<AccelerationStage> stages);
+                     double softStartSpeed, int softStartAcceleration, std::list<AccelerationStage> stages,
+                     bool useAdaptiveAccelerationButtons);
 
         ~UserSettings() override;
 
@@ -60,6 +67,7 @@ class UserSettings : public ResponseCastInterface
         [[nodiscard]] const std::list<AccelerationStage> getAccelerationStages() const;
         [[nodiscard]] double getSoftStartSpeed() const;
         [[nodiscard]] int getSoftStartAcceleration() const;
+        [[nodiscard]] bool isAdaptiveAccelerationUIActivated() const;
 };
 
 }
