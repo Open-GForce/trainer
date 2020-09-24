@@ -35,7 +35,10 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             {"acceleration", 1555}
     };
 
-    nlohmann::json correctAccelerationStagesData = {{"stages", {}}};
+    nlohmann::json correctAccelerationStagesData = {
+            {"stages", {}},
+            {"mode", "differential"}
+    };
     correctAccelerationStagesData["stages"].push_back({{"speed", 100}, {"acceleration", 2500}});
     correctAccelerationStagesData["stages"].push_back({{"speed", 200}, {"acceleration", 3400}});
 
@@ -107,7 +110,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1673);
@@ -208,7 +211,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
@@ -280,7 +283,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
@@ -390,6 +393,44 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         }
     }
 
+    SECTION("setAccelerationStages() => mode field is missing")
+    {
+        auto data = correctAccelerationStagesData;
+        data.erase("mode");
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setAccelerationStages(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field mode");
+        }
+    }
+
+    SECTION("setAccelerationStages() => mode field contains invalid value => default used")
+    {
+        auto data = correctAccelerationStagesData;
+        data["mode"] = "invalidValue";
+
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
+                new Range(1000, 2000),
+                new Range(3000, 4000),
+                5.0,
+                100,
+                1000,
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
+
+        fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
+            CHECK(settings->getAccelerationMode() == AccelerationMode::targetSpeed);
+        });
+
+        auto request = new Request("test", data);
+        controller->setAccelerationStages(request);
+
+        fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
+    }
+
     SECTION("setAdaptiveAccelerationUIToggle() => toggle not a boolean")
     {
         auto data = correctSoftStartData;
@@ -436,9 +477,28 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         }
     }
 
+    SECTION("setAccelerationStages() => mode field not a string")
+    {
+        auto data = correctAccelerationStagesData;
+        data.erase("mode");
+        data["mode"] = {1, 2, 3};
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setAccelerationStages(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field mode is not a string");
+        }
+    }
+
     SECTION("setAccelerationStages() => field speed missing of item")
     {
-        nlohmann::json data = {{"stages", {}}};
+        nlohmann::json data = correctAccelerationStagesData;
+        data.erase("stages");
+        data["stages"] = {};
+
         data["stages"].push_back({{"acceleration", 2500}});
         data["stages"].push_back({{"speed", 200}, {"acceleration", 3400}});
 
@@ -454,7 +514,10 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setAccelerationStages() => field acceleration missing of item")
     {
-        nlohmann::json data = {{"stages", {}}};
+        nlohmann::json data = correctAccelerationStagesData;
+        data.erase("stages");
+        data["stages"] = {};
+
         data["stages"].push_back({{"speed", 100}});
         data["stages"].push_back({{"speed", 200}, {"acceleration", 3400}});
 
@@ -470,7 +533,10 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setAccelerationStages() => speed field not a number")
     {
-        nlohmann::json data = {{"stages", {}}};
+        nlohmann::json data = correctAccelerationStagesData;
+        data.erase("stages");
+        data["stages"] = {};
+
         data["stages"].push_back({{"speed", 100}, {"acceleration", 2500}});
         data["stages"].push_back({{"speed", "abc"}, {"acceleration", 3400}});
 
@@ -486,7 +552,10 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setAccelerationStages() => acceleration field not a number")
     {
-        nlohmann::json data = {{"stages", {}}};
+        nlohmann::json data = correctAccelerationStagesData;
+        data.erase("stages");
+        data["stages"] = {};
+
         data["stages"].push_back({{"speed", 100}, {"acceleration", 2500}});
         data["stages"].push_back({{"speed", 200}, {"acceleration", "abc"}});
 
@@ -508,7 +577,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
@@ -521,6 +590,8 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getAccelerationStages().size() == 1);
             CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
             CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
+            CHECK(!settings->isAdaptiveAccelerationUIActivated());
+            CHECK(settings->getAccelerationMode() == AccelerationMode::targetSpeed);
         });
 
         fakeit::When(Method(processingThreadMock, reloadUserConfig)).AlwaysDo([] (UserSettings* settings) {
@@ -534,6 +605,8 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getAccelerationStages().size() == 1);
             CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
             CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
+            CHECK(!settings->isAdaptiveAccelerationUIActivated());
+            CHECK(settings->getAccelerationMode() == AccelerationMode::targetSpeed);
         });
 
         auto request = new Request("test", correctSoftStartData);
@@ -551,7 +624,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
@@ -566,6 +639,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getAccelerationStages().front().getAcceleration() == 2500);
             CHECK(settings->getAccelerationStages().back().getSpeed() == 200);
             CHECK(settings->getAccelerationStages().back().getAcceleration() == 3400);
+            CHECK(settings->getAccelerationMode() == AccelerationMode::differential);
         });
 
         fakeit::When(Method(processingThreadMock, reloadUserConfig)).AlwaysDo([] (UserSettings* settings) {
@@ -581,6 +655,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getAccelerationStages().front().getAcceleration() == 2500);
             CHECK(settings->getAccelerationStages().back().getSpeed() == 200);
             CHECK(settings->getAccelerationStages().back().getAcceleration() == 3400);
+            CHECK(settings->getAccelerationMode() == AccelerationMode::differential);
         });
 
         auto request = new Request("test", correctAccelerationStagesData);

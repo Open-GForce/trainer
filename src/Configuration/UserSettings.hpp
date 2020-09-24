@@ -13,6 +13,13 @@ using namespace GForce::API::Websocket;
 
 namespace GForce::Configuration {
 
+enum AccelerationMode {
+    // Determines the acceleration based on difference between current and target speed
+    differential,
+    // Determines the acceleration based on target speed
+    targetSpeed
+};
+
 class UserSettings : public ResponseCastInterface
 {
     public:
@@ -20,6 +27,7 @@ class UserSettings : public ResponseCastInterface
         const static inline std::string JSON_KEY_SOFT_START_ACC   = "softStartAcceleration";
         const static inline std::string JSON_KEY_SOFT_START_SPEED = "softStartSpeed";
         const static inline std::string JSON_KEY_ACC_STAGES       = "accelerationStages";
+        const static inline std::string JSON_KEY_ACC_MODE         = "accelerationMode";
         const static inline std::string JSON_KEY_ADAP_ACC_UI      = "useAdaptiveAccelerationUserInterface";
 
     private:
@@ -37,6 +45,11 @@ class UserSettings : public ResponseCastInterface
         std::list<AccelerationStage> accelerationStages;
 
         /**
+         * Algorithm for selecting the acceleration stage
+         */
+        AccelerationMode accelerationMode;
+
+        /**
          * Speed in 1/min, up to which the static soft start acceleration takes effect
          */
         double softStartSpeed;
@@ -52,8 +65,8 @@ class UserSettings : public ResponseCastInterface
         bool useAdaptiveAccelerationUserInterface;
 
     public:
-        UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius,
-                     double softStartSpeed, int softStartAcceleration, std::list<AccelerationStage> stages,
+        UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius, double softStartSpeed,
+                     int softStartAcceleration, std::list<AccelerationStage> stages, AccelerationMode accelerationMode,
                      bool useAdaptiveAccelerationButtons);
 
         ~UserSettings() override;
@@ -65,11 +78,19 @@ class UserSettings : public ResponseCastInterface
         [[nodiscard]] Range* getOuterBrakeRange() const;
         [[nodiscard]] double getRotationRadius() const;
         [[nodiscard]] const std::list<AccelerationStage> getAccelerationStages() const;
+        [[nodiscard]] AccelerationMode getAccelerationMode() const;
         [[nodiscard]] double getSoftStartSpeed() const;
         [[nodiscard]] int getSoftStartAcceleration() const;
         [[nodiscard]] bool isAdaptiveAccelerationUIActivated() const;
-};
 
+        static AccelerationMode stringToAccelerationMode(std::string input) {
+            if (input == "differential") {
+                return AccelerationMode::differential;
+            }
+
+            return AccelerationMode::targetSpeed;
+        }
+};
 }
 
 #endif //GFORCE_TRAINER_CONTROLLER_USERSETTINGS_HPP

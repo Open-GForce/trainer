@@ -2,13 +2,15 @@
 
 using namespace GForce::Configuration;
 
-UserSettings::UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius,
-                           double softStartSpeed, int softStartAcceleration, std::list<AccelerationStage> stages,
+UserSettings::UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius, double softStartSpeed,
+                           int softStartAcceleration, std::list<AccelerationStage> stages,
+                           AccelerationMode accelerationMode,
                            bool useAdaptiveAccelerationButtons)
         : innerBrakeRange(innerBrakeRange), outerBrakeRange(outerBrakeRange), rotationRadius(trainerRadius),
           softStartSpeed(softStartSpeed),
           softStartAcceleration(softStartAcceleration),
-          accelerationStages(stages), useAdaptiveAccelerationUserInterface(useAdaptiveAccelerationButtons) {}
+          accelerationStages(stages), useAdaptiveAccelerationUserInterface(useAdaptiveAccelerationButtons),
+          accelerationMode(accelerationMode) {}
 
 UserSettings::~UserSettings()
 {
@@ -36,8 +38,16 @@ nlohmann::json UserSettings::toJSON()
             {JSON_KEY_SOFT_START_SPEED, this->softStartSpeed},
             {JSON_KEY_SOFT_START_ACC, this->softStartAcceleration},
             {JSON_KEY_ACC_STAGES, {}},
+            {JSON_KEY_ACC_MODE, "unknown"},
             {JSON_KEY_ADAP_ACC_UI, this->useAdaptiveAccelerationUserInterface},
     };
+
+    switch (this->accelerationMode) {
+        case differential:
+            data[JSON_KEY_ACC_MODE] = "differential"; break;
+        case targetSpeed:
+            data[JSON_KEY_ACC_MODE] = "targetSpeed"; break;
+    }
 
     for (auto const& stage : this->accelerationStages) {
         data[JSON_KEY_ACC_STAGES].push_back({
@@ -75,6 +85,10 @@ int UserSettings::getSoftStartAcceleration() const {
 
 bool UserSettings::isAdaptiveAccelerationUIActivated() const {
     return useAdaptiveAccelerationUserInterface;
+}
+
+AccelerationMode UserSettings::getAccelerationMode() const {
+    return accelerationMode;
 }
 
 

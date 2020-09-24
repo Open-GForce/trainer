@@ -7,6 +7,7 @@ AccelerationService::AccelerationService()
     this->stages = {};
     this->softStartAcceleration = 1000;
     this->softStartSpeed = 10;
+    this->accelerationMode = AccelerationMode::targetSpeed;
 }
 
 int AccelerationService::getAcceleration(double currentSpeed, double targetSpeed)
@@ -39,5 +40,9 @@ void AccelerationService::setSoftStartSpeed(double speed)
 void AccelerationService::setSoftStartAcceleration(int value)
 {
     this->softStartAcceleration = value;
+}
+
+void AccelerationService::setAccelerationMode(AccelerationMode mode) {
+    this->accelerationMode = mode;
 }
 

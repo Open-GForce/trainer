@@ -3,6 +3,9 @@
 
 #include <list>
 #include "AccelerationStage.hpp"
+#include "../../Configuration/UserSettings.hpp"
+
+using namespace GForce::Configuration;
 
 namespace GForce::Processing::Acceleration {
 
@@ -13,6 +16,11 @@ class AccelerationService
          * Acceleration configuration dependent on target speed
          */
         std::list<AccelerationStage> stages;
+
+        /**
+         * Algorithm for selecting the acceleration stage
+         */
+        AccelerationMode accelerationMode;
 
         /**
          * Speed in 1/min, up to which the static soft start acceleration takes effect
@@ -39,6 +47,7 @@ class AccelerationService
         virtual void setStages(const std::list<AccelerationStage> &newStages);
         virtual void setSoftStartSpeed(double speed);
         virtual void setSoftStartAcceleration(int value);
+        virtual void setAccelerationMode(AccelerationMode mode);
 };
 
 }
