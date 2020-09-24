@@ -21,10 +21,11 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
     fakeit::Fake(Method(accelerationServiceMock, setSoftStartAcceleration));
     fakeit::Fake(Method(accelerationServiceMock, setSoftStartSpeed));
     fakeit::Fake(Method(accelerationServiceMock, setStages));
+    fakeit::Fake(Method(accelerationServiceMock, setAccelerationMode));
     AccelerationService* accelerationService = &accelerationServiceMock.get();
 
     auto settings = new UserSettings(new Range(30, 200), new Range(40, 100), 6.3, 25, 1000,
-                                     {AccelerationStage(100, 2000)}, false);
+                                     {AccelerationStage(100, 2000)}, AccelerationMode::targetSpeed, false);
     auto service = new ProcessingService(driveService, settings, accelerationService);
 
     SECTION("Node started during init")

@@ -54,6 +54,7 @@ UserSettings* ConfigRepository::decode(const std::string& fileContent)
             parseSoftStartSpeed(data),
             parseSoftStartAcceleration(data),
             parseAccelerationStages(data),
+            parseAccelerationMode(data),
             parseAdaptiveAcceleration(data));
 }
 
@@ -118,6 +119,18 @@ std::list<AccelerationStage> ConfigRepository::parseAccelerationStages(nlohmann:
     }
 
     return stages;
+}
+
+AccelerationMode ConfigRepository::parseAccelerationMode(nlohmann::json data)
+{
+    if (data.find(UserSettings::JSON_KEY_ACC_MODE) == data.end()
+        || !data.find(UserSettings::JSON_KEY_ACC_MODE)->is_string()
+        || data.find(UserSettings::JSON_KEY_ACC_MODE)->empty()) {
+
+        return DEFAULT_ACC_MODE;
+    }
+
+    return UserSettings::stringToAccelerationMode(data[UserSettings::JSON_KEY_ACC_MODE]);
 }
 
 bool ConfigRepository::parseAdaptiveAcceleration(nlohmann::json data)

@@ -31,6 +31,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
            {"softStartSpeed", 25},
            {"softStartAcceleration", 2500},
            {"accelerationStages", {}},
+           {"accelerationMode", "differential"},
            {"useAdaptiveAccelerationUserInterface", true},
     };
 
@@ -205,6 +206,20 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(!config->isAdaptiveAccelerationUIActivated());
     }
 
+    SECTION("Default values for acceleration mode if key is missing")
+    {
+        nlohmann::json data = correctConfig;
+        data.erase("accelerationMode");
+
+        std::ofstream configFile(basePath + "/user_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadUserSettings();
+
+        CHECK(config->getAccelerationMode() == AccelerationMode::targetSpeed);
+    }
+
     SECTION("Default values for acceleration stages if key is missing")
     {
         nlohmann::json data = correctConfig;
@@ -278,7 +293,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(config->getAccelerationStages().front().getAcceleration() == 1000);
     }
 
-    SECTION("Default values for acceleration stages if element is faulty => acceleraiton not number")
+    SECTION("Default values for acceleration stages if element is faulty => acceleration not number")
     {
         nlohmann::json data = correctConfig;
         data.erase("accelerationStages");
@@ -317,6 +332,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(config->getAccelerationStages().front().getAcceleration() == 5000);
         CHECK(config->getAccelerationStages().back().getSpeed() == 300);
         CHECK(config->getAccelerationStages().back().getAcceleration() == 7500);
+        CHECK(config->getAccelerationMode() == AccelerationMode::differential);
         CHECK(config->isAdaptiveAccelerationUIActivated());
     }
 
@@ -324,7 +340,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
     {
         auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 5.2, 125, 1500, {
             AccelerationStage(500.5, 7400)
-        }, true);
+        }, AccelerationMode::differential, true);
         repository->saveUserSettings(saved);
 
         auto loaded = repository->loadUserSettings();
@@ -337,6 +353,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(loaded->getAccelerationStages().size() == 1);
         CHECK(loaded->getAccelerationStages().front().getSpeed() == 500.5);
         CHECK(loaded->getAccelerationStages().front().getAcceleration() == 7400);
+        CHECK(loaded->getAccelerationMode() == AccelerationMode::differential);
         CHECK(loaded->isAdaptiveAccelerationUIActivated());
     }
 

@@ -23,7 +23,8 @@ void Controller::ConfigurationController::setInnerBrakeRange(Request *request)
             oldConfig->getRotationRadius(),
             oldConfig->getSoftStartSpeed(),
             oldConfig->getSoftStartAcceleration(),
-            oldConfig->getAccelerationStages(), oldConfig->isAdaptiveAccelerationUIActivated());
+            oldConfig->getAccelerationStages(),
+            AccelerationMode::targetSpeed, oldConfig->isAdaptiveAccelerationUIActivated());
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -39,7 +40,8 @@ void Controller::ConfigurationController::setOuterBrakeRange(Request *request)
             oldConfig->getRotationRadius(),
             oldConfig->getSoftStartSpeed(),
             oldConfig->getSoftStartAcceleration(),
-            oldConfig->getAccelerationStages(), oldConfig->isAdaptiveAccelerationUIActivated());
+            oldConfig->getAccelerationStages(),
+            AccelerationMode::targetSpeed, oldConfig->isAdaptiveAccelerationUIActivated());
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -54,7 +56,8 @@ void Controller::ConfigurationController::setRotationRadius(Request *request)
                                       request->getData()["rotationRadius"],
                                       oldConfig->getSoftStartSpeed(),
                                       oldConfig->getSoftStartAcceleration(),
-                                      oldConfig->getAccelerationStages(), oldConfig->isAdaptiveAccelerationUIActivated());
+                                      oldConfig->getAccelerationStages(), AccelerationMode::targetSpeed,
+                                      oldConfig->isAdaptiveAccelerationUIActivated());
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -71,7 +74,8 @@ void Controller::ConfigurationController::setSoftStart(Request *request)
                                       oldConfig->getRotationRadius(),
                                       request->getData()["speed"],
                                       request->getData()["acceleration"],
-                                      oldConfig->getAccelerationStages(), oldConfig->isAdaptiveAccelerationUIActivated());
+                                      oldConfig->getAccelerationStages(), AccelerationMode::targetSpeed,
+                                      oldConfig->isAdaptiveAccelerationUIActivated());
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -79,6 +83,7 @@ void Controller::ConfigurationController::setSoftStart(Request *request)
 void Controller::ConfigurationController::setAccelerationStages(Request *request)
 {
     Assertion::jsonExistsAndArray(request->getData(), "stages");
+    Assertion::jsonExistsAndString(request->getData(), "mode");
 
     std::list<AccelerationStage> stages = {};
 
@@ -95,7 +100,9 @@ void Controller::ConfigurationController::setAccelerationStages(Request *request
                                       oldConfig->getRotationRadius(),
                                       oldConfig->getSoftStartSpeed(),
                                       oldConfig->getSoftStartAcceleration(),
-                                      stages, oldConfig->isAdaptiveAccelerationUIActivated());
+                                      stages,
+                                      UserSettings::stringToAccelerationMode(request->getData()["mode"]),
+                                      oldConfig->isAdaptiveAccelerationUIActivated());
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -111,6 +118,7 @@ void Controller::ConfigurationController::setUserInterfaceSettings(Request* requ
                                       oldConfig->getSoftStartSpeed(),
                                       oldConfig->getSoftStartAcceleration(),
                                       oldConfig->getAccelerationStages(),
+                                      oldConfig->getAccelerationMode(),
                                       request->getData()["activateAdaptiveAcceleration"]);
 
     this->saveConfig(newConfig, oldConfig);
