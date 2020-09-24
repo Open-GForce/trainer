@@ -68,6 +68,42 @@ class OperationsPage extends AbstractPage
          * @type {boolean}
          */
         this.firstStatusHandled = false;
+
+        /**
+         * @type {jQuery}
+         */
+        this.regularControlsContainer = undefined;
+
+        /**
+         * @type {jQuery}
+         */
+        this.adaptiveAccelerationControlsContainer = undefined;
+
+        /**
+         * @type {jQuery}
+         */
+        this.accelerationButton = undefined;
+
+        /**
+         * Is acceleration button visible
+         *
+         * @type {boolean}
+         */
+        this.accelerationButtonVisiable = false;
+
+        /**
+         * Show adaptive acceleration button instead of regular controls when released
+         *
+         * @type {boolean}
+         */
+        this.useAdaptiveAccelerationButton = false;
+
+        /**
+         * Max. speed limit (updated by system status)
+         *
+         * @type {number}
+         */
+        this.maxSpeed = 0;
     }
 
     /**
@@ -76,6 +112,9 @@ class OperationsPage extends AbstractPage
     _initialize()
     {
         this.firstStatusHandled = false;
+
+        let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
+        app.socket.send(configRequest);
 
         this.statusSegment = $('.status.segment');
         this.forceSegment = $('.force.segment');
@@ -88,6 +127,10 @@ class OperationsPage extends AbstractPage
         this.modeButtons.staticSpeed = this.controlSegment.find('.operation-mode.buttons .static-speed');
 
         this.releaseButton = this.controlSegment.find('.release.button');
+
+        this.regularControlsContainer = this.controlSegment.find('.regularControls');
+        this.adaptiveAccelerationControlsContainer = this.controlSegment.find('.adaptiveAccelerationControls');
+        this.accelerationButton = this.adaptiveAccelerationControlsContainer.find('.acceleration.button');
 
         this.brakeChart = new BrakeInputChart();
         this.speedChart = new SpeedChart();
@@ -112,6 +155,8 @@ class OperationsPage extends AbstractPage
     {
         this.controlSegment.removeClass('loading');
 
+        this.maxSpeed = status.maxSpeed;
+
         if (!this.firstStatusHandled) {
             this.speedSliderElement.slider("set value", RotationMath.speedToForce(status.maxSpeed));
             this.firstStatusHandled = true;
@@ -132,6 +177,7 @@ class OperationsPage extends AbstractPage
         this._renderForce(status);
         this._renderControlButtons(status);
         this._renderReleaseButton(status);
+        this._renderAccelerationButton(status);
     }
 
     /**
@@ -140,11 +186,13 @@ class OperationsPage extends AbstractPage
     onUserSettings(settings)
     {
         RotationMath.trainerRadius = settings.rotationRadius;
-        console.log(RotationMath.trainerRadius);
+        this.useAdaptiveAccelerationButton = settings.useAdaptiveAccelerationUserInterface;
     }
 
     _bindControls()
     {
+        let page = this;
+
         this.speedSliderElement = $('.control.segment .slider');
         this.speedSliderElement.slider({
             min: 0,
@@ -156,10 +204,7 @@ class OperationsPage extends AbstractPage
                     return;
                 }
 
-                let message = new Message(Message.REQUEST_TYPE_MAX_SPEED, {
-                    speed: RotationMath.forceToSpeed(value)
-                });
-                app.socket.send(message);
+                page._setMaxSpeed(RotationMath.forceToSpeed(value));
             }
         });
 
@@ -179,6 +224,16 @@ class OperationsPage extends AbstractPage
             this._sendOperationModeMessage('regularSpiral');
         });
 
+        this.accelerationButton.click(() => {
+            this.accelerationButton.addClass('loading');
+            setTimeout(() => {
+                this.accelerationButton.removeClass('loading');
+            }, 500);
+
+            let maxForce = RotationMath.speedToForce(this.maxSpeed) + 0.5;
+            page._setMaxSpeed(RotationMath.forceToSpeed(maxForce));
+        });
+
         this.releaseButton.click(() => {
             this.releaseButton.addClass('disabled').addClass('loading');
 
@@ -187,6 +242,25 @@ class OperationsPage extends AbstractPage
             });
             app.socket.send(message);
         });
+    }
+
+    /**
+     * Sets the max. speed by sending a message to the controller
+     *
+     * @param {number} maxSpeed Max. speed in 1/min
+     * @private
+     */
+    _setMaxSpeed(maxSpeed)
+    {
+        if (maxSpeed >= RotationMath.forceToSpeed(7)) {
+            maxSpeed = RotationMath.forceToSpeed(7);
+        }
+
+        this.maxSpeed = maxSpeed;
+        let message = new Message(Message.REQUEST_TYPE_MAX_SPEED, {
+            speed: this.maxSpeed
+        });
+        app.socket.send(message);
     }
 
     /**
@@ -341,6 +415,33 @@ class OperationsPage extends AbstractPage
             this.releaseButton
                 .removeClass('red').addClass('blue')
                 .html('Freigeben');
+        }
+    }
+
+    /**
+     * @param {SystemStatus|undefined} status
+     */
+    _renderAccelerationButton(status)
+    {
+        console.log(this.useAdaptiveAccelerationButton);
+        if (!this.useAdaptiveAccelerationButton) {
+            return;
+        }
+
+        if (!this.released && this.accelerationButtonVisiable) {
+            this.adaptiveAccelerationControlsContainer.hide();
+            this.regularControlsContainer.show();
+            this.accelerationButtonVisiable = false;
+            return;
+        }
+
+        if (this.released && !this.accelerationButtonVisiable) {
+            let containerHeight = this.regularControlsContainer.height();
+            this.accelerationButton.height(containerHeight);
+
+            this.regularControlsContainer.hide();
+            this.adaptiveAccelerationControlsContainer.show();
+            this.accelerationButtonVisiable = true;
         }
     }
 }
