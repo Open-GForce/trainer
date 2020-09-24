@@ -206,14 +206,14 @@ TEST_CASE( "Request router tests", "[Websocket]" )
     SECTION("ConfigurationController->setAccelerationStages() called")
     {
         nlohmann::json data = correctMessage;
-        data["type"] = "setAdaptiveAccelerationUIToggle";
+        data["type"] = "setUserInterfaceSettings";
 
-        fakeit::When(Method(configControllerMock, setAdaptiveAccelerationUIToggle)).AlwaysDo([] (Request* request) {
-            CHECK(request->getType() == "setAdaptiveAccelerationUIToggle");
+        fakeit::When(Method(configControllerMock, setUserInterfaceSettings)).AlwaysDo([] (Request* request) {
+            CHECK(request->getType() == "setUserInterfaceSettings");
         });
 
         router->handle(data.dump());
-        fakeit::Verify(Method(configControllerMock, setAdaptiveAccelerationUIToggle)).Once();
+        fakeit::Verify(Method(configControllerMock, setUserInterfaceSettings)).Once();
     }
 
     SECTION("ConfigurationController->loadUserSettings() called")

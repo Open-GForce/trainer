@@ -100,9 +100,9 @@ void Controller::ConfigurationController::setAccelerationStages(Request *request
     this->saveConfig(newConfig, oldConfig);
 }
 
-void Controller::ConfigurationController::setAdaptiveAccelerationUIToggle(Request* request)
+void Controller::ConfigurationController::setUserInterfaceSettings(Request* request)
 {
-    Assertion::jsonExistsAndBool(request->getData(), "activate");
+    Assertion::jsonExistsAndBool(request->getData(), "activateAdaptiveAcceleration");
 
     auto oldConfig = this->configRepository->loadUserSettings();
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
@@ -111,7 +111,7 @@ void Controller::ConfigurationController::setAdaptiveAccelerationUIToggle(Reques
                                       oldConfig->getSoftStartSpeed(),
                                       oldConfig->getSoftStartAcceleration(),
                                       oldConfig->getAccelerationStages(),
-                                      request->getData()["activated"]);
+                                      request->getData()["activateAdaptiveAcceleration"]);
 
     this->saveConfig(newConfig, oldConfig);
 }

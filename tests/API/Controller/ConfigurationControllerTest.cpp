@@ -393,30 +393,30 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
     SECTION("setAdaptiveAccelerationUIToggle() => toggle not a boolean")
     {
         auto data = correctSoftStartData;
-        data["activate"] = "abc";
+        data["activateAdaptiveAcceleration"] = "abc";
 
         auto request = new Request("test", data);
 
         try {
-            controller->setAdaptiveAccelerationUIToggle(request);
+            controller->setUserInterfaceSettings(request);
             FAIL("Expected exception was not thrown");
         } catch (AssertionFailedException &e) {
-            CHECK(e.getMessage() == "Assertion failed. JSON field activate is not boolean");
+            CHECK(e.getMessage() == "Assertion failed. JSON field activateAdaptiveAcceleration is not boolean");
         }
     }
 
     SECTION("setAdaptiveAccelerationUIToggle() => toggle not a boolean")
     {
         auto data = correctSoftStartData;
-        data.erase("activate");
+        data.erase("activateAdaptiveAcceleration");
 
         auto request = new Request("test", data);
 
         try {
-            controller->setAdaptiveAccelerationUIToggle(request);
+            controller->setUserInterfaceSettings(request);
             FAIL("Expected exception was not thrown");
         } catch (AssertionFailedException &e) {
-            CHECK(e.getMessage() == "Assertion failed. Missing JSON field activate");
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field activateAdaptiveAcceleration");
         }
     }
 

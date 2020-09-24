@@ -75,8 +75,8 @@ ResponseCastInterface* RequestRouter::route(Request *request)
         return nullptr;
     }
 
-    if (request->getType() == RequestRouter::TYPE_SET_CONFIG_ADAP_ACC_UI) {
-        this->configurationController->setAdaptiveAccelerationUIToggle(request);
+    if (request->getType() == RequestRouter::TYPE_SET_CONFIG_UI) {
+        this->configurationController->setUserInterfaceSettings(request);
         return nullptr;
     }
 

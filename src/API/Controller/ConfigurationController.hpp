@@ -47,7 +47,7 @@ class ConfigurationController
         virtual void setSoftStart(Request* request);
         virtual void setAccelerationStages(Request* request);
 
-        virtual void setAdaptiveAccelerationUIToggle(Request* request);
+        virtual void setUserInterfaceSettings(Request* request);
 };
 
 }
