@@ -132,6 +132,7 @@ void ProcessingService::loadUserConfig(UserSettings *settings)
     this->accelerationService->setSoftStartAcceleration(settings->getSoftStartAcceleration());
     this->accelerationService->setSoftStartSpeed(settings->getSoftStartSpeed());
     this->accelerationService->setStages(settings->getAccelerationStages());
+    this->accelerationService->setAccelerationMode(settings->getAccelerationMode());
 }
 
 void ProcessingService::setReleased(bool isReleased) {

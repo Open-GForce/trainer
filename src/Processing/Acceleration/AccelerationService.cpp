@@ -16,9 +16,13 @@ int AccelerationService::getAcceleration(double currentSpeed, double targetSpeed
         return this->softStartAcceleration;
     }
 
+    double needle = this->accelerationMode == AccelerationMode::targetSpeed
+            ? targetSpeed
+            : std::abs(targetSpeed - currentSpeed);
+
     std::list<AccelerationStage>:: reverse_iterator revit;
     for( revit = this->stages.rbegin(); revit != this->stages.rend(); revit++) {
-        if (revit->getSpeed() <= targetSpeed) {
+        if (revit->getSpeed() <= needle) {
             return revit->getAcceleration();
         }
     }
