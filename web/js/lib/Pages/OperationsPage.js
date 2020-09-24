@@ -277,9 +277,9 @@ class OperationsPage extends AbstractPage
         app.socket.send(message);
 
         if (direction === 'right') {
-            this._toggleButtons(this.directionButtons.right, this.directionButtons.left);
+            this.toggleButtons(this.directionButtons.right, this.directionButtons.left);
         } else {
-            this._toggleButtons(this.directionButtons.left, this.directionButtons.right);
+            this.toggleButtons(this.directionButtons.left, this.directionButtons.right);
         }
     }
 
@@ -298,22 +298,11 @@ class OperationsPage extends AbstractPage
         app.socket.send(message);
 
         if (mode === 'staticMaxSpeed') {
-            this._toggleButtons(this.modeButtons.staticSpeed, this.modeButtons.simulation);
+            this.toggleButtons(this.modeButtons.staticSpeed, this.modeButtons.simulation);
         } else {
-            this._toggleButtons(this.modeButtons.simulation, this.modeButtons.staticSpeed);
+            this.toggleButtons(this.modeButtons.simulation, this.modeButtons.staticSpeed);
         }
     }
-
-    /**
-     * @param {jQuery} active
-     * @param {jQuery} passive
-     * @private
-     */
-    _toggleButtons(active, passive)
-    {
-        active.addClass('active').addClass('white');
-        passive.removeClass('active').removeClass('white');
-    };
 
     /**
      * @param {SystemStatus|undefined} status
@@ -381,15 +370,15 @@ class OperationsPage extends AbstractPage
     _renderControlButtons(status)
     {
         if (status.direction === "right") {
-            this._toggleButtons(this.directionButtons.right, this.directionButtons.left);
+            this.toggleButtons(this.directionButtons.right, this.directionButtons.left);
         } else {
-            this._toggleButtons(this.directionButtons.left, this.directionButtons.right);
+            this.toggleButtons(this.directionButtons.left, this.directionButtons.right);
         }
 
         if (status.operationMode === "staticMaxSpeed") {
-            this._toggleButtons(this.modeButtons.staticSpeed, this.modeButtons.simulation);
+            this.toggleButtons(this.modeButtons.staticSpeed, this.modeButtons.simulation);
         } else {
-            this._toggleButtons(this.modeButtons.simulation, this.modeButtons.staticSpeed);
+            this.toggleButtons(this.modeButtons.simulation, this.modeButtons.staticSpeed);
         }
     }
 

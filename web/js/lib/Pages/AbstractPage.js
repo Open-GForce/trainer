@@ -51,4 +51,15 @@ class AbstractPage
     _initialize()
     {
     }
+
+    /**
+     * @param {jQuery} active
+     * @param {jQuery} passive
+     * @protected
+     */
+    toggleButtons(active, passive)
+    {
+        active.addClass('active').addClass('white');
+        passive.removeClass('active').removeClass('white');
+    };
 }

@@ -40,6 +40,11 @@ class UserSettings
         this.accelerationStages = props.accelerationStages;
 
         /**
+         * @type {string}
+         */
+        this.accelerationMode = props.accelerationMode;
+
+        /**
          * @type {boolean}
          */
         this.useAdaptiveAccelerationUserInterface = props.useAdaptiveAccelerationUserInterface;

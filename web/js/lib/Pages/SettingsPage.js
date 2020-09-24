@@ -173,10 +173,24 @@ class SettingsPage extends AbstractPage
      */
     _configureAccelerationStagesSegment()
     {
+        let differentialModeButton = this.accelerationStagesSegment.find('.differential.button');
+        let targetSpeedModeButton = this.accelerationStagesSegment.find('.target-speed.button');
+
+        targetSpeedModeButton.click(() => {
+            this.settings.accelerationMode = 'targetSpeed';
+            this.toggleButtons(targetSpeedModeButton, differentialModeButton);
+        });
+
+        differentialModeButton.click(() => {
+            this.settings.accelerationMode = 'differential';
+            this.toggleButtons(differentialModeButton, targetSpeedModeButton);
+        });
+
         let saveButton = this.accelerationStagesSegment.find('.save.button');
         saveButton.click(() => {
             let message = new Message(Message.REQUEST_TYPE_CONF_ACC_STAGES, {
-                stages: this.settings.accelerationStages
+                stages: this.settings.accelerationStages,
+                mode: this.settings.accelerationMode
             });
             app.socket.send(message);
             this._saveAnimation(saveButton);
@@ -256,6 +270,12 @@ class SettingsPage extends AbstractPage
         this.uiConfigurationSegment.find('.adaptiveAccelerationButton').checkbox(settings.useAdaptiveAccelerationUserInterface ? 'set checked' : 'set unchecked');
 
         this._renderAccelerationStages();
+
+        if (settings.accelerationMode === 'targetSpeed') {
+            this.toggleButtons(this.accelerationStagesSegment.find('.target-speed.button'), this.accelerationStagesSegment.find('.differential.button'), )
+        } else {
+            this.toggleButtons(this.accelerationStagesSegment.find('.differential.button'), this.accelerationStagesSegment.find('.target-speed.button'), )
+        }
     }
 
     /**
