@@ -3,11 +3,12 @@
 using namespace GForce::Configuration;
 
 UserSettings::UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius,
-                           double softStartSpeed, int softStartAcceleration, std::list<AccelerationStage> stages)
+                           double softStartSpeed, int softStartAcceleration, std::list<AccelerationStage> stages,
+                           bool useAdaptiveAccelerationButtons)
         : innerBrakeRange(innerBrakeRange), outerBrakeRange(outerBrakeRange), rotationRadius(trainerRadius),
           softStartSpeed(softStartSpeed),
           softStartAcceleration(softStartAcceleration),
-          accelerationStages(stages) {}
+          accelerationStages(stages), useAdaptiveAccelerationUserInterface(useAdaptiveAccelerationButtons) {}
 
 UserSettings::~UserSettings()
 {
@@ -35,6 +36,7 @@ nlohmann::json UserSettings::toJSON()
             {JSON_KEY_SOFT_START_SPEED, this->softStartSpeed},
             {JSON_KEY_SOFT_START_ACC, this->softStartAcceleration},
             {JSON_KEY_ACC_STAGES, {}},
+            {JSON_KEY_ADAP_ACC_UI, this->useAdaptiveAccelerationUserInterface},
     };
 
     for (auto const& stage : this->accelerationStages) {
@@ -69,6 +71,10 @@ double UserSettings::getSoftStartSpeed() const {
 
 int UserSettings::getSoftStartAcceleration() const {
     return softStartAcceleration;
+}
+
+bool UserSettings::isAdaptiveAccelerationUIActivated() const {
+    return useAdaptiveAccelerationUserInterface;
 }
 
 

@@ -27,6 +27,11 @@ class SettingsPage extends AbstractPage
         /**
          * @type {jQuery}
          */
+        this.uiConfigurationSegment = undefined;
+
+        /**
+         * @type {jQuery}
+         */
         this.softStartSegment = undefined;
 
         /**
@@ -55,6 +60,7 @@ class SettingsPage extends AbstractPage
         this.forceCalculationSegment = $('#forceCalculationSegment');
         this.softStartSegment = $('#softStartSegment');
         this.accelerationStagesSegment = $('#accelerationStagesSegment');
+        this.uiConfigurationSegment = $('#userInterfaceConfiguration');
 
         this._configureBrakeRangeSegment(this.innerBrakeSegment, Message.REQUEST_TYPE_CONF_INNER_BRAKE, () => {
             return this.lastSystemStatus.innerBrake
@@ -67,6 +73,7 @@ class SettingsPage extends AbstractPage
         this._configureForceCalculationSegment();
         this._configureSoftStartSegment();
         this._configureAccelerationStagesSegment();
+        this._configureUserInterfaceConfigSegment();
 
         let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
         app.socket.send(configRequest);
@@ -119,6 +126,23 @@ class SettingsPage extends AbstractPage
         saveButton.click(() => {
             let message = new Message(Message.REQUEST_TYPE_CONF_ROT_RADIUS, {
                 rotationRadius: parseFloat(radiusInput.val().replace(',', '.')),
+            });
+            app.socket.send(message);
+            this._saveAnimation(saveButton);
+        });
+    }
+
+    /**
+     * @private
+     */
+    _configureUserInterfaceConfigSegment()
+    {
+        let checkbox = this.uiConfigurationSegment.find('.adaptiveAccelerationButton');
+        let saveButton = this.uiConfigurationSegment.find('.save.button');
+
+        saveButton.click(() => {
+            let message = new Message(Message.REQUEST_TYPE_CONF_UI_SETTINGS, {
+                activateAdaptiveAcceleration: checkbox.checkbox('is checked'),
             });
             app.socket.send(message);
             this._saveAnimation(saveButton);
@@ -228,6 +252,8 @@ class SettingsPage extends AbstractPage
 
         this.softStartSegment.find('.speed input').val(RotationMath.speedToForce(settings.softStart.speed).toFixed(2));
         this.softStartSegment.find('.acceleration input').val(settings.softStart.acceleration);
+
+        this.uiConfigurationSegment.find('.adaptiveAccelerationButton').checkbox(settings.useAdaptiveAccelerationUserInterface ? 'set checked' : 'set unchecked');
 
         this._renderAccelerationStages();
     }

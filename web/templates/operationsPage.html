@@ -12,34 +12,42 @@
             Steuerung
         </h5>
         <div class="ui attached inverted segment control">
-            <h3 class="ui inverted header">
-                <i class="fighter jet icon"></i>
-                <div class="content">
-                    Belastung
-                    <div class="sub header">Begrenzung der G-Kräfte</div>
+            <div class="regularControls" style="display: block">
+                <h3 class="ui inverted header">
+                    <i class="fighter jet icon"></i>
+                    <div class="content">
+                        Belastung
+                        <div class="sub header">Begrenzung der G-Kräfte</div>
+                    </div>
+                </h3><br>
+                <div class="ui labeled ticked inverted slider"></div>
+                <div class="ui divider"></div>
+                <h3 class="ui inverted header">
+                    <i class="directions icon"></i>
+                    <div class="content">
+                        Drehrichtung
+                    </div>
+                </h3>
+                <div class="ui huge fluid inverted direction buttons">
+                    <button class="ui inverted active white right button">Rechts</button>
+                    <button class="ui inverted left button">Links</button>
                 </div>
-            </h3><br>
-            <div class="ui labeled ticked inverted slider"></div>
-            <div class="ui divider"></div>
-            <h3 class="ui inverted header">
-                <i class="directions icon"></i>
-                <div class="content">
-                    Drehrichtung
+                <h3 class="ui inverted header">
+                    <i class="toggle on icon"></i>
+                    <div class="content">
+                        Modus
+                    </div>
+                </h3>
+                <div class="ui huge fluid inverted operation-mode buttons">
+                    <button class="ui inverted white static-speed button">Feste Belastung</button>
+                    <button class="ui inverted active simulation button">Simulation</button>
                 </div>
-            </h3>
-            <div class="ui huge fluid inverted direction buttons">
-                <button class="ui inverted active white right button">Rechts</button>
-                <button class="ui inverted left button">Links</button>
             </div>
-            <h3 class="ui inverted header">
-                <i class="toggle on icon"></i>
-                <div class="content">
-                    Modus
-                </div>
-            </h3>
-            <div class="ui huge fluid inverted operation-mode buttons">
-                <button class="ui inverted white static-speed button">Feste Belastung</button>
-                <button class="ui inverted active simulation button">Simulation</button>
+            <div class="adaptiveAccelerationControls" style="display: none">
+                <button class="ui inverted blue fluid massive button acceleration">
+                    <i class="circular plus icon"></i><br><br>
+                    Steigere maximale Belastung (+ 0.5 G)
+                </button>
             </div>
             <div class="ui divider"></div>
             <h3 class="ui inverted header">
