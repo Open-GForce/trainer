@@ -1,6 +1,6 @@
 #include <utility>
 #include <fstream>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include "../Utils/Exceptions/RuntimeException.hpp"
 #include "ConfigRepository.hpp"
 

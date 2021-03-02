@@ -1,7 +1,7 @@
 #ifndef PEGASUS_CONTROLLER_ASSERTION_HPP
 #define PEGASUS_CONTROLLER_ASSERTION_HPP
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 namespace GForce::Utils::Assertions
 {

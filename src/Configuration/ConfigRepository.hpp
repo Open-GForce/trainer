@@ -2,7 +2,7 @@
 #define GFORCE_TRAINER_CONTROLLER_CONFIGREPOSITORY_HPP
 
 #include <string>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include "UserSettings.hpp"
 
 namespace GForce::Configuration {

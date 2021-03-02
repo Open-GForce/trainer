@@ -1,7 +1,7 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_BRAKEINPUTMESSAGE_HPP
 #define GFORCE_TRAINER_CONTROLLER_BRAKEINPUTMESSAGE_HPP
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 namespace GForce::Processing::BrakeInput {
 

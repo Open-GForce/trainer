@@ -1,0 +1,12 @@
+[requires]
+boost/1.75.0
+nlohmann_json/3.9.1
+spdlog/1.8.2
+rang/3.1.0
+websocketpp/0.8.2
+can-utils/v2020.12.0@open-gforce/can-utils
+catch2/2.9.2
+FakeIt/2.0.5@gasuketsu/testing
+
+[generators]
+cmake

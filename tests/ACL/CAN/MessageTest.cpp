@@ -1,4 +1,4 @@
-#include "../../../includes/catch2/catch.hpp"
+#include <catch2/catch.hpp>
 #include "../../../src/ACL/CAN/Message.hpp"
 #include "../../../src/Utils/Exceptions/InvalidArgumentException.hpp"
 

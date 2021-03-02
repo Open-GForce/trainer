@@ -1,5 +1,5 @@
-#include "../../../includes/catch2/catch.hpp"
-#include "../../../includes/fake_it/single_header/catch/fakeit.hpp"
+#include <catch2/catch.hpp>
+#include <fakeit.hpp>
 #include "../../../src/API/Controller/OperationsController.hpp"
 #include "../../../src/API/Controller/HeartbeatResponse.hpp"
 #include "../../../src/Utils/Assertions/AssertionFailedException.hpp"

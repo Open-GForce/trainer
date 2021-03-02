@@ -2,7 +2,7 @@
 #define GFORCE_TRAINER_CONTROLLER_CONTROLSTATUS_HPP
 
 #include <cstdint>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 namespace GForce::Networking {
 

@@ -1,7 +1,7 @@
 #ifndef GFORCE_TRAINER_CONTROLLER_USERSETTINGS_HPP
 #define GFORCE_TRAINER_CONTROLLER_USERSETTINGS_HPP
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <list>
 #include "../Processing/Range.hpp"
 #include "../API/Websocket/ResponseCastInterface.hpp"
