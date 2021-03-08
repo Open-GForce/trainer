@@ -3,8 +3,8 @@
 
 #include <fstream>
 #include <boost/filesystem.hpp>
-#include "../../includes/catch2/catch.hpp"
-#include "../../includes/fake_it/single_header/catch/fakeit.hpp"
+#include <catch2/catch.hpp>
+#include <fakeit.hpp>
 #include "../../src/Configuration/ConfigRepository.hpp"
 #include "../../src/Utils/Exceptions/RuntimeException.hpp"
 

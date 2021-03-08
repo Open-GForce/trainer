@@ -1,4 +1,5 @@
-#include "../../../includes/catch2/catch.hpp"
+#include <catch2/catch.hpp>
+#include <fakeit.hpp>
 #include "../../../src/Processing/Acceleration/AccelerationService.hpp"
 #include "../../../src/Processing/Acceleration/AccelerationStage.hpp"
 

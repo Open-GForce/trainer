@@ -2,7 +2,7 @@
 #define GFORCE_TRAINER_CONTROLLER_REQUEST_HPP
 
 #include <string>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 namespace GForce::API::Websocket {
 

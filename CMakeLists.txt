@@ -5,12 +5,7 @@ project (gforce_trainer_controller LANGUAGES C CXX)
 
 set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_BUILD_TYPE Debug)
-
-include_directories(../includes/can-utils)
-include_directories(../includes/websocketpp)
-include_directories(../includes/nlohmann_json)
-include_directories(../includes/spdlog)
-include_directories(../includes/rang)
+set (Boost_USE_STATIC_LIBS ON)
 
 set(SOURCES
         src/ACL/I2C/Device.cpp
@@ -77,17 +72,15 @@ set(TESTS
         tests/General/AlgorithmsTest.cpp
         tests/Processing/Acceleration/AccelerationServiceTest.cpp)
 
-FIND_PACKAGE( Boost 1.62 COMPONENTS system filesystem REQUIRED )
-INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+include(build/conanbuildinfo.cmake)
+conan_basic_setup()
 
 add_executable(controller ${SOURCES} src/main.cpp)
-target_link_libraries (controller ${PROJECT_SOURCE_DIR}/includes/can-utils/build/libcan.a)
 target_link_libraries (controller pthread)
 target_link_libraries (controller m)
-target_link_libraries (controller ${Boost_LIBRARIES} )
+target_link_libraries (controller ${CONAN_LIBS})
 
 add_executable(run_tests ${SOURCES} ${TESTS} tests/main.cpp)
-target_link_libraries (run_tests ${PROJECT_SOURCE_DIR}/includes/can-utils/build/libcan.a)
 target_link_libraries (run_tests pthread)
 target_link_libraries (run_tests m)
-target_link_libraries (run_tests ${Boost_LIBRARIES} )
+target_link_libraries (run_tests ${CONAN_LIBS})

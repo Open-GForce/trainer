@@ -1,5 +1,5 @@
-#include "../../includes/catch2/catch.hpp"
-#include "../../includes/fake_it/single_header/catch/fakeit.hpp"
+#include <catch2/catch.hpp>
+#include <fakeit.hpp>
 #include "../../src/Networking/BusResponse.hpp"
 #include "../../src/ACL/CAN/Message.hpp"
 
