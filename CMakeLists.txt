@@ -46,7 +46,8 @@ set(SOURCES
         src/Processing/Mode/StaticMaxSpeedMode.cpp
         src/Utils/Algorithms.cpp
         src/Processing/Acceleration/AccelerationStage.cpp
-        src/Processing/Acceleration/AccelerationService.cpp)
+        src/Processing/Acceleration/AccelerationService.cpp
+        src/Configuration/SystemSettings.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp

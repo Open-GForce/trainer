@@ -4,6 +4,7 @@
 #include <string>
 #include <nlohmann/json.hpp>
 #include "UserSettings.hpp"
+#include "SystemSettings.hpp"
 
 namespace GForce::Configuration {
 
@@ -19,9 +20,25 @@ class ConfigRepository
     private:
         std::string basePath;
 
-        std::string loadFileContent();
+        /**
+         * Loads the given configuration file.
+         * Throws an exception if file is not existing or non readable
+         */
+        std::string loadFileContent(std::string file);
 
-        static UserSettings* decode(const std::string& fileContent);
+        /**
+         * Decodes the content of user_settings.json to DTO
+         */
+        static UserSettings* decodeUserSettings(const std::string& fileContent);
+
+        /**
+         * Decodes the content of system_settings.json to DTO
+         */
+        static SystemSettings* decodeSystemSettings(const std::string& fileContent);
+
+        /**
+         * Parser for parameters of user settings
+         */
         static Range* parseRange(nlohmann::json data, const std::string& key);
         static double parseRotationRadius(nlohmann::json data);
         static double parseSoftStartSpeed(nlohmann::json data);
@@ -29,6 +46,11 @@ class ConfigRepository
         static std::list<AccelerationStage> parseAccelerationStages(nlohmann::json data);
         static AccelerationMode parseAccelerationMode(nlohmann::json data);
         static bool parseAdaptiveAcceleration(nlohmann::json data);
+
+        /**
+         * Parser for parameters of system settings
+         */
+        static BrakeSensorProtocol parseBrakeProtocol(nlohmann::json data);
 
     public:
         ConfigRepository();
@@ -38,6 +60,11 @@ class ConfigRepository
          * Ownership of returned object moves to caller
          */
         virtual UserSettings* loadUserSettings();
+
+        /**
+         * Ownership of returned object moves to caller
+         */
+        virtual SystemSettings* loadSystemSettings();
 
         /**
         * Ownership of object stays at caller
