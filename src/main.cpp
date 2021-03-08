@@ -50,11 +50,13 @@ void runControllerMode(bool CANDummyMode)
     auto configRepository = new ConfigRepository();
     auto userConfig = configRepository->loadUserSettings();
 
+    CANThread* canThread = nullptr;
     MoviDriveService* moviDriveService = nullptr;
 
     if (CANDummyMode) {
         auto canSocket = new DummyCANSocket();
-        moviDriveService = new MoviDriveService(canSocket, logger);
+        canThread = new CANThread(canSocket, logger);
+        moviDriveService = new MoviDriveService(canThread, logger);
     } else {
         auto canSocket = new CANSocket();
         std::string canSocketAddress = SystemRepository::getNetworkAddress("eth0");
@@ -63,7 +65,8 @@ void runControllerMode(bool CANDummyMode)
 
         canSocket->connect(canSocketAddress, 29536);
         canSocket->open();
-        moviDriveService = new MoviDriveService(canSocket, logger);
+        canThread = new CANThread(canSocket, logger);
+        moviDriveService = new MoviDriveService(canThread, logger);
     }
 
     auto accelerationService = new AccelerationService();
@@ -82,18 +85,23 @@ void runControllerMode(bool CANDummyMode)
         websocketServer->run(8763);
     });
 
-    std::thread t1([webSocketThread] {
+    std::thread t1([canThread] {
+        canThread->start();
+    });
+    logger->info(LOG_CHANNEL_MAIN, "CAN thread started", {});
+
+    std::thread t2([webSocketThread] {
         webSocketThread->start();
     });
     logger->info(LOG_CHANNEL_MAIN, "Websocket thread started", {});
 
-    std::thread t2([brakeThread] {
+    std::thread t3([brakeThread] {
         brakeThread->start();
     });
     brakeThread->waitUntilStarted();
     logger->info(LOG_CHANNEL_MAIN, "Brake input thread started", {});
 
-    std::thread t3([processingThread, brakeThread, webSocketThread] {
+    std::thread t4([processingThread, brakeThread, webSocketThread] {
         processingThread->start(brakeThread, webSocketThread);
     });
     logger->info(LOG_CHANNEL_MAIN, "Processing thread started", {});

@@ -10,13 +10,13 @@ using namespace GForce::Utils::Logging;
 
 TEST_CASE( "MoviDrive service tests", "[Networking]" )
 {
-    fakeit::Mock<CAN::SocketInterface> socketMock;
-    fakeit::Fake(Method(socketMock, send));
-    fakeit::When(Method(socketMock, receive)).AlwaysReturn({});
+    fakeit::Mock<CANThread> canThreadMock;
+    fakeit::Fake(Method(canThreadMock, send));
+    fakeit::When(Method(canThreadMock, getMoviDriveMessages)).AlwaysReturn({});
 
-    CAN::SocketInterface *socket = &socketMock.get();
+    CANThread* canThread = &canThreadMock.get();
 
-    auto service = new MoviDriveService(socket, new NullLogger());
+    auto service = new MoviDriveService(canThread, new NullLogger());
 
     SECTION("Correct message encoding of control status and positive speed + sync message")
     {
@@ -34,7 +34,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
         int callCount = 0;
 
-        fakeit::When(Method(socketMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
+        fakeit::When(Method(canThreadMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
             callCount++;
 
             switch (callCount) {
@@ -54,7 +54,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
         service->setAcceleration(10000);
         service->sync();
 
-        fakeit::Verify(Method(socketMock, send)).Exactly(2);
+        fakeit::Verify(Method(canThreadMock, send)).Exactly(2);
     }
 
     SECTION("Correct message encoding of control status and negative speed + sync message")
@@ -71,7 +71,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
         int callCount = 0;
 
-        fakeit::When(Method(socketMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
+        fakeit::When(Method(canThreadMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
             callCount++;
 
             switch (callCount) {
@@ -90,12 +90,12 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
         service->setRotationSpeed(-50);
         service->sync();
 
-        fakeit::Verify(Method(socketMock, send)).Exactly(2);
+        fakeit::Verify(Method(canThreadMock, send)).Exactly(2);
     }
 
     SECTION("Correct response decoding => no messages => null returned")
     {
-        fakeit::When(Method(socketMock, receive)).AlwaysReturn({});
+        fakeit::When(Method(canThreadMock, getMoviDriveMessages)).AlwaysReturn({});
 
         service->setControlStatus(ControlStatus::release());
         service->setRotationSpeed(0);
@@ -106,10 +106,10 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
     SECTION("Correct response decoding => on error => null returned")
     {
-        fakeit::When(Method(socketMock, receive)).AlwaysDo([] () {
+        fakeit::When(Method(canThreadMock, getMoviDriveMessages)).AlwaysDo([] () {
             throw std::exception();
 
-            std::vector<CAN::MessageInterface*> messages = {};
+            std::list<CAN::MessageInterface*> messages = {};
             return messages;
         });
 
@@ -122,7 +122,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
     SECTION("Correct response decoding => only last message used")
     {
-        fakeit::When(Method(socketMock, receive)).AlwaysReturn({
+        fakeit::When(Method(canThreadMock, getMoviDriveMessages)).AlwaysReturn({
             new CAN::Message(0x182, {0x07, 0x04, 0x0, 0x0}),
             new CAN::Message(0x182, {0x07, 0x04, 0x1c, 0x03}),
         });
@@ -137,7 +137,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
     SECTION("Correct response decoding => only message with correct index used")
     {
-        fakeit::When(Method(socketMock, receive)).AlwaysReturn({
+        fakeit::When(Method(canThreadMock, getMoviDriveMessages)).AlwaysReturn({
             new CAN::Message(0x182, {0x07, 0x04, 0x0, 0x0}),
             new CAN::Message(0x182, {0x07, 0x04, 0x1c, 0x03}),
             new CAN::Message(0x666, {0x07, 0x04, 0x1c, 0x03}),
@@ -158,7 +158,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
          * 500 / scale factor = ~ 3.0012
          */
 
-        fakeit::When(Method(socketMock, receive)).AlwaysReturn({
+        fakeit::When(Method(canThreadMock, getMoviDriveMessages)).AlwaysReturn({
             new CAN::Message(0x182, {0x07, 0x04, 0x0c, 0xFE})
         });
 
@@ -174,7 +174,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
     {
         int callCount = 0;
 
-        fakeit::When(Method(socketMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
+        fakeit::When(Method(canThreadMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
             callCount++;
 
             switch (callCount) {
@@ -204,7 +204,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
             service->sync();
         }
 
-        fakeit::Verify(Method(socketMock, send)).Exactly(7);
+        fakeit::Verify(Method(canThreadMock, send)).Exactly(7);
     }
 
 
@@ -212,7 +212,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
     {
         int callCount = 0;
 
-        fakeit::When(Method(socketMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
+        fakeit::When(Method(canThreadMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
             callCount++;
 
             switch (callCount) {
@@ -242,7 +242,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
             service->sync();
         }
 
-        fakeit::Verify(Method(socketMock, send)).Exactly(7);
+        fakeit::Verify(Method(canThreadMock, send)).Exactly(7);
     }
 
 
@@ -250,7 +250,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
     {
         int callCount = 0;
 
-        fakeit::When(Method(socketMock, send)).AlwaysDo([&callCount, service] (CAN::MessageInterface* message) {
+        fakeit::When(Method(canThreadMock, send)).AlwaysDo([&callCount, service] (CAN::MessageInterface* message) {
             callCount++;
 
             switch (callCount) {
@@ -284,7 +284,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
         service->sync();
         service->sync();
 
-        fakeit::Verify(Method(socketMock, send)).Exactly(9);
+        fakeit::Verify(Method(canThreadMock, send)).Exactly(9);
     }
 
 
@@ -292,7 +292,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
     {
         int callCount = 0;
 
-        fakeit::When(Method(socketMock, send)).AlwaysDo([&callCount, service] (CAN::MessageInterface* message) {
+        fakeit::When(Method(canThreadMock, send)).AlwaysDo([&callCount, service] (CAN::MessageInterface* message) {
             callCount++;
 
             switch (callCount) {
@@ -315,6 +315,6 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
         service->startNode();
 
-        fakeit::Verify(Method(socketMock, send)).Exactly(2);
+        fakeit::Verify(Method(canThreadMock, send)).Exactly(2);
     }
 }

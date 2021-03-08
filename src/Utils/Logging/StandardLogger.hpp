@@ -9,6 +9,7 @@ namespace GForce::Utils::Logging {
 
 static const std::string LOG_CHANNEL_UNKNOWN        = "unknown";
 static const std::string LOG_CHANNEL_MAIN           = "main";
+static const std::string LOG_CHANNEL_CAN            = "CAN";
 static const std::string LOG_CHANNEL_PROCESSING     = "processing";
 static const std::string LOG_CHANNEL_BRAKE_INPUT_RX = "brakeInputRX";
 static const std::string LOG_CHANNEL_BRAKE_INPUT_TX = "brakeInputTX";

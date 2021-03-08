@@ -5,6 +5,7 @@
 #include "ControlStatus.hpp"
 #include "../ACL/CAN/CANSocket.hpp"
 #include "../Utils/Logging/LoggerInterface.hpp"
+#include "CANThread.hpp"
 
 using namespace GForce::ACL;
 using namespace GForce::Utils::Logging;
@@ -16,15 +17,16 @@ const double SPEED_SCALE_FACTOR = 166.66;
 
 class MoviDriveService
 {
-    const int CAN_TX_PDO_INDEX    = 0x202;
-    const int CAN_RX_PDO_INDEX    = 0x182;
-    const int CAN_SYNC_INDEX      = 0x080;
-    const int CAN_HEARTBEAT_INDEX = 0x702;
+    public:
+        static const int CAN_TX_PDO_INDEX    = 0x202;
+        static const int CAN_RX_PDO_INDEX    = 0x182;
+        static const int CAN_SYNC_INDEX      = 0x080;
+        static const int CAN_HEARTBEAT_INDEX = 0x702;
 
-    const uint8_t NODE_ID = 0x2;
+        const uint8_t NODE_ID = 0x2;
 
     private:
-        CAN::SocketInterface* socket;
+        CANThread* canThread;
         LoggerInterface* logger;
 
         /**
@@ -88,7 +90,7 @@ class MoviDriveService
         static uint8_t highByte(uint16_t value);
 
     public:
-        explicit MoviDriveService(CAN::SocketInterface* socket, LoggerInterface* logger);
+        explicit MoviDriveService(CANThread* canThread, LoggerInterface* logger);
         virtual ~MoviDriveService();
 
         /**

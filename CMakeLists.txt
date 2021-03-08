@@ -47,7 +47,8 @@ set(SOURCES
         src/Utils/Algorithms.cpp
         src/Processing/Acceleration/AccelerationStage.cpp
         src/Processing/Acceleration/AccelerationService.cpp
-        src/Configuration/SystemSettings.cpp)
+        src/Configuration/SystemSettings.cpp
+        src/Networking/CANThread.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -71,7 +72,7 @@ set(TESTS
         tests/Processing/Mode/RegularSpiralModeTest.cpp
         tests/Processing/Mode/StaticMaxSpeedModeTest.cpp
         tests/General/AlgorithmsTest.cpp
-        tests/Processing/Acceleration/AccelerationServiceTest.cpp)
+        tests/Processing/Acceleration/AccelerationServiceTest.cpp tests/Networking/CANThreadTest.cpp)
 
 include(build/conanbuildinfo.cmake)
 conan_basic_setup()
