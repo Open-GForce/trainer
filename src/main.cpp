@@ -6,6 +6,7 @@
 #include "Processing/BrakeInput/BrakeInputReceiveThread.hpp"
 #include "Processing/BrakeInput/BrakeInputTransmissionThread.hpp"
 #include "Utils/Logging/StandardLogger.hpp"
+#include "Utils/SystemRepository.hpp"
 #include "API/Controller/ConfigurationController.hpp"
 #include "API/Controller/OperationsController.hpp"
 #include "API/Websocket/RequestRouter.hpp"
@@ -21,6 +22,7 @@ using namespace GForce::API::Controller;
 using namespace GForce::Processing;
 using namespace GForce::Sensors;
 using namespace GForce::Processing::BrakeInput;
+using namespace GForce::Utils;
 using namespace GForce::Utils::Logging;
 
 void runControllerMode(bool CANDummyMode);
@@ -55,7 +57,11 @@ void runControllerMode(bool CANDummyMode)
         moviDriveService = new MoviDriveService(canSocket, logger);
     } else {
         auto canSocket = new CANSocket();
-        canSocket->connect("192.168.2.201", 29536);
+        std::string canSocketAddress = SystemRepository::getNetworkAddress("eth0");
+
+        logger->info(LOG_CHANNEL_MAIN, "Connecting to CAN socket daemon on " + canSocketAddress + ":29536", {});
+
+        canSocket->connect(canSocketAddress, 29536);
         canSocket->open();
         moviDriveService = new MoviDriveService(canSocket, logger);
     }
