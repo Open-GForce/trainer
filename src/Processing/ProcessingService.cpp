@@ -98,7 +98,7 @@ void ProcessingService::setSecondBrakeInput(int input)
 
 ProcessingStatus *ProcessingService::getStatus()
 {
-    double rotationSpeed = std::abs(this->status->getRotationSpeed());
+    double rotationSpeed = this->status != nullptr ? std::abs(this->status->getRotationSpeed()) : 0;
 
     return new ProcessingStatus(
             this->status != nullptr ? this->status->getEngineStatus()->clone() : nullptr,

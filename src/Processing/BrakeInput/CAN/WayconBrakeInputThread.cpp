@@ -78,7 +78,7 @@ int WayconBrakeInputThread::decodeMessage(std::list<MessageInterface*> messages)
 
 void WayconBrakeInputThread::setOperational(uint8_t node)
 {
-    this->logger->info(LOG_CHANNEL_BRAKE_INPUT_RX, "Starting waycon sensor node " + std::to_string(node), {});
+    this->logger->info(LOG_CHANNEL_BRAKE_INPUT_RX, "Starting Waycon sensor node " + std::to_string(node), {});
 
     auto message = new Message(0x0, {0x1, node});
     this->canThread->send(message);
