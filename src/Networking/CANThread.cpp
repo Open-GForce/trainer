@@ -2,6 +2,7 @@
 #include <thread>
 #include "CANThread.hpp"
 #include "../Utils/Logging/StandardLogger.hpp"
+#include "../ACL/CAN/Message.hpp"
 
 using namespace GForce::Networking;
 
@@ -59,6 +60,9 @@ void CANThread::loop()
 
     this->moviDriveMutex.unlock();
     this->brakeMutex.unlock();
+
+    auto syncMessage = new Message(CAN_SYNC_INDEX, {});
+    this->send(syncMessage);
 }
 
 std::list<MessageInterface*> CANThread::trimQueue(std::list<MessageInterface*> queue)

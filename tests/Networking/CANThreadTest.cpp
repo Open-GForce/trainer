@@ -12,6 +12,7 @@ TEST_CASE( "CANThread tests", "[Networking]" )
 {
     fakeit::Mock<CAN::SocketInterface> socketMock;
     fakeit::Fake(Method(socketMock, receive));
+    fakeit::Fake(Method(socketMock, send));
     fakeit::When(Method(socketMock, receive)).AlwaysReturn({});
 
     CAN::SocketInterface *socket = &socketMock.get();
@@ -134,5 +135,19 @@ TEST_CASE( "CANThread tests", "[Networking]" )
         REQUIRE(secondBrakeMessages.back() != nullptr);
         REQUIRE(secondBrakeMessages.back()->getData().size() == 1);
         CHECK(secondBrakeMessages.back()->getData()[0] == 0x6);
+    }
+
+    SECTION("SYNC message sent")
+    {
+        fakeit::When(Method(socketMock, send)).AlwaysDo([] (CAN::MessageInterface* message) {
+            REQUIRE(message != nullptr);
+
+            CHECK(message->getIndex() == 0x080);
+            CHECK(message->getData().empty());
+        });
+
+        thread->loop();
+
+        fakeit::Verify(Method(socketMock, send)).Once();
     }
 }

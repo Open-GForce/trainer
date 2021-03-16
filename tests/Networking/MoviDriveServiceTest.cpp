@@ -32,21 +32,9 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
          * Low byte is sent first
          */
 
-        int callCount = 0;
-
-        fakeit::When(Method(canThreadMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
-            callCount++;
-
-            switch (callCount) {
-                case 1:
-                    CHECK(message->toFrame() == "< send 202 6 06 00 92 71 10 27 >");
-                    break;
-                case 2:
-                    CHECK(message->toFrame() == "< send 080 0 >");
-                    break;
-                default:
-                    FAIL("send() method called more then two times");
-            }
+        fakeit::When(Method(canThreadMock, send)).AlwaysDo([] (CAN::MessageInterface* message) {
+            REQUIRE(message != nullptr);
+            CHECK(message->toFrame() == "< send 202 6 06 00 92 71 10 27 >");
         });
 
         service->setControlStatus(ControlStatus::release());
@@ -54,7 +42,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
         service->setAcceleration(10000);
         service->sync();
 
-        fakeit::Verify(Method(canThreadMock, send)).Exactly(2);
+        fakeit::Verify(Method(canThreadMock, send)).Once();
     }
 
     SECTION("Correct message encoding of control status and negative speed + sync message")
@@ -69,28 +57,16 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
          * Low byte is sent first
          */
 
-        int callCount = 0;
-
-        fakeit::When(Method(canThreadMock, send)).AlwaysDo([&callCount] (CAN::MessageInterface* message) {
-            callCount++;
-
-            switch (callCount) {
-                case 1:
-                    CHECK(message->toFrame() == "< send 202 6 06 00 73 DF 00 00 >");
-                    break;
-                case 2:
-                    CHECK(message->toFrame() == "< send 080 0 >");
-                    break;
-                default:
-                    FAIL("send() method called more then two times");
-            }
+        fakeit::When(Method(canThreadMock, send)).AlwaysDo([] (CAN::MessageInterface* message) {
+            REQUIRE(message != nullptr);
+            CHECK(message->toFrame() == "< send 202 6 06 00 73 DF 00 00 >");
         });
 
         service->setControlStatus(ControlStatus::release());
         service->setRotationSpeed(-50);
         service->sync();
 
-        fakeit::Verify(Method(canThreadMock, send)).Exactly(2);
+        fakeit::Verify(Method(canThreadMock, send)).Once();
     }
 
     SECTION("Correct response decoding => no messages => null returned")
@@ -179,20 +155,15 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                case 3:
-                case 6:
-                    CHECK(message->getIndex() == 0x202);
-                    break;
                 case 2:
                 case 4:
-                case 7:
-                    CHECK(message->getIndex() == 0x080);
+                    CHECK(message->getIndex() == 0x202);
                     break;
-                case 5:
+                case 3:
                     CHECK(message->getIndex() == 0x702);
                     break;
                 default:
-                    FAIL("send() method called more then seven times");
+                    FAIL("send() method called more then four times");
             }
         });
 
@@ -204,7 +175,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
             service->sync();
         }
 
-        fakeit::Verify(Method(canThreadMock, send)).Exactly(7);
+        fakeit::Verify(Method(canThreadMock, send)).Exactly(4);
     }
 
 
@@ -217,20 +188,15 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                case 3:
-                case 6:
-                    CHECK(message->getIndex() == 0x202);
-                    break;
                 case 2:
                 case 4:
-                case 7:
-                    CHECK(message->getIndex() == 0x080);
+                    CHECK(message->getIndex() == 0x202);
                     break;
-                case 5:
+                case 3:
                     CHECK(message->getIndex() == 0x702);
                     break;
                 default:
-                    FAIL("send() method called more then seven times");
+                    FAIL("send() method called more then four times");
             }
         });
 
@@ -242,7 +208,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
             service->sync();
         }
 
-        fakeit::Verify(Method(canThreadMock, send)).Exactly(7);
+        fakeit::Verify(Method(canThreadMock, send)).Exactly(4);
     }
 
 
@@ -255,25 +221,19 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
 
             switch (callCount) {
                 case 1:
-                    throw std::exception(); // PDO#1
+                    throw std::exception();
                 case 2:
-                    break; // PDO#2
+                    throw std::exception();
                 case 3:
-                    throw std::exception(); // Sync
                 case 4:
-                case 6:
+                case 5:
                     CHECK(message->toFrame() == "< send 202 6 02 00 00 00 00 00 >"); // Soft break
                     break;
-                case 5:
-                case 7:
-                    CHECK(message->toFrame() == "< send 080 0 >"); // Sync of soft break
-                    break;
-                case 8:
-                    service->resetErrorCount(); // Second soft break
-                case 9:
-                    break; // Sync of second soft break
+                case 6:
+                    service->resetErrorCount();
+                    break; // Error recovery
                 default:
-                    FAIL("send() method called more then nine times");
+                    FAIL("send() method called more then six times. Call count: " + std::to_string(callCount));
             }
         });
 
@@ -284,7 +244,7 @@ TEST_CASE( "MoviDrive service tests", "[Networking]" )
         service->sync();
         service->sync();
 
-        fakeit::Verify(Method(canThreadMock, send)).Exactly(9);
+        fakeit::Verify(Method(canThreadMock, send)).Exactly(6);
     }
 
 

@@ -82,9 +82,6 @@ void MoviDriveService::send()
 
     auto pdoMessage = new CAN::Message(CAN_TX_PDO_INDEX, data);
     this->canThread->send(pdoMessage);
-
-    auto syncMessage = new CAN::Message(CAN_SYNC_INDEX, {});
-    this->canThread->send(syncMessage);
 }
 
 BusResponse* MoviDriveService::receive()

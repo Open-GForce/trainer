@@ -14,6 +14,7 @@ namespace GForce::Networking {
 class CANThread
 {
     public:
+        static const int inline CAN_SYNC_INDEX       = 0x080;
         static const int inline INDEX_MOVIDRIVE      = 0x182;
         static const int inline INDEX_BRAKE_SENSOR_1 = 0x100;
         static const int inline INDEX_BRAKE_SENSOR_2 = 0x200;
