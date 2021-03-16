@@ -18,8 +18,8 @@ class CANThread
     public:
         static const int inline CAN_SYNC_INDEX       = 0x080;
         static const int inline INDEX_MOVIDRIVE      = 0x182;
-        static const int inline INDEX_BRAKE_SENSOR_1 = 0x100;
-        static const int inline INDEX_BRAKE_SENSOR_2 = 0x200;
+        static const int inline INDEX_BRAKE_SENSOR_1 = 0x187;
+        static const int inline INDEX_BRAKE_SENSOR_2 = 0x188;
 
         /**
          * Stores not more then n messages per topic
