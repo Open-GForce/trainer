@@ -1,5 +1,6 @@
 #include "WayconBrakeInputThread.hpp"
 #include "../../../ACL/CAN/Message.hpp"
+#include "../../../Utils/Logging/StandardLogger.hpp"
 
 using namespace GForce::Processing::BrakeInput::CAN;
 using namespace GForce::ACL::CAN;
@@ -25,7 +26,17 @@ void WayconBrakeInputThread::start()
     this->startMutex.unlock();
 
     while (!this->stopped) {
-        this->loop();
+        this->canThread->waitForBrakeMessages();
+
+        try {
+            this->loop();
+        } catch (std::exception &e) {
+            this->logger->error(LOG_CHANNEL_BRAKE_INPUT_RX, "Error while processing brake input message => " + std::string(e.what()), {
+                    {"messageCount", messageCount},
+                    {"lastFirstBrakeInput", firstBrake},
+                    {"lastSecondBrakeInput", secondBrake},
+            });
+        }
     }
 }
 
@@ -67,6 +78,8 @@ int WayconBrakeInputThread::decodeMessage(std::list<MessageInterface*> messages)
 
 void WayconBrakeInputThread::setOperational(uint8_t node)
 {
+    this->logger->info(LOG_CHANNEL_BRAKE_INPUT_RX, "Starting waycon sensor node " + std::to_string(node), {});
+
     auto message = new Message(0x0, {0x1, node});
     this->canThread->send(message);
 }

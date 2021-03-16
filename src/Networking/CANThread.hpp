@@ -3,11 +3,13 @@
 
 #include <list>
 #include <mutex>
+#include "../Utils/ThreadSynchronizer.hpp"
 #include "../ACL/CAN/SocketInterface.hpp"
 #include "../Utils/Logging/LoggerInterface.hpp"
 
 using namespace GForce::ACL::CAN;
 using namespace GForce::Utils::Logging;
+using namespace GForce::Utils;
 
 namespace GForce::Networking {
 
@@ -49,6 +51,11 @@ class CANThread
         std::mutex brakeMutex;
 
         /**
+         * Wakes up thread waiting for brake input CAN messages
+         */
+        ThreadSynchronizer* brakeNotifier;
+
+        /**
          * Last messages seperated according to topic.
          * List length is limited by QUEUE_LENGTH
          */
@@ -88,6 +95,10 @@ class CANThread
          */
         virtual void send(MessageInterface* message);
 
+        /**
+         * Blocks until new brake input messages arrived
+         */
+        virtual void waitForBrakeMessages();
 };
 
 }

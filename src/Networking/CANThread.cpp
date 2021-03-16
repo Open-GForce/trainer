@@ -7,7 +7,7 @@
 using namespace GForce::Networking;
 
 CANThread::CANThread(SocketInterface* socket, LoggerInterface* logger)
-        : socket(socket), stopped(false), cycleInterval(10), logger(logger) {}
+        : socket(socket), stopped(false), cycleInterval(10), logger(logger), brakeNotifier(new ThreadSynchronizer()) {}
 
 void CANThread::start()
 {
@@ -23,6 +23,8 @@ void CANThread::start()
         try {
             this->loop();
         } catch (std::exception &e) {
+            this->moviDriveMutex.unlock();
+            this->brakeMutex.unlock();
             this->logger->error(LOG_CHANNEL_CAN, "Error while executing CAN thread loop => " + std::string(e.what()), {});
         }
         std::this_thread::sleep_until(next);
@@ -41,13 +43,17 @@ void CANThread::loop()
     this->moviDriveMutex.lock();
     this->brakeMutex.lock();
 
+    bool brakeMessage = false;
+
     for (MessageInterface* message : messages) {
         switch (message->getIndex()) {
             case INDEX_MOVIDRIVE:
                 this->messagesMoviDrive.push_back(message); break;
             case INDEX_BRAKE_SENSOR_1:
+                brakeMessage = true;
                 this->messagesFirstBrakeSensor.push_back(message); break;
             case INDEX_BRAKE_SENSOR_2:
+                brakeMessage = true;
                 this->messagesSecondBrakeSensor.push_back(message); break;
             default:
                 delete message;
@@ -57,6 +63,10 @@ void CANThread::loop()
     this->messagesMoviDrive = trimQueue(this->messagesMoviDrive);
     this->messagesFirstBrakeSensor = trimQueue(this->messagesFirstBrakeSensor);
     this->messagesSecondBrakeSensor = trimQueue(this->messagesSecondBrakeSensor);
+
+    if (brakeMessage) {
+        this->brakeNotifier->wakeup();
+    }
 
     this->moviDriveMutex.unlock();
     this->brakeMutex.unlock();
@@ -106,6 +116,16 @@ std::list<MessageInterface *> CANThread::getSecondBrakeMessages()
     this->brakeMutex.unlock();
 
     return messages;
+}
+
+void CANThread::waitForBrakeMessages()
+{
+    this->brakeMutex.lock();
+    delete this->brakeNotifier;
+    this->brakeNotifier = new ThreadSynchronizer();
+    this->brakeMutex.unlock();
+
+    this->brakeNotifier->sleep();
 }
 
 void CANThread::send(MessageInterface *message)
