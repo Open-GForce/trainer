@@ -88,7 +88,7 @@ std::list<MessageInterface *> CANThread::getMoviDriveMessages()
     return messages;
 }
 
-std::list<MessageInterface *> CANThread::getFirstBrakeMessages()
+std::list<MessageInterface*> CANThread::getFirstBrakeMessages()
 {
     this->brakeMutex.lock();
     auto messages = this->messagesFirstBrakeSensor;

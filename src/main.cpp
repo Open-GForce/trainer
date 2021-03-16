@@ -5,6 +5,7 @@
 #include "ACL/CAN/DummyCANSocket.hpp"
 #include "Processing/BrakeInput/IP/BrakeInputRXThread.hpp"
 #include "Processing/BrakeInput/IP/BrakeInputTXThread.hpp"
+#include "Processing/BrakeInput/CAN/WayconBrakeInputThread.hpp"
 #include "Utils/Logging/StandardLogger.hpp"
 #include "Utils/SystemRepository.hpp"
 #include "API/Controller/ConfigurationController.hpp"
@@ -49,6 +50,7 @@ void runControllerMode(bool CANDummyMode)
 
     auto configRepository = new ConfigRepository();
     auto userConfig = configRepository->loadUserSettings();
+    auto systemConfig = configRepository->loadSystemSettings();
 
     CANThread* canThread = nullptr;
     MoviDriveService* moviDriveService = nullptr;
@@ -73,7 +75,12 @@ void runControllerMode(bool CANDummyMode)
     auto processingService = new ProcessingService(moviDriveService, userConfig, accelerationService);
     auto processingThread = new ProcessingThread(logger, processingService);
 
-    auto brakeThread = new IP::BrakeInputRXThread(logger);
+    BrakeInputThread* brakeThread = nullptr;
+    if (systemConfig->getBrakeSensorProtocol() == BrakeSensorProtocol::IPNetwork) {
+        brakeThread = new IP::BrakeInputRXThread(logger);
+    } else {
+        brakeThread = new BrakeInput::CAN::WayconBrakeInputThread(canThread, logger);
+    }
 
     auto configController = new ConfigurationController(processingThread, configRepository);
     auto operationsController = new OperationsController(processingThread);
