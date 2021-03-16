@@ -3,7 +3,7 @@
 
 #include <nlohmann/json.hpp>
 
-namespace GForce::Processing::BrakeInput {
+namespace GForce::Processing::BrakeInput::IP {
 
 class BrakeInputMessage
 {

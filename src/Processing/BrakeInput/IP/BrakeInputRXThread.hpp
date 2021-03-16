@@ -1,16 +1,17 @@
-#ifndef GFORCE_TRAINER_CONTROLLER_BRAKEINPUTRECEIVETHREAD_HPP
-#define GFORCE_TRAINER_CONTROLLER_BRAKEINPUTRECEIVETHREAD_HPP
+#ifndef GFORCE_TRAINER_CONTROLLER_BRAKEINPUTRXTHREAD_HPP
+#define GFORCE_TRAINER_CONTROLLER_BRAKEINPUTRXTHREAD_HPP
 
 #include <mutex>
-#include "../../Utils/Logging/LoggerInterface.hpp"
-#include "../../ACL/TCP/TCPSocketInterface.hpp"
+#include "../BrakeInputThread.hpp"
+#include "../../../Utils/Logging/LoggerInterface.hpp"
+#include "../../../ACL/TCP/TCPSocketInterface.hpp"
 
 using namespace GForce::ACL::TCP;
 using namespace GForce::Utils::Logging;
 
-namespace GForce::Processing::BrakeInput {
+namespace GForce::Processing::BrakeInput::IP {
 
-class BrakeInputReceiveThread
+class BrakeInputRXThread : public BrakeInputThread
 {
     private:
         const static int DEFAULT_FAILURE_THRESHOLD = 50;
@@ -55,15 +56,15 @@ class BrakeInputReceiveThread
         void closeSocket();
 
     public:
-        explicit BrakeInputReceiveThread(LoggerInterface *logger);
+        explicit BrakeInputRXThread(LoggerInterface *logger);
 
-        void start();
-        void stop();
-        void waitUntilStarted();
+        void start() override;
+        void stop() override;
+        void waitUntilStarted() override;
 
-        [[nodiscard]] virtual int getFirstBrake() const;
-        [[nodiscard]] virtual int getSecondBrake() const;
-        [[nodiscard]] virtual int getMessageCount() const;
+        [[nodiscard]] virtual int getFirstBrake() const override;
+        [[nodiscard]] virtual int getSecondBrake() const override;
+        [[nodiscard]] virtual int getMessageCount() const override;
 
         void setFailureThreshold(int threshold);
 
@@ -73,4 +74,4 @@ class BrakeInputReceiveThread
 
 }
 
-#endif //GFORCE_TRAINER_CONTROLLER_BRAKEINPUTRECEIVETHREAD_HPP
+#endif //GFORCE_TRAINER_CONTROLLER_BRAKEINPUTRXTHREAD_HPP

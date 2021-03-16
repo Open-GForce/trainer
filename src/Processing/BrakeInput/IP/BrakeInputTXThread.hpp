@@ -1,18 +1,18 @@
-#ifndef GFORCE_TRAINER_CONTROLLER_BRAKEINPUTTRANSMISSIONTHREAD_HPP
-#define GFORCE_TRAINER_CONTROLLER_BRAKEINPUTTRANSMISSIONTHREAD_HPP
+#ifndef GFORCE_TRAINER_CONTROLLER_BRAKEINPUTTXTHREAD_HPP
+#define GFORCE_TRAINER_CONTROLLER_BRAKEINPUTTXTHREAD_HPP
 
 #include <vector>
-#include "../../Sensors/ADCSensorInterface.hpp"
-#include "../../Utils/Logging/LoggerInterface.hpp"
-#include "../../ACL/TCP/TCPConnectionInterface.hpp"
+#include "../../../Sensors/ADCSensorInterface.hpp"
+#include "../../../Utils/Logging/LoggerInterface.hpp"
+#include "../../../ACL/TCP/TCPConnectionInterface.hpp"
 
 using namespace GForce::Sensors;
 using namespace GForce::Utils::Logging;
 using namespace GForce::ACL::TCP;
 
-namespace GForce::Processing::BrakeInput {
+namespace GForce::Processing::BrakeInput::IP {
 
-class BrakeInputTransmissionThread
+class BrakeInputTXThread
 {
     private:
         LoggerInterface* logger;
@@ -63,7 +63,7 @@ class BrakeInputTransmissionThread
         static int calcAverage(const std::vector<int>& values);
 
     public:
-        BrakeInputTransmissionThread(LoggerInterface *logger, ADCSensorInterface *sensor);
+        BrakeInputTXThread(LoggerInterface *logger, ADCSensorInterface *sensor);
 
         void start();
         void stop();
@@ -76,4 +76,4 @@ class BrakeInputTransmissionThread
 }
 
 
-#endif //GFORCE_TRAINER_CONTROLLER_BRAKEINPUTTRANSMISSIONTHREAD_HPP
+#endif //GFORCE_TRAINER_CONTROLLER_BRAKEINPUTTXTHREAD_HPP

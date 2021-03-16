@@ -1,9 +1,9 @@
 #include <catch2/catch.hpp>
 #include <fakeit.hpp>
-#include "../../../src/Processing/BrakeInput/BrakeInputTransmissionThread.hpp"
-#include "../../../src/Utils/Logging/NullLogger.hpp"
-#include "../../../src/ACL/TCP/TCPConnectionInterface.hpp"
-#include "../../../src/ACL/TCP/BrokenPipeException.hpp"
+#include "../../../../src/Processing/BrakeInput/IP/BrakeInputTXThread.hpp"
+#include "../../../../src/Utils/Logging/NullLogger.hpp"
+#include "../../../../src/ACL/TCP/TCPConnectionInterface.hpp"
+#include "../../../../src/ACL/TCP/BrokenPipeException.hpp"
 
 
 using namespace GForce::Processing;
@@ -24,7 +24,7 @@ TEST_CASE( "BrakeInputTransmissionThread tests", "[Processing]" )
     fakeit::Fake(Method(sensorMock, read));
     ADCSensorInterface* sensor = &sensorMock.get();
 
-    auto thread = new BrakeInputTransmissionThread(new NullLogger(), sensor);
+    auto thread = new IP::BrakeInputTXThread(new NullLogger(), sensor);
     thread->setSocket(socket);
     thread->setSocketFactory(socketFactory);
 

@@ -1,13 +1,13 @@
 #include <string>
-#include "BrakeInputReceiveThread.hpp"
+#include "BrakeInputRXThread.hpp"
 #include <exception>
-#include "../../ACL/TCP/BoostTCPSocket.hpp"
+#include "../../../ACL/TCP/BoostTCPSocket.hpp"
 #include "BrakeInputMessage.hpp"
-#include "../../Utils/Logging/StandardLogger.hpp"
+#include "../../../Utils/Logging/StandardLogger.hpp"
 
-using namespace GForce::Processing::BrakeInput;
+using namespace GForce::Processing::BrakeInput::IP;
 
-BrakeInputReceiveThread::BrakeInputReceiveThread(LoggerInterface *logger): logger(logger)
+BrakeInputRXThread::BrakeInputRXThread(LoggerInterface *logger): logger(logger)
 {
     this->messageCount = 0;
     this->continuousFailureCount = 0;
@@ -20,7 +20,7 @@ BrakeInputReceiveThread::BrakeInputReceiveThread(LoggerInterface *logger): logge
     this->startMutex.lock();
 }
 
-void BrakeInputReceiveThread::start()
+void BrakeInputRXThread::start()
 {
     this->listen();
     this->startMutex.unlock();
@@ -57,7 +57,7 @@ void BrakeInputReceiveThread::start()
     this->closeSocket();
 }
 
-void BrakeInputReceiveThread::listen()
+void BrakeInputRXThread::listen()
 {
     if (this->socket == nullptr) {
         logger->info(LOG_CHANNEL_BRAKE_INPUT_RX, "Listening on port 8519 for brake inputs, waiting for connections", {});
@@ -66,41 +66,41 @@ void BrakeInputReceiveThread::listen()
     }
 }
 
-void BrakeInputReceiveThread::waitUntilStarted()
+void BrakeInputRXThread::waitUntilStarted()
 {
     this->startMutex.lock();
 }
 
-void BrakeInputReceiveThread::setSocket(TCPSocketInterface *value) {
+void BrakeInputRXThread::setSocket(TCPSocketInterface *value) {
     this->socket = value;
 }
 
-void BrakeInputReceiveThread::setFactory(TCPSocketFactory *socketFactory) {
+void BrakeInputRXThread::setFactory(TCPSocketFactory *socketFactory) {
     delete this->factory;
     this->factory = socketFactory;
 }
 
-void BrakeInputReceiveThread::setFailureThreshold(int threshold) {
+void BrakeInputRXThread::setFailureThreshold(int threshold) {
     this->failureThreshold = threshold;
 }
 
-void BrakeInputReceiveThread::stop() {
+void BrakeInputRXThread::stop() {
     this->stopped = true;
 }
 
-int BrakeInputReceiveThread::getFirstBrake() const {
+int BrakeInputRXThread::getFirstBrake() const {
     return firstBrake;
 }
 
-int BrakeInputReceiveThread::getSecondBrake() const {
+int BrakeInputRXThread::getSecondBrake() const {
     return secondBrake;
 }
 
-int BrakeInputReceiveThread::getMessageCount() const {
+int BrakeInputRXThread::getMessageCount() const {
     return messageCount;
 }
 
-void BrakeInputReceiveThread::closeSocket()
+void BrakeInputRXThread::closeSocket()
 {
     if (this->socket == nullptr) {
         return;

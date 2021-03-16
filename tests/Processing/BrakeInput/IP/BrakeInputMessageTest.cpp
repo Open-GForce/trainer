@@ -1,8 +1,8 @@
 #include <catch2/catch.hpp>
-#include "../../../src/Processing/BrakeInput/BrakeInputMessage.hpp"
-#include "../../../src/Utils/Assertions/AssertionFailedException.hpp"
+#include "../../../../src/Processing/BrakeInput/IP/BrakeInputMessage.hpp"
+#include "../../../../src/Utils/Assertions/AssertionFailedException.hpp"
 
-using namespace GForce::Processing::BrakeInput;
+using namespace GForce::Processing::BrakeInput::IP;
 using namespace GForce::Utils::Assertions;
 
 TEST_CASE( "BrakeInputMessage tests", "[Processing BrakeInput]" )

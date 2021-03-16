@@ -1,13 +1,13 @@
 #include <catch2/catch.hpp>
 #include <fakeit.hpp>
-#include "../../../src/Processing/BrakeInput/BrakeInputReceiveThread.hpp"
-#include "../../../src/Processing/BrakeInput/BrakeInputMessage.hpp"
-#include "../../../src/Utils/Logging/NullLogger.hpp"
+#include "../../../../src/Processing/BrakeInput/IP/BrakeInputRXThread.hpp"
+#include "../../../../src/Processing/BrakeInput/IP/BrakeInputMessage.hpp"
+#include "../../../../src/Utils/Logging/NullLogger.hpp"
 
 using namespace GForce::Processing;
-using namespace GForce::Processing::BrakeInput;
+using namespace GForce::Processing::BrakeInput::IP;
 
-TEST_CASE( "BrakeInputReceiveThread tests", "[Processing]" )
+TEST_CASE( "BrakeInputRXThread tests", "[Processing BrakeInput IP]" )
 {
     fakeit::Mock<TCPSocketInterface> socketMock;
     fakeit::Fake(Method(socketMock, read));
@@ -18,7 +18,7 @@ TEST_CASE( "BrakeInputReceiveThread tests", "[Processing]" )
     fakeit::Fake(Method(socketFactoryMock, listen));
     TCPSocketFactory* socketFactory = &socketFactoryMock.get();
 
-    auto thread = new BrakeInputReceiveThread(new NullLogger());
+    auto thread = new BrakeInputRXThread(new NullLogger());
     thread->setSocket(socket);
     thread->setFactory(socketFactory);
     thread->setFailureThreshold(3);

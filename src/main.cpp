@@ -3,8 +3,8 @@
 #include "Sensors/ADS1115.hpp"
 #include "ACL/CAN/CANSocket.hpp"
 #include "ACL/CAN/DummyCANSocket.hpp"
-#include "Processing/BrakeInput/BrakeInputReceiveThread.hpp"
-#include "Processing/BrakeInput/BrakeInputTransmissionThread.hpp"
+#include "Processing/BrakeInput/IP/BrakeInputRXThread.hpp"
+#include "Processing/BrakeInput/IP/BrakeInputTXThread.hpp"
 #include "Utils/Logging/StandardLogger.hpp"
 #include "Utils/SystemRepository.hpp"
 #include "API/Controller/ConfigurationController.hpp"
@@ -73,7 +73,7 @@ void runControllerMode(bool CANDummyMode)
     auto processingService = new ProcessingService(moviDriveService, userConfig, accelerationService);
     auto processingThread = new ProcessingThread(logger, processingService);
 
-    auto brakeThread = new BrakeInputReceiveThread(logger);
+    auto brakeThread = new IP::BrakeInputRXThread(logger);
 
     auto configController = new ConfigurationController(processingThread, configRepository);
     auto operationsController = new OperationsController(processingThread);
@@ -121,7 +121,7 @@ void runBrakeInputMode()
     device->open();
 
     auto sensor = new ADS1115(device);
-    auto thread = new BrakeInputTransmissionThread(logger, sensor);
+    auto thread = new IP::BrakeInputTXThread(logger, sensor);
 
     thread->start();
 }
