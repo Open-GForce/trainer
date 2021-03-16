@@ -80,7 +80,7 @@ class Websocket
     {
         let handler = this;
         this._disconnect();
-        this.connection = new WebSocket('ws://192.168.2.201:8763');
+        this.connection = new WebSocket('ws://192.168.0.63:8763');
 
         this.connection.onopen = function ()
         {
@@ -169,10 +169,9 @@ class Websocket
         let rotationSpeed = message.data['rotationSpeed'] < 1000 || message.data['rotationSpeed'] > 0
             ? message.data['rotationSpeed']
             : 0;
-        console.log(rotationSpeed);
         
         let status = new SystemStatus(
-            message.data.engineStatus !== undefined ? new EngineStatus(message.data.engineStatus) : undefined,
+            message.data.engineStatus ? new EngineStatus(message.data.engineStatus) : undefined,
             new BrakeInput(message.data.innerBrake),
             new BrakeInput(message.data.outerBrake),
             message.data['rotationDirection'],
