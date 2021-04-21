@@ -61,7 +61,8 @@ UserSettings* ConfigRepository::decodeUserSettings(const std::string &fileConten
             parseSoftStartAcceleration(data),
             parseAccelerationStages(data),
             parseAccelerationMode(data),
-            parseAdaptiveAcceleration(data));
+            parseAdaptiveAcceleration(data),
+            parseOuterBrakeDeactivated(data));
 }
 
 SystemSettings *ConfigRepository::decodeSystemSettings(const std::string &fileContent)
@@ -155,6 +156,15 @@ bool ConfigRepository::parseAdaptiveAcceleration(nlohmann::json data)
     }
 
     return DEFAULT_ADAPTIVE_ACCELERATION_UI;
+}
+
+bool ConfigRepository::parseOuterBrakeDeactivated(nlohmann::json data)
+{
+    if (data.find(UserSettings::JSON_KEY_DEACTIVATE_OUTER_BRAKE) != data.end() && data[UserSettings::JSON_KEY_DEACTIVATE_OUTER_BRAKE].is_boolean()) {
+        return data[UserSettings::JSON_KEY_DEACTIVATE_OUTER_BRAKE];
+    }
+
+    return DEFAULT_OUTER_BRAKE_DEACTIVATED;
 }
 
 BrakeSensorProtocol ConfigRepository::parseBrakeProtocol(nlohmann::json data)

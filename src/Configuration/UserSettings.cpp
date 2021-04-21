@@ -2,15 +2,15 @@
 
 using namespace GForce::Configuration;
 
-UserSettings::UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius, double softStartSpeed,
-                           int softStartAcceleration, std::list<AccelerationStage> stages,
-                           AccelerationMode accelerationMode,
-                           bool useAdaptiveAccelerationButtons)
+UserSettings::UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius,
+                           double softStartSpeed, int softStartAcceleration, std::list<AccelerationStage> stages,
+                           AccelerationMode accelerationMode, bool useAdaptiveAccelerationButtons,
+                           bool deactivateOuterBrake)
         : innerBrakeRange(innerBrakeRange), outerBrakeRange(outerBrakeRange), rotationRadius(trainerRadius),
           softStartSpeed(softStartSpeed),
           softStartAcceleration(softStartAcceleration),
           accelerationStages(stages), useAdaptiveAccelerationUserInterface(useAdaptiveAccelerationButtons),
-          accelerationMode(accelerationMode) {}
+          accelerationMode(accelerationMode), outerBrakeDeactivated(deactivateOuterBrake) {}
 
 UserSettings::~UserSettings()
 {
@@ -40,6 +40,7 @@ nlohmann::json UserSettings::toJSON()
             {JSON_KEY_ACC_STAGES, {}},
             {JSON_KEY_ACC_MODE, "unknown"},
             {JSON_KEY_ADAP_ACC_UI, this->useAdaptiveAccelerationUserInterface},
+            {JSON_KEY_DEACTIVATE_OUTER_BRAKE, this->isOuterBrakeDeactivated()},
     };
 
     switch (this->accelerationMode) {
@@ -89,6 +90,10 @@ bool UserSettings::isAdaptiveAccelerationUIActivated() const {
 
 AccelerationMode UserSettings::getAccelerationMode() const {
     return accelerationMode;
+}
+
+bool UserSettings::isOuterBrakeDeactivated() const {
+    return outerBrakeDeactivated;
 }
 
 

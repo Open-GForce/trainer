@@ -81,19 +81,34 @@ void ProcessingService::sync(ControlStatus *controlStatus, double rotationSpeed)
 void ProcessingService::setFirstBrakeInput(int input)
 {
     if (this->direction == RotationDirection::left) {
-        this->innerBrake = input;
+        this->setInnerBrake(input);
     } else {
-        this->outerBrake = input;
+        this->setOuterBrake(input);
     }
 }
 
 void ProcessingService::setSecondBrakeInput(int input)
 {
     if (this->direction == RotationDirection::left) {
-        this->outerBrake = input;
+        this->setOuterBrake(input);
     } else {
-        this->innerBrake = input;
+        this->setInnerBrake(input);
     }
+}
+
+void ProcessingService::setInnerBrake(int input)
+{
+    this->innerBrake = input;
+}
+
+void ProcessingService::setOuterBrake(int input)
+{
+    if (this->outerBrakeDeactivated) {
+        this->outerBrake = 0;
+        return;
+    }
+
+    this->outerBrake = input;
 }
 
 ProcessingStatus *ProcessingService::getStatus()
@@ -133,6 +148,8 @@ void ProcessingService::loadUserConfig(UserSettings *settings)
     this->accelerationService->setSoftStartSpeed(settings->getSoftStartSpeed());
     this->accelerationService->setStages(settings->getAccelerationStages());
     this->accelerationService->setAccelerationMode(settings->getAccelerationMode());
+
+    this->outerBrakeDeactivated = settings->isOuterBrakeDeactivated();
 }
 
 void ProcessingService::setReleased(bool isReleased) {

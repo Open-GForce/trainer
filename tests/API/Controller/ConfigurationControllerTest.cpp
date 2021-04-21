@@ -110,7 +110,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1673);
@@ -211,7 +211,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
@@ -283,7 +283,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
@@ -419,7 +419,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getAccelerationMode() == AccelerationMode::targetSpeed);
@@ -577,7 +577,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
@@ -624,7 +624,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);

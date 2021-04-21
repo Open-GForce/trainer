@@ -67,6 +67,11 @@ class ProcessingService
         OperationMode* operationMode;
 
         /**
+         * Ignore input of outer brake?
+         */
+        bool outerBrakeDeactivated;
+
+        /**
          * Syncs with MoviDrive
          */
         void sync(ControlStatus* controlStatus, double rotationSpeed);
@@ -81,6 +86,12 @@ class ProcessingService
          * Calculates the target speed based on brake inputs
          */
         double calcTargetSpeed();
+
+        /**
+         * Sets input values
+         */
+        void setInnerBrake(int input);
+        void setOuterBrake(int input);
 
     public:
         ProcessingService(MoviDriveService *driveService, UserSettings *settings, AccelerationService *accelerationService);
