@@ -16,6 +16,7 @@ class ConfigRepository
         const static inline int DEFAULT_SOFT_START_ACCELERATION   = 1000;
         const static inline AccelerationMode DEFAULT_ACC_MODE     = AccelerationMode::targetSpeed;
         const static inline bool DEFAULT_ADAPTIVE_ACCELERATION_UI = false;
+        const static inline bool DEFAULT_OUTER_BRAKE_DEACTIVATED  = false;
 
     private:
         std::string basePath;
@@ -46,6 +47,7 @@ class ConfigRepository
         static std::list<AccelerationStage> parseAccelerationStages(nlohmann::json data);
         static AccelerationMode parseAccelerationMode(nlohmann::json data);
         static bool parseAdaptiveAcceleration(nlohmann::json data);
+        static bool parseOuterBrakeDeactivated(nlohmann::json data);
 
         /**
          * Parser for parameters of system settings

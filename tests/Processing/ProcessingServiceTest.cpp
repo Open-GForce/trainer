@@ -25,7 +25,7 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
     AccelerationService* accelerationService = &accelerationServiceMock.get();
 
     auto settings = new UserSettings(new Range(30, 200), new Range(40, 100), 6.3, 25, 1000,
-                                     {AccelerationStage(100, 2000)}, AccelerationMode::targetSpeed, false);
+                                     {AccelerationStage(100, 2000)}, AccelerationMode::targetSpeed, false, false);
     auto service = new ProcessingService(driveService, settings, accelerationService);
 
     SECTION("Node started during init")
@@ -135,6 +135,54 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
         service->setDirection(RotationDirection::left);
         service->setSecondBrakeInput(0);   // Outer brake => 0
         service->setFirstBrakeInput(200);  // Inner brake => 1
+        service->setMaxSpeed(60);
+        service->setReleased(true);
+        service->run();
+
+        fakeit::Verify(Method(driveServiceMock, sync)).Once();
+        fakeit::Verify(Method(driveServiceMock, setRotationSpeed)).Once();
+        fakeit::Verify(Method(driveServiceMock, setControlStatus)).Once();
+    }
+
+    SECTION("Outer brake activated")
+    {
+        settings = new UserSettings(new Range(30, 200), new Range(30, 200), 6.3, 25, 1000,
+                                         {AccelerationStage(100, 2000)}, AccelerationMode::targetSpeed, false, false);
+        service->loadUserConfig(settings);
+
+        fakeit::When(Method(driveServiceMock, setRotationSpeed)).AlwaysDo([] (double speed) {
+            CHECK(std::round(speed) == 45);
+        });
+
+        fakeit::When(Method(accelerationServiceMock, getAcceleration)).AlwaysReturn(1000);
+
+        service->setDirection(RotationDirection::right);
+        service->setSecondBrakeInput(200);   // Inner brake => 100%
+        service->setFirstBrakeInput(72);   // Outer brake => 25%
+        service->setMaxSpeed(60);
+        service->setReleased(true);
+        service->run();
+
+        fakeit::Verify(Method(driveServiceMock, sync)).Once();
+        fakeit::Verify(Method(driveServiceMock, setRotationSpeed)).Once();
+        fakeit::Verify(Method(driveServiceMock, setControlStatus)).Once();
+    }
+
+    SECTION("Outer brake deactivated")
+    {
+        settings = new UserSettings(new Range(30, 200), new Range(30, 200), 6.3, 25, 1000,
+                                    {AccelerationStage(100, 2000)}, AccelerationMode::targetSpeed, false, true);
+        service->loadUserConfig(settings);
+
+        fakeit::When(Method(driveServiceMock, setRotationSpeed)).AlwaysDo([] (double speed) {
+            CHECK(std::round(speed) == 60);
+        });
+
+        fakeit::When(Method(accelerationServiceMock, getAcceleration)).AlwaysReturn(1000);
+
+        service->setDirection(RotationDirection::right);
+        service->setSecondBrakeInput(200);   // Inner brake => 100%
+        service->setFirstBrakeInput(72);   // Outer brake => 25%, but ignored
         service->setMaxSpeed(60);
         service->setReleased(true);
         service->run();

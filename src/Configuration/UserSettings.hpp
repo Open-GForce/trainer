@@ -23,12 +23,13 @@ enum AccelerationMode {
 class UserSettings : public ResponseCastInterface
 {
     public:
-        const static inline std::string JSON_KEY_ROT_RADIUS       = "rotationRadius";
-        const static inline std::string JSON_KEY_SOFT_START_ACC   = "softStartAcceleration";
-        const static inline std::string JSON_KEY_SOFT_START_SPEED = "softStartSpeed";
-        const static inline std::string JSON_KEY_ACC_STAGES       = "accelerationStages";
-        const static inline std::string JSON_KEY_ACC_MODE         = "accelerationMode";
-        const static inline std::string JSON_KEY_ADAP_ACC_UI      = "useAdaptiveAccelerationUserInterface";
+        const static inline std::string JSON_KEY_ROT_RADIUS             = "rotationRadius";
+        const static inline std::string JSON_KEY_SOFT_START_ACC         = "softStartAcceleration";
+        const static inline std::string JSON_KEY_SOFT_START_SPEED       = "softStartSpeed";
+        const static inline std::string JSON_KEY_ACC_STAGES             = "accelerationStages";
+        const static inline std::string JSON_KEY_ACC_MODE               = "accelerationMode";
+        const static inline std::string JSON_KEY_ADAP_ACC_UI            = "useAdaptiveAccelerationUserInterface";
+        const static inline std::string JSON_KEY_DEACTIVATE_OUTER_BRAKE = "outerBrakeDeactivated";
 
     private:
         Range* innerBrakeRange;
@@ -64,10 +65,16 @@ class UserSettings : public ResponseCastInterface
          */
         bool useAdaptiveAccelerationUserInterface;
 
+        /**
+         * Ignore input of outer brake
+         */
+        bool outerBrakeDeactivated;
+
     public:
-        UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius, double softStartSpeed,
-                     int softStartAcceleration, std::list<AccelerationStage> stages, AccelerationMode accelerationMode,
-                     bool useAdaptiveAccelerationButtons);
+        UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius,
+                     double softStartSpeed, int softStartAcceleration, std::list<AccelerationStage> stages,
+                     AccelerationMode accelerationMode, bool useAdaptiveAccelerationButtons,
+                     bool deactivateOuterBrake);
 
         ~UserSettings() override;
 
@@ -82,6 +89,7 @@ class UserSettings : public ResponseCastInterface
         [[nodiscard]] double getSoftStartSpeed() const;
         [[nodiscard]] int getSoftStartAcceleration() const;
         [[nodiscard]] bool isAdaptiveAccelerationUIActivated() const;
+        [[nodiscard]] bool isOuterBrakeDeactivated() const;
 
         static AccelerationMode stringToAccelerationMode(std::string input) {
             if (input == "differential") {

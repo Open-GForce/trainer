@@ -33,6 +33,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
            {"accelerationStages", {}},
            {"accelerationMode", "differential"},
            {"useAdaptiveAccelerationUserInterface", true},
+           {"outerBrakeDeactivated", true},
     };
 
     correctUserConfig["accelerationStages"].push_back({{"speed", 200}, {"acceleration", 5000}});
@@ -220,6 +221,34 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         CHECK(config->getAccelerationMode() == AccelerationMode::targetSpeed);
     }
 
+    SECTION("Default values for outer brake toggle if value is missing")
+    {
+        nlohmann::json data = correctUserConfig;
+        data.erase("outerBrakeDeactivated");
+
+        std::ofstream configFile(basePath + "/user_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadUserSettings();
+
+        CHECK(!config->isOuterBrakeDeactivated());
+    }
+
+    SECTION("Default values for adaptive acceleration UI toggle if value is not boolean")
+    {
+        nlohmann::json data = correctUserConfig;
+        data["outerBrakeDeactivated"] = "abc";
+
+        std::ofstream configFile(basePath + "/user_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadUserSettings();
+
+        CHECK(!config->isOuterBrakeDeactivated());
+    }
+
     SECTION("Default values for acceleration stages if key is missing")
     {
         nlohmann::json data = correctUserConfig;
@@ -334,13 +363,14 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         CHECK(config->getAccelerationStages().back().getAcceleration() == 7500);
         CHECK(config->getAccelerationMode() == AccelerationMode::differential);
         CHECK(config->isAdaptiveAccelerationUIActivated());
+        CHECK(config->isOuterBrakeDeactivated());
     }
 
     SECTION("Config saved correctly")
     {
         auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 5.2, 125, 1500, {
-            AccelerationStage(500.5, 7400)
-        }, AccelerationMode::differential, true);
+                AccelerationStage(500.5, 7400)
+        }, AccelerationMode::differential, true, true);
         repository->saveUserSettings(saved);
 
         auto loaded = repository->loadUserSettings();
@@ -355,6 +385,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         CHECK(loaded->getAccelerationStages().front().getAcceleration() == 7400);
         CHECK(loaded->getAccelerationMode() == AccelerationMode::differential);
         CHECK(loaded->isAdaptiveAccelerationUIActivated());
+        CHECK(loaded->isOuterBrakeDeactivated());
     }
 
     boost::filesystem::remove_all(basePath);

@@ -223,7 +223,7 @@ TEST_CASE( "Request router tests", "[Websocket]" )
 
         fakeit::When(Method(configControllerMock, getUserSettings)).AlwaysDo([] () {
             return new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0, 0, 0,
-                                    std::list<AccelerationStage>(), AccelerationMode::targetSpeed, false);
+                                    std::list<AccelerationStage>(), AccelerationMode::targetSpeed, false, false);
         });
 
         auto response = router->handle(data.dump());
