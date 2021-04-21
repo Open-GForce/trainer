@@ -3,8 +3,9 @@
 #include "Sensors/ADS1115.hpp"
 #include "ACL/CAN/CANSocket.hpp"
 #include "ACL/CAN/DummyCANSocket.hpp"
-#include "Processing/BrakeInput/BrakeInputReceiveThread.hpp"
-#include "Processing/BrakeInput/BrakeInputTransmissionThread.hpp"
+#include "Processing/BrakeInput/IP/BrakeInputRXThread.hpp"
+#include "Processing/BrakeInput/IP/BrakeInputTXThread.hpp"
+#include "Processing/BrakeInput/CAN/WayconBrakeInputThread.hpp"
 #include "Utils/Logging/StandardLogger.hpp"
 #include "Utils/SystemRepository.hpp"
 #include "API/Controller/ConfigurationController.hpp"
@@ -49,12 +50,15 @@ void runControllerMode(bool CANDummyMode)
 
     auto configRepository = new ConfigRepository();
     auto userConfig = configRepository->loadUserSettings();
+    auto systemConfig = configRepository->loadSystemSettings();
 
+    CANThread* canThread = nullptr;
     MoviDriveService* moviDriveService = nullptr;
 
     if (CANDummyMode) {
         auto canSocket = new DummyCANSocket();
-        moviDriveService = new MoviDriveService(canSocket, logger);
+        canThread = new CANThread(canSocket, logger);
+        moviDriveService = new MoviDriveService(canThread, logger);
     } else {
         auto canSocket = new CANSocket();
         std::string canSocketAddress = SystemRepository::getNetworkAddress("eth0");
@@ -63,14 +67,20 @@ void runControllerMode(bool CANDummyMode)
 
         canSocket->connect(canSocketAddress, 29536);
         canSocket->open();
-        moviDriveService = new MoviDriveService(canSocket, logger);
+        canThread = new CANThread(canSocket, logger);
+        moviDriveService = new MoviDriveService(canThread, logger);
     }
 
     auto accelerationService = new AccelerationService();
     auto processingService = new ProcessingService(moviDriveService, userConfig, accelerationService);
     auto processingThread = new ProcessingThread(logger, processingService);
 
-    auto brakeThread = new BrakeInputReceiveThread(logger);
+    BrakeInputThread* brakeThread = nullptr;
+    if (systemConfig->getBrakeSensorProtocol() == BrakeSensorProtocol::IPNetwork) {
+        brakeThread = new IP::BrakeInputRXThread(logger);
+    } else {
+        brakeThread = new BrakeInput::CAN::WayconBrakeInputThread(canThread, logger);
+    }
 
     auto configController = new ConfigurationController(processingThread, configRepository);
     auto operationsController = new OperationsController(processingThread);
@@ -82,18 +92,23 @@ void runControllerMode(bool CANDummyMode)
         websocketServer->run(8763);
     });
 
-    std::thread t1([webSocketThread] {
+    std::thread t1([canThread] {
+        canThread->start();
+    });
+    logger->info(LOG_CHANNEL_MAIN, "CAN thread started", {});
+
+    std::thread t2([webSocketThread] {
         webSocketThread->start();
     });
     logger->info(LOG_CHANNEL_MAIN, "Websocket thread started", {});
 
-    std::thread t2([brakeThread] {
+    std::thread t3([brakeThread] {
         brakeThread->start();
     });
     brakeThread->waitUntilStarted();
     logger->info(LOG_CHANNEL_MAIN, "Brake input thread started", {});
 
-    std::thread t3([processingThread, brakeThread, webSocketThread] {
+    std::thread t4([processingThread, brakeThread, webSocketThread] {
         processingThread->start(brakeThread, webSocketThread);
     });
     logger->info(LOG_CHANNEL_MAIN, "Processing thread started", {});
@@ -113,7 +128,7 @@ void runBrakeInputMode()
     device->open();
 
     auto sensor = new ADS1115(device);
-    auto thread = new BrakeInputTransmissionThread(logger, sensor);
+    auto thread = new IP::BrakeInputTXThread(logger, sensor);
 
     thread->start();
 }

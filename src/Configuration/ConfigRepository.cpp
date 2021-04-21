@@ -16,8 +16,14 @@ ConfigRepository::ConfigRepository(std::string basePath) : basePath(std::move(ba
 
 UserSettings* ConfigRepository::loadUserSettings()
 {
-    std::string content = this->loadFileContent();
-    return ConfigRepository::decode(content);
+    std::string content = this->loadFileContent("user_settings.json");
+    return ConfigRepository::decodeUserSettings(content);
+}
+
+SystemSettings *ConfigRepository::loadSystemSettings()
+{
+    std::string content = this->loadFileContent("system_settings.json");
+    return ConfigRepository::decodeSystemSettings(content);
 }
 
 void ConfigRepository::saveUserSettings(UserSettings *settings)
@@ -27,9 +33,9 @@ void ConfigRepository::saveUserSettings(UserSettings *settings)
     configFile.close();
 }
 
-std::string ConfigRepository::loadFileContent()
+std::string ConfigRepository::loadFileContent(std::string file)
 {
-    std::string path = this->basePath + "/user_settings.json";
+    std::string path = this->basePath + "/" + file;
     std::ifstream ifs(path);
 
     if (!((bool) ifs)) {
@@ -43,7 +49,7 @@ std::string ConfigRepository::loadFileContent()
     return content;
 }
 
-UserSettings* ConfigRepository::decode(const std::string& fileContent)
+UserSettings* ConfigRepository::decodeUserSettings(const std::string &fileContent)
 {
     nlohmann::json data = nlohmann::json::parse(fileContent);
 
@@ -56,6 +62,15 @@ UserSettings* ConfigRepository::decode(const std::string& fileContent)
             parseAccelerationStages(data),
             parseAccelerationMode(data),
             parseAdaptiveAcceleration(data));
+}
+
+SystemSettings *ConfigRepository::decodeSystemSettings(const std::string &fileContent)
+{
+    nlohmann::json data = nlohmann::json::parse(fileContent);
+
+    return new SystemSettings(
+        parseBrakeProtocol(data)
+    );
 }
 
 Range* ConfigRepository::parseRange(nlohmann::json data, const std::string& key) {
@@ -140,6 +155,20 @@ bool ConfigRepository::parseAdaptiveAcceleration(nlohmann::json data)
     }
 
     return DEFAULT_ADAPTIVE_ACCELERATION_UI;
+}
+
+BrakeSensorProtocol ConfigRepository::parseBrakeProtocol(nlohmann::json data)
+{
+    if (data.find(SystemSettings::JSON_KEY_BRAKE_PROTOCOL) == data.end()
+        || !data.find(SystemSettings::JSON_KEY_BRAKE_PROTOCOL)->is_string()
+        || data.find(SystemSettings::JSON_KEY_BRAKE_PROTOCOL)->empty()) {
+
+        return BrakeSensorProtocol::IPNetwork;
+    }
+
+    return data[SystemSettings::JSON_KEY_BRAKE_PROTOCOL] == "CANopen"
+        ? BrakeSensorProtocol::CANopen
+        : BrakeSensorProtocol::IPNetwork;
 }
 
 

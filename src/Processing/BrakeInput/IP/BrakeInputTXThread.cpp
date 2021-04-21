@@ -1,17 +1,17 @@
 #include <cmath>
-#include "BrakeInputTransmissionThread.hpp"
-#include "../../ACL/TCP/BoostTCPConnection.hpp"
+#include "BrakeInputTXThread.hpp"
+#include "../../../ACL/TCP/BoostTCPConnection.hpp"
 #include "BrakeInputMessage.hpp"
-#include "../../Utils/Logging/StandardLogger.hpp"
-#include "../../Utils/Exceptions/RuntimeException.hpp"
-#include "../../Utils/Algorithms.hpp"
-#include "../../ACL/TCP/BrokenPipeException.hpp"
+#include "../../../Utils/Logging/StandardLogger.hpp"
+#include "../../../Utils/Exceptions/RuntimeException.hpp"
+#include "../../../Utils/Algorithms.hpp"
+#include "../../../ACL/TCP/BrokenPipeException.hpp"
 
-using namespace GForce::Processing::BrakeInput;
+using namespace GForce::Processing::BrakeInput::IP;
 using namespace GForce::Utils::Exceptions;
 using namespace GForce::Utils;
 
-BrakeInputTransmissionThread::BrakeInputTransmissionThread(LoggerInterface *logger, ADCSensorInterface *sensor): logger(logger), sensor(sensor)
+BrakeInputTXThread::BrakeInputTXThread(LoggerInterface *logger, ADCSensorInterface *sensor): logger(logger), sensor(sensor)
 {
     this->socket = nullptr;
     this->factory = new BoostTCPConnectionFactory;
@@ -23,7 +23,7 @@ BrakeInputTransmissionThread::BrakeInputTransmissionThread(LoggerInterface *logg
     this->normalizeLength = 15;
 }
 
-void BrakeInputTransmissionThread::start()
+void BrakeInputTXThread::start()
 {
     this->connect();
 
@@ -45,7 +45,7 @@ void BrakeInputTransmissionThread::start()
     }
 }
 
-void BrakeInputTransmissionThread::loop()
+void BrakeInputTXThread::loop()
 {
     int firstBrake = scaleSignedInput(this->sensor->read(0));
     int secondBrake = scaleSignedInput(this->sensor->read(1));
@@ -65,7 +65,7 @@ void BrakeInputTransmissionThread::loop()
     this->socket->send(message.toJSON().dump());
 }
 
-void BrakeInputTransmissionThread::connect()
+void BrakeInputTXThread::connect()
 {
     while (this->socket == nullptr) {
         this->logger->setGlobalContext("mainControllerAddress", this->mainControllerAddress);
@@ -83,7 +83,7 @@ void BrakeInputTransmissionThread::connect()
     }
 }
 
-void BrakeInputTransmissionThread::reconnect()
+void BrakeInputTXThread::reconnect()
 {
     if (this->socket != nullptr) {
         try {
@@ -101,25 +101,25 @@ void BrakeInputTransmissionThread::reconnect()
     this->connect();
 }
 
-int BrakeInputTransmissionThread::scaleSignedInput(int value)
+int BrakeInputTXThread::scaleSignedInput(int value)
 {
     return value > 32768 ? (0 - (65536 - value)) : value;
 }
 
-void BrakeInputTransmissionThread::stop() {
+void BrakeInputTXThread::stop() {
     this->stopped = true;
 }
 
-void BrakeInputTransmissionThread::setSocket(TCPConnectionInterface *value){
+void BrakeInputTXThread::setSocket(TCPConnectionInterface *value){
     this->socket = value;
 }
 
-void BrakeInputTransmissionThread::setSocketFactory(TCPConnectionFactory *socketFactory) {
+void BrakeInputTXThread::setSocketFactory(TCPConnectionFactory *socketFactory) {
     delete this->factory;
-    BrakeInputTransmissionThread::factory = socketFactory;
+    BrakeInputTXThread::factory = socketFactory;
 }
 
-int BrakeInputTransmissionThread::calcAverage(const std::vector<int>& values)
+int BrakeInputTXThread::calcAverage(const std::vector<int>& values)
 {
     double sum = 0;
 
@@ -131,7 +131,7 @@ int BrakeInputTransmissionThread::calcAverage(const std::vector<int>& values)
 }
 
 
-nlohmann::json BrakeInputTransmissionThread::getErrorContext(std::string errorMessage) {
+nlohmann::json BrakeInputTXThread::getErrorContext(std::string errorMessage) {
     return {
         {"exceptionMessage", errorMessage},
         {"normalizationLength", this->normalizeLength},

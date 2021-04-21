@@ -21,7 +21,7 @@ set(SOURCES
         src/ACL/CAN/MessageFactory.cpp
         src/Networking/EngineStatus.cpp
         src/Networking/BusResponse.cpp
-        src/Processing/BrakeInput/BrakeInputReceiveThread.cpp
+        src/Processing/BrakeInput/IP/BrakeInputRXThread.cpp
         src/Processing/Range.cpp
         src/Processing/ProcessingThread.cpp
         src/Configuration/UserSettings.cpp
@@ -38,15 +38,18 @@ set(SOURCES
         src/Utils/Assertions/AssertionFailedException.cpp
         src/API/Websocket/Request.cpp
         src/API/Websocket/RequestRouter.cpp
-        src/Processing/BrakeInput/BrakeInputMessage.cpp
+        src/Processing/BrakeInput/IP/BrakeInputMessage.cpp
         src/ACL/TCP/BoostTCPSocket.cpp
         src/ACL/TCP/BoostTCPConnection.cpp
-        src/Processing/BrakeInput/BrakeInputTransmissionThread.cpp
+        src/Processing/BrakeInput/IP/BrakeInputTXThread.cpp
         src/Processing/Mode/RegularSpiralMode.cpp
         src/Processing/Mode/StaticMaxSpeedMode.cpp
         src/Utils/Algorithms.cpp
         src/Processing/Acceleration/AccelerationStage.cpp
-        src/Processing/Acceleration/AccelerationService.cpp)
+        src/Processing/Acceleration/AccelerationService.cpp
+        src/Configuration/SystemSettings.cpp
+        src/Networking/CANThread.cpp
+        src/Processing/BrakeInput/CAN/WayconBrakeInputThread.cpp)
 
 set(TESTS
         tests/Sensors/ADS1115Test.cpp
@@ -55,7 +58,7 @@ set(TESTS
         tests/Networking/MoviDriveServiceTest.cpp
         tests/ACL/CAN/MessageFactoryTest.cpp
         tests/Networking/ResponseTest.cpp
-        tests/Processing/BrakeInput/BrakeInputThreadReceiveTest.cpp
+        tests/Processing/BrakeInput/IP/BrakeInputRXThreadTest.cpp
         tests/Processing/RangeTest.cpp
         tests/Processing/ProcessingServiceTest.cpp
         tests/Processing/ProcessingThreadTest.cpp
@@ -65,12 +68,14 @@ set(TESTS
         tests/API/Controller/OperationsControllerTest.cpp
         tests/API/Websocket/RequestRouterTest.cpp
         tests/API/Controller/ConfigurationControllerTest.cpp
-        tests/Processing/BrakeInput/BrakeInputMessageTest.cpp
-        tests/Processing/BrakeInput/BrakeInputTransmissionThreadTest.cpp
+        tests/Processing/BrakeInput/IP/BrakeInputMessageTest.cpp
+        tests/Processing/BrakeInput/IP/BrakeInputTXThreadTest.cpp
         tests/Processing/Mode/RegularSpiralModeTest.cpp
         tests/Processing/Mode/StaticMaxSpeedModeTest.cpp
         tests/General/AlgorithmsTest.cpp
-        tests/Processing/Acceleration/AccelerationServiceTest.cpp)
+        tests/Processing/Acceleration/AccelerationServiceTest.cpp
+        tests/Networking/CANThreadTest.cpp
+        tests/Processing/BrakeInput/CAN/WayconBrakeInputThreadTest.cpp)
 
 include(build/conanbuildinfo.cmake)
 conan_basic_setup()

@@ -18,7 +18,7 @@ ProcessingThread::ProcessingThread(LoggerInterface* logger, ProcessingService *s
     this->brakeInputTimeoutThreshold = 50;
 }
 
-void ProcessingThread::start(GForce::Processing::BrakeInput::BrakeInputReceiveThread* brakeThread, Websocket::ServerThread* serverThread)
+void ProcessingThread::start(BrakeInputThread* brakeThread, Websocket::ServerThread* serverThread)
 {
     this->brakeInputThread = brakeThread;
     this->websocketThread = serverThread;

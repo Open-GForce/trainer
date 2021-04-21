@@ -1,7 +1,7 @@
 #include "BrakeInputMessage.hpp"
-#include "../../Utils/Assertions/Assertion.hpp"
+#include "../../../Utils/Assertions/Assertion.hpp"
 
-using namespace GForce::Processing::BrakeInput;
+using namespace GForce::Processing::BrakeInput::IP;
 using namespace GForce::Utils::Assertions;
 
 BrakeInputMessage::BrakeInputMessage(int firstBrake, int secondBrake) : firstBrake(firstBrake), secondBrake(secondBrake) {}

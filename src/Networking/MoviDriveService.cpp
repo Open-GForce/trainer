@@ -8,7 +8,7 @@
 
 using namespace GForce::Networking;
 
-MoviDriveService::MoviDriveService(CAN::SocketInterface* socket, LoggerInterface* logger): socket(socket), logger(logger)
+MoviDriveService::MoviDriveService(CANThread* socket, LoggerInterface* logger): canThread(socket), logger(logger)
 {
     this->controlStatus = nullptr;
     this->rotationSpeed = 0;
@@ -27,11 +27,11 @@ MoviDriveService::~MoviDriveService()
 void MoviDriveService::startNode()
 {
     auto preOpMessage = new CAN::Message(0, {0x80, NODE_ID});
-    this->socket->send(preOpMessage);
+    this->canThread->send(preOpMessage);
     usleep(50000);
 
     auto opMessage = new CAN::Message(0, {0x1, NODE_ID});
-    this->socket->send(opMessage);
+    this->canThread->send(opMessage);
 }
 
 BusResponse* MoviDriveService::sync()
@@ -81,15 +81,12 @@ void MoviDriveService::send()
     data[5] = highByte((uint16_t) acceleration);
 
     auto pdoMessage = new CAN::Message(CAN_TX_PDO_INDEX, data);
-    this->socket->send(pdoMessage);
-
-    auto syncMessage = new CAN::Message(CAN_SYNC_INDEX, {});
-    this->socket->send(syncMessage);
+    this->canThread->send(pdoMessage);
 }
 
 BusResponse* MoviDriveService::receive()
 {
-    auto messages = this->socket->receive();
+    auto messages = this->canThread->getMoviDriveMessages();
     CAN::MessageInterface* lastMessage = nullptr;
     BusResponse* response = nullptr;
 
@@ -117,7 +114,7 @@ void MoviDriveService::handleHeartbeat()
 
     if (this->lastHeartbeat >= this->heartbeatInterval) {
         auto heartBeatMessage = new CAN::Message(CAN_HEARTBEAT_INDEX, {0x05});
-        this->socket->send(heartBeatMessage);
+        this->canThread->send(heartBeatMessage);
         this->lastHeartbeat = 0;
     }
 }

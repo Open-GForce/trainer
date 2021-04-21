@@ -11,14 +11,14 @@
 using namespace GForce::Configuration;
 using namespace GForce::Utils::Exceptions;
 
-TEST_CASE( "Configuration repository test", "[Configuration]" )
+TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
 {
     std::string basePath = "/tmp/test_" + std::to_string(std::rand());
     boost::filesystem::create_directory(basePath);
 
     auto repository = new ConfigRepository(basePath);
 
-    nlohmann::json correctConfig = {
+    nlohmann::json correctUserConfig = {
             {"innerBrakeRange", {
                {"min", 1000},
                {"max", 2500},
@@ -35,8 +35,8 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
            {"useAdaptiveAccelerationUserInterface", true},
     };
 
-    correctConfig["accelerationStages"].push_back({{"speed", 200}, {"acceleration", 5000}});
-    correctConfig["accelerationStages"].push_back({{"speed", 300}, {"acceleration", 7500},});
+    correctUserConfig["accelerationStages"].push_back({{"speed", 200}, {"acceleration", 5000}});
+    correctUserConfig["accelerationStages"].push_back({{"speed", 300}, {"acceleration", 7500},});
 
     SECTION("Exception thrown if config file is missing")
     {
@@ -50,7 +50,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for range if section is missing")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data.erase("innerBrakeRange");
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -65,7 +65,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for range if section sub key is missing")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data["innerBrakeRange"].erase("min");
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -80,7 +80,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for range if section sub key is not number")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data["innerBrakeRange"]["max"] = "abc";
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -95,7 +95,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for rotation radius if key is missing")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data.erase("rotationRadius");
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -109,7 +109,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for rotation radius if value is not number")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data["rotationRadius"] = "abc";
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -123,7 +123,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for soft start speed if key is missing")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data.erase("softStartSpeed");
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -137,7 +137,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for rotation radius if value is not number")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data["softStartSpeed"] = "abc";
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -152,7 +152,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for soft start speed if key is missing")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data.erase("softStartAcceleration");
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -166,7 +166,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for rotation radius if value is not number")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data["softStartAcceleration"] = "abc";
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -180,7 +180,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for adaptive acceleration UI toggle if value is missing")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data.erase("useAdaptiveAccelerationUserInterface");
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -194,7 +194,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for adaptive acceleration UI toggle if value is not boolean")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data["useAdaptiveAccelerationUserInterface"] = "abc";
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -208,7 +208,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for acceleration mode if key is missing")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data.erase("accelerationMode");
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -222,7 +222,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for acceleration stages if key is missing")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data.erase("accelerationStages");
 
         std::ofstream configFile(basePath + "/user_settings.json");
@@ -238,7 +238,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for acceleration stages if element is faulty => missing speed")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data.erase("accelerationStages");
 
         data["accelerationStages"] = {};
@@ -257,7 +257,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for acceleration stages if element is faulty => missing acceleration")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data.erase("accelerationStages");
 
         data["accelerationStages"] = {};
@@ -276,7 +276,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for acceleration stages if element is faulty => speed not number")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data.erase("accelerationStages");
 
         data["accelerationStages"] = {};
@@ -295,7 +295,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
 
     SECTION("Default values for acceleration stages if element is faulty => acceleration not number")
     {
-        nlohmann::json data = correctConfig;
+        nlohmann::json data = correctUserConfig;
         data.erase("accelerationStages");
 
         data["accelerationStages"] = {};
@@ -315,7 +315,7 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
     SECTION("Config correctly decoded")
     {
         std::ofstream configFile(basePath + "/user_settings.json");
-        configFile << correctConfig.dump() << "\n";
+        configFile << correctUserConfig.dump() << "\n";
         configFile.close();
 
         auto config = repository->loadUserSettings();
@@ -355,6 +355,87 @@ TEST_CASE( "Configuration repository test", "[Configuration]" )
         CHECK(loaded->getAccelerationStages().front().getAcceleration() == 7400);
         CHECK(loaded->getAccelerationMode() == AccelerationMode::differential);
         CHECK(loaded->isAdaptiveAccelerationUIActivated());
+    }
+
+    boost::filesystem::remove_all(basePath);
+}
+
+
+TEST_CASE( "Configuration repository system settings test", "[Configuration]" )
+{
+    std::string basePath = "/tmp/test_" + std::to_string(std::rand());
+    boost::filesystem::create_directory(basePath);
+
+    auto repository = new ConfigRepository(basePath);
+
+    nlohmann::json correctSystemSettings = {
+            {"brakeSensorProtocol", "IPNetwork"}
+    };
+
+    SECTION("Exception thrown if config file is missing")
+    {
+        try {
+            repository->loadSystemSettings();
+            FAIL("Expected exception was not thrown");
+        } catch (RuntimeException &e) {
+            CHECK(e.getMessage() == "Config file " + basePath + "/system_settings.json does not exist");
+        }
+    }
+
+    SECTION("Default values for brake sensor protocol if key is missing")
+    {
+        nlohmann::json data = correctSystemSettings;
+        data.erase("brakeSensorProtocol");
+
+        std::ofstream configFile(basePath + "/system_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadSystemSettings();
+
+        CHECK(config->getBrakeSensorProtocol() == IPNetwork);
+    }
+
+    SECTION("Default values for brake sensor protocol if value is not string")
+    {
+        nlohmann::json data = correctSystemSettings;
+        data["brakeSensorProtocol"] = {{}};
+
+        std::ofstream configFile(basePath + "/system_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadSystemSettings();
+
+        CHECK(config->getBrakeSensorProtocol() == IPNetwork);
+    }
+
+    SECTION("Correct value for brakeSensorProtocol => IPNetwork")
+    {
+        nlohmann::json data = correctSystemSettings;
+        data["brakeSensorProtocol"] = "IPNetwork";
+
+        std::ofstream configFile(basePath + "/system_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadSystemSettings();
+
+        CHECK(config->getBrakeSensorProtocol() == IPNetwork);
+    }
+
+    SECTION("Correct value for brakeSensorProtocol => CANopen")
+    {
+        nlohmann::json data = correctSystemSettings;
+        data["brakeSensorProtocol"] = "CANopen";
+
+        std::ofstream configFile(basePath + "/system_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadSystemSettings();
+
+        CHECK(config->getBrakeSensorProtocol() == CANopen);
     }
 
     boost::filesystem::remove_all(basePath);

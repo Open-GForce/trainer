@@ -17,11 +17,11 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
     fakeit::Fake(Method(serviceMock, run));
     ProcessingService* service = &serviceMock.get();
 
-    fakeit::Mock<BrakeInputReceiveThread> brakeThreadMock;
+    fakeit::Mock<BrakeInputThread> brakeThreadMock;
     fakeit::Fake(Method(brakeThreadMock, getFirstBrake));
     fakeit::Fake(Method(brakeThreadMock, getSecondBrake));
     fakeit::Fake(Method(brakeThreadMock, getMessageCount));
-    BrakeInputReceiveThread* brakeThread = &brakeThreadMock.get();
+    BrakeInputThread* brakeThread = &brakeThreadMock.get();
 
     fakeit::Mock<Websocket::ServerThread> serverThreadMock;
     fakeit::Fake(Method(serverThreadMock, addBroadcastMessage));
