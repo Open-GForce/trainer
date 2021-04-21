@@ -21,9 +21,15 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     auto controller = new ConfigurationController(processingThread, configRepository);
 
-    nlohmann::json correctRangeData = {
+    nlohmann::json correctInnerBrakeConfiguration = {
             {"min", 1673},
             {"max", 4434}
+    };
+
+    nlohmann::json correctOuterBrakeConfiguration = {
+            {"min", 1673},
+            {"max", 4434},
+            {"deactivated", true},
     };
 
     nlohmann::json correctRadiusData = {
@@ -44,7 +50,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setInnerBrakeRange() => min field is missing")
     {
-        auto data = correctRangeData;
+        auto data = correctInnerBrakeConfiguration;
         data.erase("min");
 
         auto request = new Request("test", data);
@@ -59,7 +65,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setInnerBrakeRange() => max field is missing")
     {
-        auto data = correctRangeData;
+        auto data = correctInnerBrakeConfiguration;
         data.erase("max");
 
         auto request = new Request("test", data);
@@ -74,7 +80,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setInnerBrakeRange() => min field not a number")
     {
-        auto data = correctRangeData;
+        auto data = correctInnerBrakeConfiguration;
         data["min"] = "abc";
 
         auto request = new Request("test", data);
@@ -89,7 +95,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setInnerBrakeRange() => max field not a number")
     {
-        auto data = correctRangeData;
+        auto data = correctInnerBrakeConfiguration;
         data["max"] = "abc";
 
         auto request = new Request("test", data);
@@ -110,13 +116,14 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1673);
             CHECK(settings->getInnerBrakeRange()->getMax() == 4434);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->isOuterBrakeDeactivated());
             CHECK(settings->getSoftStartSpeed() == 100);
             CHECK(settings->getSoftStartAcceleration() == 1000);
             CHECK(settings->getAccelerationStages().size() == 1);
@@ -129,6 +136,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getInnerBrakeRange()->getMax() == 4434);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->isOuterBrakeDeactivated());
             CHECK(settings->getSoftStartSpeed() == 100);
             CHECK(settings->getSoftStartAcceleration() == 1000);
             CHECK(settings->getAccelerationStages().size() == 1);
@@ -136,16 +144,31 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
         });
 
-        auto request = new Request("test", correctRangeData);
+        auto request = new Request("test", correctInnerBrakeConfiguration);
         controller->setInnerBrakeRange(request);
         
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
         fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
     }
 
+    SECTION("setOuterBrakeRange() => deactivated field is missing")
+    {
+        auto data = correctOuterBrakeConfiguration;
+        data.erase("deactivated");
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setOuterBrakeRange(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field deactivated");
+        }
+    }
+
     SECTION("setOuterBrakeRange() => min field is missing")
     {
-        auto data = correctRangeData;
+        auto data = correctOuterBrakeConfiguration;
         data.erase("min");
 
         auto request = new Request("test", data);
@@ -160,7 +183,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setOuterBrakeRange() => max field is missing")
     {
-        auto data = correctRangeData;
+        auto data = correctOuterBrakeConfiguration;
         data.erase("max");
 
         auto request = new Request("test", data);
@@ -175,7 +198,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setOuterBrakeRange() => min field not a number")
     {
-        auto data = correctRangeData;
+        auto data = correctOuterBrakeConfiguration;
         data["min"] = "abc";
 
         auto request = new Request("test", data);
@@ -190,7 +213,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setOuterBrakeRange() => max field not a number")
     {
-        auto data = correctRangeData;
+        auto data = correctOuterBrakeConfiguration;
         data["max"] = "abc";
 
         auto request = new Request("test", data);
@@ -200,6 +223,21 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             FAIL("Expected exception was not thrown");
         } catch (AssertionFailedException &e) {
             CHECK(e.getMessage() == "Assertion failed. JSON field max is not a number");
+        }
+    }
+
+    SECTION("setOuterBrakeRange() => deactivated field not a boolean")
+    {
+        auto data = correctOuterBrakeConfiguration;
+        data["deactivated"] = "abc";
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setOuterBrakeRange(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field deactivated is not boolean");
         }
     }
 
@@ -218,6 +256,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 1673);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4434);
+            CHECK(settings->isOuterBrakeDeactivated());
             CHECK(settings->getSoftStartSpeed() == 100);
             CHECK(settings->getSoftStartAcceleration() == 1000);
             CHECK(settings->getAccelerationStages().size() == 1);
@@ -231,6 +270,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 1673);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4434);
+            CHECK(settings->isOuterBrakeDeactivated());
             CHECK(settings->getSoftStartSpeed() == 100);
             CHECK(settings->getSoftStartAcceleration() == 1000);
             CHECK(settings->getAccelerationStages().size() == 1);
@@ -238,7 +278,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
         });
 
-        auto request = new Request("test", correctRangeData);
+        auto request = new Request("test", correctOuterBrakeConfiguration);
         controller->setOuterBrakeRange(request);
 
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
@@ -283,13 +323,14 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->isOuterBrakeDeactivated());
             CHECK(settings->getRotationRadius() == 2.53);
             CHECK(settings->getSoftStartSpeed() == 100);
             CHECK(settings->getSoftStartAcceleration() == 1000);
@@ -303,6 +344,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->isOuterBrakeDeactivated());
             CHECK(settings->getRotationRadius() == 2.53);
             CHECK(settings->getSoftStartSpeed() == 100);
             CHECK(settings->getSoftStartAcceleration() == 1000);
@@ -577,13 +619,14 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->isOuterBrakeDeactivated());
             CHECK(settings->getRotationRadius() == 5.0);
             CHECK(settings->getSoftStartSpeed() == 750.5);
             CHECK(settings->getSoftStartAcceleration() == 1555);
@@ -599,6 +642,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->isOuterBrakeDeactivated());
             CHECK(settings->getRotationRadius() == 5.0);
             CHECK(settings->getSoftStartSpeed() == 750.5);
             CHECK(settings->getSoftStartAcceleration() == 1555);
@@ -624,13 +668,14 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (UserSettings* settings) {
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->isOuterBrakeDeactivated());
             CHECK(settings->getRotationRadius() == 5.0);
             CHECK(settings->getSoftStartSpeed() == 100);
             CHECK(settings->getSoftStartAcceleration() == 1000);
@@ -647,6 +692,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->isOuterBrakeDeactivated());
             CHECK(settings->getRotationRadius() == 5.0);
             CHECK(settings->getSoftStartSpeed() == 100);
             CHECK(settings->getSoftStartAcceleration() == 1000);

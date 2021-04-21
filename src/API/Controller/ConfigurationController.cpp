@@ -24,13 +24,16 @@ void Controller::ConfigurationController::setInnerBrakeRange(Request *request)
             oldConfig->getSoftStartSpeed(),
             oldConfig->getSoftStartAcceleration(),
             oldConfig->getAccelerationStages(),
-            AccelerationMode::targetSpeed, oldConfig->isAdaptiveAccelerationUIActivated(), false);
+            oldConfig->getAccelerationMode(),
+            oldConfig->isAdaptiveAccelerationUIActivated(),
+            oldConfig->isOuterBrakeDeactivated());
 
     this->saveConfig(newConfig, oldConfig);
 }
 
 void Controller::ConfigurationController::setOuterBrakeRange(Request *request)
 {
+    Assertion::jsonExistsAndBool(request->getData(), "deactivated");
     auto range = buildRange(request);
 
     auto oldConfig = this->configRepository->loadUserSettings();
@@ -41,7 +44,9 @@ void Controller::ConfigurationController::setOuterBrakeRange(Request *request)
             oldConfig->getSoftStartSpeed(),
             oldConfig->getSoftStartAcceleration(),
             oldConfig->getAccelerationStages(),
-            AccelerationMode::targetSpeed, oldConfig->isAdaptiveAccelerationUIActivated(), false);
+            oldConfig->getAccelerationMode(),
+            oldConfig->isAdaptiveAccelerationUIActivated(),
+            request->getData()["deactivated"]);
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -56,8 +61,10 @@ void Controller::ConfigurationController::setRotationRadius(Request *request)
                                       request->getData()["rotationRadius"],
                                       oldConfig->getSoftStartSpeed(),
                                       oldConfig->getSoftStartAcceleration(),
-                                      oldConfig->getAccelerationStages(), AccelerationMode::targetSpeed,
-                                      oldConfig->isAdaptiveAccelerationUIActivated(), false);
+                                      oldConfig->getAccelerationStages(),
+                                      oldConfig->getAccelerationMode(),
+                                      oldConfig->isAdaptiveAccelerationUIActivated(),
+                                      oldConfig->isOuterBrakeDeactivated());
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -74,8 +81,10 @@ void Controller::ConfigurationController::setSoftStart(Request *request)
                                       oldConfig->getRotationRadius(),
                                       request->getData()["speed"],
                                       request->getData()["acceleration"],
-                                      oldConfig->getAccelerationStages(), AccelerationMode::targetSpeed,
-                                      oldConfig->isAdaptiveAccelerationUIActivated(), false);
+                                      oldConfig->getAccelerationStages(),
+                                      oldConfig->getAccelerationMode(),
+                                      oldConfig->isAdaptiveAccelerationUIActivated(),
+                                      oldConfig->isOuterBrakeDeactivated());
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -102,7 +111,8 @@ void Controller::ConfigurationController::setAccelerationStages(Request *request
                                       oldConfig->getSoftStartAcceleration(),
                                       stages,
                                       UserSettings::stringToAccelerationMode(request->getData()["mode"]),
-                                      oldConfig->isAdaptiveAccelerationUIActivated(), false);
+                                      oldConfig->isAdaptiveAccelerationUIActivated(),
+                                      oldConfig->isOuterBrakeDeactivated());
 
     this->saveConfig(newConfig, oldConfig);
 }
@@ -119,7 +129,8 @@ void Controller::ConfigurationController::setUserInterfaceSettings(Request* requ
                                       oldConfig->getSoftStartAcceleration(),
                                       oldConfig->getAccelerationStages(),
                                       oldConfig->getAccelerationMode(),
-                                      request->getData()["activateAdaptiveAcceleration"], false);
+                                      request->getData()["activateAdaptiveAcceleration"],
+                                      oldConfig->isOuterBrakeDeactivated());
 
     this->saveConfig(newConfig, oldConfig);
 }

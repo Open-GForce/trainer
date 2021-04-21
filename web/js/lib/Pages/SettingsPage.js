@@ -64,11 +64,11 @@ class SettingsPage extends AbstractPage
 
         this._configureBrakeRangeSegment(this.innerBrakeSegment, Message.REQUEST_TYPE_CONF_INNER_BRAKE, () => {
             return this.lastSystemStatus.innerBrake
-        });
+        }, false);
 
         this._configureBrakeRangeSegment(this.outerBrakeSegment, Message.REQUEST_TYPE_CONF_OUTER_BRAKE, () => {
             return this.lastSystemStatus.outerBrake
-        });
+        }, true);
 
         this._configureForceCalculationSegment();
         this._configureSoftStartSegment();
@@ -90,9 +90,10 @@ class SettingsPage extends AbstractPage
      * @param {jQuery} segment
      * @param {string} messageType
      * @param {function} brakeStatus
+     * @param {boolean} parseActivationStatus
      * @private
      */
-    _configureBrakeRangeSegment(segment, messageType, brakeStatus)
+    _configureBrakeRangeSegment(segment, messageType, brakeStatus, parseActivationStatus = false)
     {
         let minInput = segment.find('.minimum.input input');
         segment.find('.minimum.input .button').click(() => {
@@ -104,11 +105,14 @@ class SettingsPage extends AbstractPage
             maxInput.val(brakeStatus().raw);
         });
 
+        let checkbox = parseActivationStatus ? segment.find('.brake-deactivated') : undefined;
+
         let saveButton = segment.find('.save.button');
         saveButton.click(() => {
             let message = new Message(messageType, {
                 min: parseInt(minInput.val()),
-                max: parseInt(maxInput.val())
+                max: parseInt(maxInput.val()),
+                deactivated: parseActivationStatus ? checkbox.checkbox('is checked') : false
             });
             app.socket.send(message);
             this._saveAnimation(saveButton);
@@ -261,6 +265,7 @@ class SettingsPage extends AbstractPage
 
         this.outerBrakeSegment.find('.minimum.input input').val(settings.outerBrakeRange.min);
         this.outerBrakeSegment.find('.maximum.input input').val(settings.outerBrakeRange.max);
+        this.outerBrakeSegment.find('.brake-deactivated').checkbox(settings.outerBrakeDeactivated ? 'set checked' : 'set unchecked');
 
         this.forceCalculationSegment.find('.radius.input input').val(settings.rotationRadius);
 

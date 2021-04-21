@@ -48,5 +48,10 @@ class UserSettings
          * @type {boolean}
          */
         this.useAdaptiveAccelerationUserInterface = props.useAdaptiveAccelerationUserInterface;
+
+        /**
+         * @type {boolean}
+         */
+        this.outerBrakeDeactivated = props.outerBrakeDeactivated;
     }
 }
