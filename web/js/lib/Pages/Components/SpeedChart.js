@@ -16,6 +16,10 @@ class SpeedChart
          * @type {Gauge}
          */
         this.targetChart = undefined;
+
+        this.currentSpeed = 0;
+        this.targetSpeed  = 0;
+        this.maxSpeed     = 0;
     }
 
     show()
@@ -31,16 +35,16 @@ class SpeedChart
 
         this.targetChart = Gauge(
             this.container[0], {
-                max: 3400,
-                value: 0,
+                max: this.maxSpeed,
+                value: this.targetSpeed,
                 showValue: false,
             },
         );
 
         this.currentChart = Gauge(
             this.container[0], {
-                max: 3400,
-                value: 0,
+                max: this.maxSpeed,
+                value: this.currentSpeed,
                 showValue: true,
                 label: function(value) {
                     return Math.round(value) + ' 1/min'
@@ -59,6 +63,11 @@ class SpeedChart
      */
     setMaxSpeed(value)
     {
+        if (value === this.maxSpeed) {
+            return;
+        }
+
+        this.maxSpeed = value;
         this.currentChart.setMaxValue(value);
         this.targetChart.setMaxValue(value);
     }
@@ -68,6 +77,11 @@ class SpeedChart
      */
     setCurrentSpeed(value)
     {
+        if (value === this.currentSpeed) {
+            return;
+        }
+
+        this.currentSpeed = value;
         this.currentChart.setValue(value);
     }
 
@@ -76,6 +90,11 @@ class SpeedChart
      */
     setTargetSpeed(value)
     {
+        if (value === this.targetSpeed) {
+            return;
+        }
+
+        this.targetSpeed = value;
         this.targetChart.setValue(value);
     }
 

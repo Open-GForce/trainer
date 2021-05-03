@@ -104,6 +104,13 @@ class OperationsPage extends AbstractPage
          * @type {number}
          */
         this.maxSpeed = 0;
+
+        /**
+         * Last system status
+         *
+         * @type {undefined|SystemStatus}
+         */
+        this.lastStatus = undefined;
     }
 
     /**
@@ -142,6 +149,11 @@ class OperationsPage extends AbstractPage
         this._bindControls();
     }
 
+    shutdown()
+    {
+        this.lastStatus = undefined;
+    }
+
     onSocketConnected()
     {
         let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
@@ -162,10 +174,12 @@ class OperationsPage extends AbstractPage
             this.firstStatusHandled = true;
         }
 
-        this.brakeChart.setInnerBrake(status.innerBrake.scaled * 100);
-        this.brakeChart.setOuterBrake(status.outerBrake.scaled * 100);
-        this.brakeChart.setTotalValue((status.innerBrake.scaled - status.outerBrake.scaled) * 100);
-        this.brakeChart.update();
+        if (!this.lastStatus || !status.isScaledBrakeStatusEqual(this.lastStatus)) {
+            this.brakeChart.setInnerBrake(status.innerBrake.scaled * 100);
+            this.brakeChart.setOuterBrake(status.outerBrake.scaled * 100);
+            this.brakeChart.setTotalValue((status.innerBrake.scaled - status.outerBrake.scaled) * 100);
+            this.brakeChart.update();
+        }
 
         if (status.maxSpeed > 0) {
             this.speedChart.setCurrentSpeed(status.currentSpeed);
@@ -178,6 +192,8 @@ class OperationsPage extends AbstractPage
         this._renderControlButtons(status);
         this._renderReleaseButton(status);
         this._renderAccelerationButton(status);
+
+        this.lastStatus = status;
     }
 
     /**
@@ -309,6 +325,10 @@ class OperationsPage extends AbstractPage
      */
     _renderStatus(status)
     {
+        if (this.lastStatus && status && this.lastStatus.isEngineStatusEqual(status)) {
+            return;
+        }
+
         app.templates.load('statusLabels', function (template) {
             let rendered = '';
 
@@ -345,6 +365,12 @@ class OperationsPage extends AbstractPage
      */
     _renderForce(status)
     {
+        if (this.lastStatus && status
+            && this.lastStatus.currentSpeed === status.currentSpeed
+            && this.lastStatus.maxSpeed === status.maxSpeed) {
+            return;
+        }
+
         app.templates.load('forceStatistics', function (template) {
             let rendered = '';
 
@@ -369,6 +395,12 @@ class OperationsPage extends AbstractPage
      */
     _renderControlButtons(status)
     {
+        if (this.lastStatus && status
+            && this.lastStatus.direction === status.direction
+            && this.lastStatus.operationMode === status.operationMode) {
+            return;
+        }
+
         if (status.direction === "right") {
             this.toggleButtons(this.directionButtons.right, this.directionButtons.left);
         } else {
@@ -387,6 +419,10 @@ class OperationsPage extends AbstractPage
      */
     _renderReleaseButton(status)
     {
+        if (status && this.lastStatus && this.lastStatus.isEngineStatusEqual(status)) {
+            return;
+        }
+
         let released = status.engineStatus === undefined ? false : status.engineStatus.isFullyReleased();
         let statusChanged = released !== this.released;
 
@@ -412,7 +448,6 @@ class OperationsPage extends AbstractPage
      */
     _renderAccelerationButton(status)
     {
-        console.log(this.useAdaptiveAccelerationButton);
         if (!this.useAdaptiveAccelerationButton) {
             return;
         }

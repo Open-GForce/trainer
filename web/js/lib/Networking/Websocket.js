@@ -26,6 +26,12 @@ class Websocket
          * @type {int}
          */
         this.heartBeatTimeout = undefined;
+
+        /**
+         * Current system status
+         * @type {undefined|SystemStatus}
+         */
+        this.systemStatus = undefined;
     }
 
     start() {
@@ -42,7 +48,16 @@ class Websocket
                 handler._connect();
             }
         }, 3000);
-        
+
+        // Updating UI with fixed frequency of 20 Hz
+        setInterval(function () {
+            if (handler.systemStatus === undefined) {
+                return;
+            }
+
+            app.currentPage.onSystemStatus(handler.systemStatus);
+        }, 50);
+
         // Every 2s a heartbeat is sent with a timeout of 1s
         setInterval(function () {
             if (!handler.connected) {
@@ -182,7 +197,7 @@ class Websocket
         );
 
         this.iteration++;
-        app.currentPage.onSystemStatus(status);
+        this.systemStatus = status;
     }
 
     /**
