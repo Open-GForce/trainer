@@ -1,0 +1,12 @@
+{
+  "name": "G-Force Trainer",
+  "display":      "standalone",
+  "orientation":  "landscape",
+  "icons": [
+    {
+      "src": "/img/icon.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    }
+  ]
+}
