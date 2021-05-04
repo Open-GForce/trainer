@@ -53,6 +53,7 @@ class ConfigRepository
          * Parser for parameters of system settings
          */
         static BrakeSensorProtocol parseBrakeProtocol(nlohmann::json data);
+        static std::map<int, int> parseForceTable(nlohmann::json data);
 
     public:
         ConfigRepository();

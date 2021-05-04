@@ -70,7 +70,8 @@ SystemSettings *ConfigRepository::decodeSystemSettings(const std::string &fileCo
     nlohmann::json data = nlohmann::json::parse(fileContent);
 
     return new SystemSettings(
-        parseBrakeProtocol(data)
+            parseBrakeProtocol(data),
+            parseForceTable(data)
     );
 }
 
@@ -179,6 +180,34 @@ BrakeSensorProtocol ConfigRepository::parseBrakeProtocol(nlohmann::json data)
     return data[SystemSettings::JSON_KEY_BRAKE_PROTOCOL] == "CANopen"
         ? BrakeSensorProtocol::CANopen
         : BrakeSensorProtocol::IPNetwork;
+}
+
+std::map<int, int> ConfigRepository::parseForceTable(nlohmann::json data)
+{
+    if (data.find(SystemSettings::JSON_KEY_FORCE_TABLE) == data.end()
+        || !data.find(SystemSettings::JSON_KEY_FORCE_TABLE)->is_array()
+        || data.find(SystemSettings::JSON_KEY_FORCE_TABLE)->empty()) {
+
+        return {
+                {1200, 1654},
+                {1400, 1744},
+                {1600, 1840},
+                {1800, 1936},
+                {2000, 2030},
+                {2500, 2252},
+                {3000, 2457},
+                {3500, 2648},
+                {4000, 2826},
+                {4500, 2995},
+                {5000, 3154},
+                {5500, 3307},
+                {6000, 3452},
+                {6500, 3592},
+                {7000, 3727}
+        };
+    }
+
+    return data.at(SystemSettings::JSON_KEY_FORCE_TABLE).get<std::map<int, int>>();
 }
 
 
