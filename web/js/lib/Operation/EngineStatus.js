@@ -53,4 +53,20 @@ class EngineStatus
     {
         return this.powerAmplifierReleased && this.inverterReady && this.inputDataReady;
     }
+
+    /**
+     * @param {EngineStatus} status
+     * @returns {boolean}
+     */
+    isEqual(status)
+    {
+        return this.powerAmplifierReleased === status.powerAmplifierReleased
+            && this.inverterReady === status.inverterReady
+            && this.inputDataReady === status.inputDataReady
+            && this.malfunction === status.malfunction
+            && this.switchLeftActive === status.switchLeftActive
+            && this.switchRightActive === status.switchRightActive
+            && this.currentIntegratorSet === status.currentIntegratorSet
+            && this.currentParameterSet === status.currentParameterSet;
+    }
 }
