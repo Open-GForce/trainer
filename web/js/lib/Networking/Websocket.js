@@ -168,6 +168,8 @@ class Websocket
                 return this._handleSystemStatus(data);
             case "userSettings":
                 return this._handleUserSettings(data);
+            case "systemSettings":
+                return this._handleSystemSettings(data);
             case "heartbeat":
                 return this._handleHeartbeat();
             default:
@@ -208,6 +210,16 @@ class Websocket
     {
         let settings = new UserSettings(message.data);
         app.currentPage.onUserSettings(settings);
+    }
+
+    /**
+     * @param {*} message
+     * @private
+     */
+    _handleSystemSettings(message)
+    {
+        let settings = new SystemSettings(message.data);
+        app.currentPage.onSystemSettings(settings);
     }
 
     _handleHeartbeat()
