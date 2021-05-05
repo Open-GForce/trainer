@@ -12,6 +12,11 @@ UserSettings* Controller::ConfigurationController::getUserSettings()
     return this->configRepository->loadUserSettings();
 }
 
+SystemSettings *Controller::ConfigurationController::getSystemSettings()
+{
+    return this->configRepository->loadSystemSettings();
+}
+
 void Controller::ConfigurationController::setInnerBrakeRange(Request *request)
 {
     auto range = buildRange(request);

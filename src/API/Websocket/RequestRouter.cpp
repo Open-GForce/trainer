@@ -84,6 +84,10 @@ ResponseCastInterface* RequestRouter::route(Request *request)
         return this->configurationController->getUserSettings();
     }
 
+    if (request->getType() == RequestRouter::TYPE_GET_SYSTEM_CONFIG) {
+        return this->configurationController->getSystemSettings();
+    }
+
     if (request->getType() == RequestRouter::TYPE_HEARTBEAT) {
         return this->operationsController->handleHeartbeat();
     }

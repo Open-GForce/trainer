@@ -232,6 +232,21 @@ TEST_CASE( "Request router tests", "[Websocket]" )
         CHECK(response->toResponse()->getType() == "userSettings");
     }
 
+    SECTION("ConfigurationController->loadSystemSettings() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "getSystemSettings";
+
+        fakeit::When(Method(configControllerMock, getSystemSettings)).AlwaysDo([] () {
+            return new SystemSettings(BrakeSensorProtocol::CANopen, {{1500, 2000}});
+        });
+
+        auto response = router->handle(data.dump());
+
+        REQUIRE(response != nullptr);
+        CHECK(response->toResponse()->getType() == "systemSettings");
+    }
+
     SECTION("ConfigurationController->handleHeartbeat() called")
     {
         nlohmann::json data = correctMessage;

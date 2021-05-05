@@ -120,8 +120,11 @@ class OperationsPage extends AbstractPage
     {
         this.firstStatusHandled = false;
 
-        let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
-        app.socket.send(configRequest);
+        let userConfigRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
+        app.socket.send(userConfigRequest);
+
+        let systemConfigRequest = new Message(Message.REQUEST_GET_SYSTEM_SETTINGS, {});
+        app.socket.send(systemConfigRequest);
 
         this.statusSegment = $('.status.segment');
         this.forceSegment = $('.force.segment');
@@ -196,13 +199,9 @@ class OperationsPage extends AbstractPage
         this.lastStatus = status;
     }
 
-    /**
-     * @inheritDoc
-     */
-    onUserSettings(settings)
+    onSystemSettings(settings)
     {
-        RotationMath.trainerRadius = settings.rotationRadius;
-        this.useAdaptiveAccelerationButton = settings.useAdaptiveAccelerationUserInterface;
+        RotationMath.setSystemSettings(settings);
     }
 
     _bindControls()
@@ -211,10 +210,10 @@ class OperationsPage extends AbstractPage
 
         this.speedSliderElement = $('.control.segment .slider');
         this.speedSliderElement.slider({
-            min: 0,
+            min: 1,
             max: 7,
-            start: 0,
-            step: 0.5,
+            start: 1,
+            step: 0.2,
             onChange: function (value) {
                 if (value === 0) {
                     return;

@@ -37,6 +37,12 @@ class ConfigurationController
         virtual UserSettings* getUserSettings();
 
         /**
+        * Loads the current system settings
+        * Ownership of returned object moves to caller
+        */
+        virtual SystemSettings* getSystemSettings();
+
+        /**
          * Saving brake range configuration
          */
         virtual void setInnerBrakeRange(Request *request);

@@ -46,6 +46,14 @@ class AbstractPage
     }
 
     /**
+     * @param {SystemSettings} settings
+     */
+    onSystemSettings(settings)
+    {
+
+    }
+
+    /**
      * @protected
      */
     _initialize()

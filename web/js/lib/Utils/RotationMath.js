@@ -1,13 +1,37 @@
 class RotationMath
 {
     /**
+     * @param {SystemSettings} settings
+     */
+    static setSystemSettings = function (settings)
+    {
+        RotationMath.forceTable = new Map();
+        RotationMath.speedTable = new Map();
+
+        let sortedByForce = settings.forceTable.sort(function (a, b) {
+            return b[0] - a[0];
+        });
+
+        for (let item of sortedByForce) {
+            RotationMath.forceTable.set(item[0], item[1]);
+            RotationMath.speedTable.set(item[1], item[0]);
+        }
+
+        console.log("Using the following force/speed lookup table:");
+        console.log(RotationMath.forceTable);
+    };
+
+    /**
      * @param {number} speed rotation speed in 1/min
      * @return {number} Force in G
      */
     static speedToForce(speed)
     {
-        let velocity = 4 * Math.pow(Math.PI, 2) * RotationMath.trainerRadius * Math.pow((speed/60), 2);
-        return velocity / 9.81;
+        if (this.speedTable === undefined) {
+            return 0;
+        }
+
+        return RotationMath._lookup(speed, RotationMath.speedTable);
     }
 
     /**
@@ -16,16 +40,62 @@ class RotationMath
      */
     static forceToSpeed(force)
     {
-        let velocity = force * 9.81;
-        let speed = Math.sqrt(velocity / (4 * Math.pow(Math.PI, 2) * RotationMath.trainerRadius));
+        if (this.forceTable === undefined) {
+            return 0;
+        }
 
-        return speed * 60;
+        return RotationMath._lookup(force, RotationMath.forceTable);
+    }
+
+    /**
+     * @param {number} needle
+     * @param {Map}    table
+     * @private
+     */
+    static _lookup(needle, table)
+    {
+        needle = Math.round(needle * 100);
+        let previousElement = undefined;
+
+        for (let [key, value] of table) {
+            if (key === needle) {
+                return value / 100;
+            }
+
+            if (needle > key && previousElement === undefined) {
+                return value / 100;
+            }
+
+            if (needle > key) {
+                let deltaToKey = needle - key;
+                let keyDeltaToPrevious = previousElement[0] - key;
+                let valueDeltaToPrevious = previousElement[1] - value;
+                let factor = deltaToKey / keyDeltaToPrevious;
+
+                return ((factor * valueDeltaToPrevious) + value) / 100;
+            }
+
+            previousElement = [key, value];
+        }
+
+        return 0;
     }
 }
 
 /**
- * Radius of the G-Force trainer in meters
+ * Force/Speed lookup table of SystemSettings sorted by force descending
+ * Key   = Force (scaled by factor 100)
+ * Value = Speed (scaled by factor 100)
  *
- * @type {number}
+ * @type {Map|undefined}
  */
-RotationMath.trainerRadius = 4.3;
+RotationMath.forceTable = undefined;
+
+/**
+ * Speed/Force lookup table of SystemSettings sorted by force descending
+ * Key   = Force (scaled by factor 100)
+ * Value = Speed (scaled by factor 100)
+ *
+ * @type {Map|undefined}
+ */
+RotationMath.speedTable = undefined;

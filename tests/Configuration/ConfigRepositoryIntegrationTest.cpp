@@ -400,7 +400,12 @@ TEST_CASE( "Configuration repository system settings test", "[Configuration]" )
     auto repository = new ConfigRepository(basePath);
 
     nlohmann::json correctSystemSettings = {
-            {"brakeSensorProtocol", "IPNetwork"}
+            {"brakeSensorProtocol", "IPNetwork"},
+            {"forceTable", {
+               {120, 1050},
+               {250, 1140},
+               {700, 2022}
+            }}
     };
 
     SECTION("Exception thrown if config file is missing")
@@ -467,6 +472,89 @@ TEST_CASE( "Configuration repository system settings test", "[Configuration]" )
         auto config = repository->loadSystemSettings();
 
         CHECK(config->getBrakeSensorProtocol() == CANopen);
+    }
+
+    SECTION("Default force table if key is missing")
+    {
+        nlohmann::json data = correctSystemSettings;
+        data.erase("forceTable");
+
+        std::ofstream configFile(basePath + "/system_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadSystemSettings();
+        auto forceTable = config->getForceTable();
+
+        CHECK(forceTable.size() == 15);
+        CHECK(forceTable.find(180) != forceTable.end());
+        CHECK(forceTable[180] == 1936);
+        CHECK(forceTable.find(550) != forceTable.end());
+        CHECK(forceTable[550] == 3307);
+        CHECK(forceTable.find(700) != forceTable.end());
+        CHECK(forceTable[700] == 3727);
+    }
+
+    SECTION("Default force table if not array")
+    {
+        nlohmann::json data = correctSystemSettings;
+        data["forceTable"] = "abc";
+
+        std::ofstream configFile(basePath + "/system_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadSystemSettings();
+        auto forceTable = config->getForceTable();
+
+        CHECK(forceTable.size() == 15);
+        CHECK(forceTable.find(180) != forceTable.end());
+        CHECK(forceTable[180] == 1936);
+        CHECK(forceTable.find(550) != forceTable.end());
+        CHECK(forceTable[550] == 3307);
+        CHECK(forceTable.find(700) != forceTable.end());
+        CHECK(forceTable[700] == 3727);
+    }
+
+    SECTION("Default force table if empty")
+    {
+        nlohmann::json data = correctSystemSettings;
+        data["forceTable"] = {};
+
+        std::ofstream configFile(basePath + "/system_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadSystemSettings();
+        auto forceTable = config->getForceTable();
+
+        CHECK(forceTable.size() == 15);
+        CHECK(forceTable.find(180) != forceTable.end());
+        CHECK(forceTable[180] == 1936);
+        CHECK(forceTable.find(550) != forceTable.end());
+        CHECK(forceTable[550] == 3307);
+        CHECK(forceTable.find(700) != forceTable.end());
+        CHECK(forceTable[700] == 3727);
+    }
+
+    SECTION("Correct values for force table decoded")
+    {
+        nlohmann::json data = correctSystemSettings;
+
+        std::ofstream configFile(basePath + "/system_settings.json");
+        configFile << data.dump() << "\n";
+        configFile.close();
+
+        auto config = repository->loadSystemSettings();
+        auto forceTable = config->getForceTable();
+
+        CHECK(forceTable.size() == 3);
+        CHECK(forceTable.find(120) != forceTable.end());
+        CHECK(forceTable[120] == 1050);
+        CHECK(forceTable.find(250) != forceTable.end());
+        CHECK(forceTable[250] == 1140);
+        CHECK(forceTable.find(700) != forceTable.end());
+        CHECK(forceTable[700] == 2022);
     }
 
     boost::filesystem::remove_all(basePath);
