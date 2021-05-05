@@ -402,9 +402,9 @@ TEST_CASE( "Configuration repository system settings test", "[Configuration]" )
     nlohmann::json correctSystemSettings = {
             {"brakeSensorProtocol", "IPNetwork"},
             {"forceTable", {
-               {1200, 1050},
-               {2500, 1140},
-               {7000, 2022}
+               {120, 1050},
+               {250, 1140},
+               {700, 2022}
             }}
     };
 
@@ -487,12 +487,12 @@ TEST_CASE( "Configuration repository system settings test", "[Configuration]" )
         auto forceTable = config->getForceTable();
 
         CHECK(forceTable.size() == 15);
-        CHECK(forceTable.find(1800) != forceTable.end());
-        CHECK(forceTable[1800] == 1936);
-        CHECK(forceTable.find(5500) != forceTable.end());
-        CHECK(forceTable[5500] == 3307);
-        CHECK(forceTable.find(7000) != forceTable.end());
-        CHECK(forceTable[7000] == 3727);
+        CHECK(forceTable.find(180) != forceTable.end());
+        CHECK(forceTable[180] == 1936);
+        CHECK(forceTable.find(550) != forceTable.end());
+        CHECK(forceTable[550] == 3307);
+        CHECK(forceTable.find(700) != forceTable.end());
+        CHECK(forceTable[700] == 3727);
     }
 
     SECTION("Default force table if not array")
@@ -508,12 +508,12 @@ TEST_CASE( "Configuration repository system settings test", "[Configuration]" )
         auto forceTable = config->getForceTable();
 
         CHECK(forceTable.size() == 15);
-        CHECK(forceTable.find(1800) != forceTable.end());
-        CHECK(forceTable[1800] == 1936);
-        CHECK(forceTable.find(5500) != forceTable.end());
-        CHECK(forceTable[5500] == 3307);
-        CHECK(forceTable.find(7000) != forceTable.end());
-        CHECK(forceTable[7000] == 3727);
+        CHECK(forceTable.find(180) != forceTable.end());
+        CHECK(forceTable[180] == 1936);
+        CHECK(forceTable.find(550) != forceTable.end());
+        CHECK(forceTable[550] == 3307);
+        CHECK(forceTable.find(700) != forceTable.end());
+        CHECK(forceTable[700] == 3727);
     }
 
     SECTION("Default force table if empty")
@@ -529,12 +529,12 @@ TEST_CASE( "Configuration repository system settings test", "[Configuration]" )
         auto forceTable = config->getForceTable();
 
         CHECK(forceTable.size() == 15);
-        CHECK(forceTable.find(1800) != forceTable.end());
-        CHECK(forceTable[1800] == 1936);
-        CHECK(forceTable.find(5500) != forceTable.end());
-        CHECK(forceTable[5500] == 3307);
-        CHECK(forceTable.find(7000) != forceTable.end());
-        CHECK(forceTable[7000] == 3727);
+        CHECK(forceTable.find(180) != forceTable.end());
+        CHECK(forceTable[180] == 1936);
+        CHECK(forceTable.find(550) != forceTable.end());
+        CHECK(forceTable[550] == 3307);
+        CHECK(forceTable.find(700) != forceTable.end());
+        CHECK(forceTable[700] == 3727);
     }
 
     SECTION("Correct values for force table decoded")
@@ -549,12 +549,12 @@ TEST_CASE( "Configuration repository system settings test", "[Configuration]" )
         auto forceTable = config->getForceTable();
 
         CHECK(forceTable.size() == 3);
-        CHECK(forceTable.find(1200) != forceTable.end());
-        CHECK(forceTable[1200] == 1050);
-        CHECK(forceTable.find(2500) != forceTable.end());
-        CHECK(forceTable[2500] == 1140);
-        CHECK(forceTable.find(7000) != forceTable.end());
-        CHECK(forceTable[7000] == 2022);
+        CHECK(forceTable.find(120) != forceTable.end());
+        CHECK(forceTable[120] == 1050);
+        CHECK(forceTable.find(250) != forceTable.end());
+        CHECK(forceTable[250] == 1140);
+        CHECK(forceTable.find(700) != forceTable.end());
+        CHECK(forceTable[700] == 2022);
     }
 
     boost::filesystem::remove_all(basePath);
