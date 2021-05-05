@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/SkydiveMarius/gforce_trainer#readme",
   "dependencies": {
-    "fomantic-ui": "^2.7.8"
+    "fomantic-ui": "^2.8.7"
   }
 }
