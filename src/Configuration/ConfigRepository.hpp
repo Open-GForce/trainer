@@ -60,9 +60,10 @@ class ConfigRepository
         explicit ConfigRepository(std::string basePath);
 
         /**
+         * Loads the user settings based on name.
          * Ownership of returned object moves to caller
          */
-        virtual UserSettings* loadUserSettings();
+        virtual UserSettings* loadUserSettings(std::string name);
 
         /**
          * Ownership of returned object moves to caller
@@ -70,9 +71,10 @@ class ConfigRepository
         virtual SystemSettings* loadSystemSettings();
 
         /**
+         * Saves the user settings based on name.
         * Ownership of object stays at caller
         */
-        virtual void saveUserSettings(UserSettings* settings);
+        virtual void saveUserSettings(std::string name, UserSettings* settings);
 };
 
 }

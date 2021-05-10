@@ -9,7 +9,7 @@ Controller::ConfigurationController::ConfigurationController(ProcessingThread *p
 
 UserSettings* Controller::ConfigurationController::getUserSettings()
 {
-    return this->configRepository->loadUserSettings();
+    return this->configRepository->loadUserSettings("default");
 }
 
 SystemSettings *Controller::ConfigurationController::getSystemSettings()
@@ -21,7 +21,7 @@ void Controller::ConfigurationController::setInnerBrakeRange(Request *request)
 {
     auto range = buildRange(request);
 
-    auto oldConfig = this->configRepository->loadUserSettings();
+    auto oldConfig = this->configRepository->loadUserSettings("default");
     auto newConfig = new UserSettings(
             range,
             oldConfig->getOuterBrakeRange()->clone(),
@@ -41,7 +41,7 @@ void Controller::ConfigurationController::setOuterBrakeRange(Request *request)
     Assertion::jsonExistsAndBool(request->getData(), "deactivated");
     auto range = buildRange(request);
 
-    auto oldConfig = this->configRepository->loadUserSettings();
+    auto oldConfig = this->configRepository->loadUserSettings("default");
     auto newConfig = new UserSettings(
             oldConfig->getInnerBrakeRange()->clone(),
             range,
@@ -60,7 +60,7 @@ void Controller::ConfigurationController::setRotationRadius(Request *request)
 {
     Assertion::jsonExistsAndNumber(request->getData(), "rotationRadius");
 
-    auto oldConfig = this->configRepository->loadUserSettings();
+    auto oldConfig = this->configRepository->loadUserSettings("default");
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
                                       oldConfig->getOuterBrakeRange()->clone(),
                                       request->getData()["rotationRadius"],
@@ -80,7 +80,7 @@ void Controller::ConfigurationController::setSoftStart(Request *request)
     Assertion::jsonExistsAndNumber(request->getData(), "speed");
     Assertion::jsonExistsAndNumber(request->getData(), "acceleration");
 
-    auto oldConfig = this->configRepository->loadUserSettings();
+    auto oldConfig = this->configRepository->loadUserSettings("default");
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
                                       oldConfig->getOuterBrakeRange()->clone(),
                                       oldConfig->getRotationRadius(),
@@ -108,7 +108,7 @@ void Controller::ConfigurationController::setAccelerationStages(Request *request
         stages.push_back(AccelerationStage(item["speed"], item["acceleration"]));
     }
 
-    auto oldConfig = this->configRepository->loadUserSettings();
+    auto oldConfig = this->configRepository->loadUserSettings("default");
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
                                       oldConfig->getOuterBrakeRange()->clone(),
                                       oldConfig->getRotationRadius(),
@@ -126,7 +126,7 @@ void Controller::ConfigurationController::setUserInterfaceSettings(Request* requ
 {
     Assertion::jsonExistsAndBool(request->getData(), "activateAdaptiveAcceleration");
 
-    auto oldConfig = this->configRepository->loadUserSettings();
+    auto oldConfig = this->configRepository->loadUserSettings("default");
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
                                       oldConfig->getOuterBrakeRange()->clone(),
                                       oldConfig->getRotationRadius(),
@@ -150,7 +150,7 @@ Range* Controller::ConfigurationController::buildRange(Request *request)
 
 void Controller::ConfigurationController::saveConfig(UserSettings *newConfig, UserSettings *oldConfig)
 {
-    this->configRepository->saveUserSettings(newConfig);
+    this->configRepository->saveUserSettings("default", newConfig);
     this->processingThread->reloadUserConfig(newConfig);
 
     delete oldConfig;

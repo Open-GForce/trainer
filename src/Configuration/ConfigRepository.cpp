@@ -14,9 +14,9 @@ ConfigRepository::ConfigRepository()
 
 ConfigRepository::ConfigRepository(std::string basePath) : basePath(std::move(basePath)) {}
 
-UserSettings* ConfigRepository::loadUserSettings()
+UserSettings* ConfigRepository::loadUserSettings(std::string name)
 {
-    std::string content = this->loadFileContent("user_settings.json");
+    std::string content = this->loadFileContent("user_settings." + name + ".json");
     return ConfigRepository::decodeUserSettings(content);
 }
 
@@ -26,9 +26,9 @@ SystemSettings *ConfigRepository::loadSystemSettings()
     return ConfigRepository::decodeSystemSettings(content);
 }
 
-void ConfigRepository::saveUserSettings(UserSettings *settings)
+void ConfigRepository::saveUserSettings(std::string name, UserSettings *settings)
 {
-    std::ofstream configFile(basePath + "/user_settings.json");
+    std::ofstream configFile(basePath + "/user_settings." + name + ".json");
     configFile << settings->toJSON().dump() << "\n";
     configFile.close();
 }

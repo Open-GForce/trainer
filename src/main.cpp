@@ -49,7 +49,7 @@ void runControllerMode(bool CANDummyMode)
     logger->info(LOG_CHANNEL_MAIN, "Running main controller mode [" + canMode + " CAN]", {});
 
     auto configRepository = new ConfigRepository();
-    auto userConfig = configRepository->loadUserSettings();
+    auto userConfig = configRepository->loadUserSettings("default");
     auto systemConfig = configRepository->loadSystemSettings();
 
     CANThread* canThread = nullptr;
