@@ -179,15 +179,21 @@ class SettingsPage extends AbstractPage
     {
         let differentialModeButton = this.accelerationStagesSegment.find('.differential.button');
         let targetSpeedModeButton = this.accelerationStagesSegment.find('.target-speed.button');
+        let currentSpeedModeButton = this.accelerationStagesSegment.find('.current-speed.button');
+
+        currentSpeedModeButton.click(() => {
+            this.settings.accelerationMode = 'currentSpeed';
+            this.toggleButtons(currentSpeedModeButton, targetSpeedModeButton, differentialModeButton);
+        });
 
         targetSpeedModeButton.click(() => {
             this.settings.accelerationMode = 'targetSpeed';
-            this.toggleButtons(targetSpeedModeButton, differentialModeButton);
+            this.toggleButtons(targetSpeedModeButton, differentialModeButton, currentSpeedModeButton);
         });
 
         differentialModeButton.click(() => {
             this.settings.accelerationMode = 'differential';
-            this.toggleButtons(differentialModeButton, targetSpeedModeButton);
+            this.toggleButtons(differentialModeButton, targetSpeedModeButton, currentSpeedModeButton);
         });
 
         let saveButton = this.accelerationStagesSegment.find('.save.button');
@@ -277,9 +283,23 @@ class SettingsPage extends AbstractPage
         this._renderAccelerationStages();
 
         if (settings.accelerationMode === 'targetSpeed') {
-            this.toggleButtons(this.accelerationStagesSegment.find('.target-speed.button'), this.accelerationStagesSegment.find('.differential.button'), )
+            this.toggleButtons(
+                this.accelerationStagesSegment.find('.target-speed.button'),
+                this.accelerationStagesSegment.find('.differential.button'),
+                this.accelerationStagesSegment.find('.current-speed.button'),
+            );
+        } else if (settings.accelerationMode === 'differential') {
+            this.toggleButtons(
+                this.accelerationStagesSegment.find('.differential.button'),
+                this.accelerationStagesSegment.find('.current-speed.button'),
+                this.accelerationStagesSegment.find('.target-speed.button'),
+            );
         } else {
-            this.toggleButtons(this.accelerationStagesSegment.find('.differential.button'), this.accelerationStagesSegment.find('.target-speed.button'), )
+            this.toggleButtons(
+                this.accelerationStagesSegment.find('.current-speed.button'),
+                this.accelerationStagesSegment.find('.differential.button'),
+                this.accelerationStagesSegment.find('.target-speed.button'),
+            );
         }
     }
 
