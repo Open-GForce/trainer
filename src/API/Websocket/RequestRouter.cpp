@@ -88,6 +88,10 @@ ResponseCastInterface* RequestRouter::route(Request *request)
         return this->configurationController->getActiveConfigurationName();
     }
 
+    if (request->getType() == RequestRouter::TYPE_GET_AVAILABLE_CONFIG_NAMES) {
+        return this->configurationController->getAvailableUserSettings();
+    }
+
     if (request->getType() == RequestRouter::TYPE_CREATE_USER_CONFIG) {
         this->configurationController->createUserSettings(request);
         return nullptr;

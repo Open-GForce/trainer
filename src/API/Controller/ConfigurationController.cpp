@@ -43,6 +43,11 @@ ActiveConfigurationResponse* Controller::ConfigurationController::getActiveConfi
     return new ActiveConfigurationResponse(this->currentSettingsName);
 }
 
+AvailableUserSettingsResponse *Controller::ConfigurationController::getAvailableUserSettings()
+{
+    return new AvailableUserSettingsResponse(this->configRepository->getAvailableUserSettings());
+}
+
 void Controller::ConfigurationController::deleteUserSettings(Request *request)
 {
     Assertion::jsonExistsAndString(request->getData(), "name");

@@ -5,6 +5,7 @@
 #include "../../Configuration/ConfigRepository.hpp"
 #include "../Websocket/Request.hpp"
 #include "../../Configuration/ActiveConfigurationResponse.hpp"
+#include "../../Configuration/AvailableUserSettingsResponse.hpp"
 
 using namespace GForce::Processing;
 using namespace GForce::API::Websocket;
@@ -49,9 +50,15 @@ class ConfigurationController
 
         /**
         * Returns the name of the current active user settings
-         * Ownership of returned object moves to caller
+        * Ownership of returned object moves to caller
         */
         virtual ActiveConfigurationResponse* getActiveConfigurationName();
+
+        /**
+        * Returns a list of existing user settings names
+        * Ownership of returned object moves to caller
+        */
+        virtual AvailableUserSettingsResponse* getAvailableUserSettings();
 
         /**
          * Loads and activates settings by given name
