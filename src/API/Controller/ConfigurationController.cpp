@@ -15,6 +15,15 @@ UserSettings* Controller::ConfigurationController::getUserSettings(Request *requ
     return this->configRepository->loadUserSettings(name);
 }
 
+void Controller::ConfigurationController::createUserSettings(Request* request)
+{
+    Assertion::jsonExistsAndString(request->getData(), "name");
+    std::string name = request->getData()["name"];
+
+    auto settings = this->configRepository->loadUserSettings(name);
+    this->configRepository->saveUserSettings(name, settings);
+}
+
 SystemSettings *Controller::ConfigurationController::getSystemSettings()
 {
     return this->configRepository->loadSystemSettings();

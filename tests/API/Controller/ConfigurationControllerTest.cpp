@@ -102,6 +102,68 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         fakeit::Verify(Method(configRepositoryMock, loadUserSettings).Using("example"));
     }
 
+    SECTION("createUserSettings() => name field is missing")
+    {
+        auto request = new Request("test", {});
+
+        try {
+            controller->createUserSettings(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field name");
+        }
+    }
+
+    SECTION("createUserSettings() => name field not a string")
+    {
+        auto request = new Request("test", {
+                {"name", 5.0}
+        });
+
+        try {
+            controller->createUserSettings(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
+        }
+    }
+
+    SECTION("getUserSettings() => repository called")
+    {
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
+                new Range(1000, 2000),
+                new Range(3000, 4000),
+                5.0,
+                100,
+                1000,
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
+
+        fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
+            CHECK(name == "new-config");
+            CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
+            CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
+            CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
+            CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->isOuterBrakeDeactivated());
+            CHECK(settings->getSoftStartSpeed() == 100);
+            CHECK(settings->getSoftStartAcceleration() == 1000);
+            CHECK(settings->getAccelerationStages().size() == 1);
+            CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
+            CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
+        });
+
+        auto request = new Request("test", {
+                {"name", "new-config"}
+        });
+
+        controller->createUserSettings(request);
+
+        fakeit::Verify(Method(configRepositoryMock, loadUserSettings)).Once();
+        fakeit::Verify(Method(configRepositoryMock, loadUserSettings).Using("new-config"));
+
+        fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
+    }
+
     SECTION("setInnerBrakeRange() => name field is missing")
     {
         auto data = correctInnerBrakeConfiguration;

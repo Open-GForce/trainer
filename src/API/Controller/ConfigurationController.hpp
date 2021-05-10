@@ -37,6 +37,11 @@ class ConfigurationController
         virtual UserSettings* getUserSettings(Request *request);
 
         /**
+         * Duplicates the default configuration and saves it with the given name
+         */
+        virtual void createUserSettings(Request* request);
+
+        /**
         * Loads the current system settings
         * Ownership of returned object moves to caller
         */

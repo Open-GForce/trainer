@@ -18,6 +18,7 @@ class RequestRouter : public RouterInterface
     const std::string TYPE_SET_OPERATION_MODE = "setOperationMode";
 
     const std::string TYPE_GET_USER_CONFIG        = "getUserSettings";
+    const std::string TYPE_CREATE_USER_CONFIG     = "createUserSettings";
     const std::string TYPE_GET_SYSTEM_CONFIG      = "getSystemSettings";
     const std::string TYPE_SET_CONFIG_INNER_BRAKE = "setInnerBrakeRange";
     const std::string TYPE_SET_CONFIG_OUTER_BRAKE = "setOuterBrakeRange";
