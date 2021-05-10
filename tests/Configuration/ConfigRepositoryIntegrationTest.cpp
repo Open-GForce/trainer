@@ -486,7 +486,7 @@ TEST_CASE( "Configuration repository system settings test", "[Configuration]" )
         auto config = repository->loadSystemSettings();
         auto forceTable = config->getForceTable();
 
-        CHECK(forceTable.size() == 15);
+        CHECK(forceTable.size() == 16);
         CHECK(forceTable.find(180) != forceTable.end());
         CHECK(forceTable[180] == 1936);
         CHECK(forceTable.find(550) != forceTable.end());
@@ -507,7 +507,7 @@ TEST_CASE( "Configuration repository system settings test", "[Configuration]" )
         auto config = repository->loadSystemSettings();
         auto forceTable = config->getForceTable();
 
-        CHECK(forceTable.size() == 15);
+        CHECK(forceTable.size() == 16);
         CHECK(forceTable.find(180) != forceTable.end());
         CHECK(forceTable[180] == 1936);
         CHECK(forceTable.find(550) != forceTable.end());
@@ -528,7 +528,7 @@ TEST_CASE( "Configuration repository system settings test", "[Configuration]" )
         auto config = repository->loadSystemSettings();
         auto forceTable = config->getForceTable();
 
-        CHECK(forceTable.size() == 15);
+        CHECK(forceTable.size() == 16);
         CHECK(forceTable.find(180) != forceTable.end());
         CHECK(forceTable[180] == 1936);
         CHECK(forceTable.find(550) != forceTable.end());
