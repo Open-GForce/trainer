@@ -20,6 +20,10 @@ void Controller::ConfigurationController::createUserSettings(Request* request)
     Assertion::jsonExistsAndString(request->getData(), "name");
     std::string name = request->getData()["name"];
 
+    if (name.length() > 32) {
+        name = name.substr(0, 32);
+    }
+
     auto settings = this->configRepository->loadUserSettings("default");
     this->configRepository->saveUserSettings(name, settings);
 

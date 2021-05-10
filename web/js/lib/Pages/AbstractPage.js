@@ -50,7 +50,20 @@ class AbstractPage
      */
     onSystemSettings(settings)
     {
+    }
 
+    /**
+     * @param {string} name
+     */
+    onActiveConfiguration(name)
+    {
+    }
+
+    /**
+     * @param {string[]} names
+     */
+    onAvailableUserSettings(names)
+    {
     }
 
     /**

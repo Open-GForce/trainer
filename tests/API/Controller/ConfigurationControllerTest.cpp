@@ -165,6 +165,45 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
     }
 
+
+    SECTION("createUserSettings() => name field not a string")
+    {
+        auto request = new Request("test", {
+                {"name", 5.0}
+        });
+
+        try {
+            controller->createUserSettings(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
+        }
+    }
+
+    SECTION("getUserSettings() => name shorten to 32 chars")
+    {
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
+                new Range(1000, 2000),
+                new Range(3000, 4000),
+                5.0,
+                100,
+                1000,
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
+
+        fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
+            CHECK(name == "This is a very long text, which ");
+        });
+
+        auto request = new Request("test", {
+                {"name", "This is a very long text, which needs to be truncated"}
+        });
+
+        controller->createUserSettings(request);
+
+        fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
+    }
+
+
     SECTION("switchUserSettings() => name field is missing")
     {
         auto request = new Request("test", {});

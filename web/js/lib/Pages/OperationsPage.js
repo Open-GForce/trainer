@@ -111,6 +111,18 @@ class OperationsPage extends AbstractPage
          * @type {undefined|SystemStatus}
          */
         this.lastStatus = undefined;
+
+        /**
+         * Current active user settings name
+         *
+         * @type {undefined|string}
+         */
+        this.settingsName = undefined;
+
+        /**
+         * @type {undefined|number}
+         */
+        this.activeConfigurationRefreshInterval = undefined;
     }
 
     /**
@@ -120,8 +132,8 @@ class OperationsPage extends AbstractPage
     {
         this.firstStatusHandled = false;
 
-        let userConfigRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
-        app.socket.send(userConfigRequest);
+        this._refreshActiveConfigurationName();
+        this.activeConfigurationRefreshInterval = setInterval(this._refreshActiveConfigurationName, 1000);
 
         let systemConfigRequest = new Message(Message.REQUEST_GET_SYSTEM_SETTINGS, {});
         app.socket.send(systemConfigRequest);
@@ -155,12 +167,12 @@ class OperationsPage extends AbstractPage
     shutdown()
     {
         this.lastStatus = undefined;
+        clearInterval(this.activeConfigurationRefreshInterval);
     }
 
     onSocketConnected()
     {
-        let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
-        app.socket.send(configRequest);
+        this._refreshActiveConfigurationName();
     }
 
     /**
@@ -204,6 +216,25 @@ class OperationsPage extends AbstractPage
         RotationMath.setSystemSettings(settings);
     }
 
+    onActiveConfiguration(name)
+    {
+        if (name === this.settingsName) {
+            return;
+        }
+
+        this.settingsName = name;
+        let userConfigRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {
+            name: this.settingsName
+        });
+        app.socket.send(userConfigRequest);
+    }
+
+    _refreshActiveConfigurationName()
+    {
+        let userConfigRequest = new Message(Message.REQUEST_GET_ACTIVE_USER_SETTINGS, {});
+        app.socket.send(userConfigRequest);
+    }
+
     _bindControls()
     {
         let page = this;
@@ -213,7 +244,7 @@ class OperationsPage extends AbstractPage
             min: 1,
             max: 7,
             start: 1,
-            step: 0.2,
+            step: 0.5,
             onChange: function (value) {
                 if (value === 0) {
                     return;

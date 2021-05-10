@@ -1,12 +1,32 @@
 <div class="ui grid settings">
-    <div class="ten wide column">
+    <div class="six wide column">
+        <h5 class="ui top attached dark header">
+            Speicherplatz
+        </h5>
+        <div class="ui attached inverted segment" id="settingsNameSegment">
+            <div class="ui fluid selection dropdown">
+                <input type="hidden" name="name">
+                <i class="dropdown icon"></i>
+                <div class="default text">Slot auswählen</div>
+                <div class="menu">
+                </div>
+            </div>
+            <div class="ui divider"></div>
+            <div class="ui fluid action inverted name input">
+                <input type="text" aria-label="Name" value="">
+                <div class="ui inverted white button">Erstellen</div>
+            </div>
+            <div class="ui divider"></div>
+            <div class="ui red disabled inverted fluid delete button">Löschen</div>
+        </div>
+    </div>
+    <div class="eight wide column">
         <h5 class="ui top attached dark header">
             Werte Steuerleinen
         </h5>
         <div class="ui attached inverted segment" id="brakeStatsSegment">
         </div>
     </div>
-    <div class="four wide column"></div>
     <div class="seven wide column">
         <h5 class="ui top attached dark header">
             Bereich Außenbremse
@@ -140,7 +160,7 @@
             <div class="ui blue inverted fluid save button">Speichern</div>
         </div>
     </div>
-    <div class="five wide column">
+    <div class="seven wide column">
         <h5 class="ui top attached dark header">
             Benutzeroberfläche
         </h5>

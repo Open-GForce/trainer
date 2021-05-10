@@ -170,6 +170,10 @@ class Websocket
                 return this._handleUserSettings(data);
             case "systemSettings":
                 return this._handleSystemSettings(data);
+            case "activeConfiguration":
+                return this._handleActiveConfigurationResponse(data);
+            case "availableUserSettings":
+                return this._handleAvailableUserSettingsResponse(data);
             case "heartbeat":
                 return this._handleHeartbeat();
             default:
@@ -220,6 +224,24 @@ class Websocket
     {
         let settings = new SystemSettings(message.data);
         app.currentPage.onSystemSettings(settings);
+    }
+
+    /**
+     * @param {*} message
+     * @private
+     */
+    _handleActiveConfigurationResponse(message)
+    {
+        app.currentPage.onActiveConfiguration(message.data.name);
+    }
+
+    /**
+     * @param {*} message
+     * @private
+     */
+    _handleAvailableUserSettingsResponse(message)
+    {
+        app.currentPage.onAvailableUserSettings(message.data.names);
     }
 
     _handleHeartbeat()
