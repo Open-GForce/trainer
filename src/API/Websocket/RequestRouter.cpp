@@ -24,7 +24,7 @@ ResponseCastInterface* RequestRouter::handle(const std::string& message)
         return response;
     } catch (std::exception &e) {
         delete request;
-        throw e;
+        throw;
     }
 }
 
