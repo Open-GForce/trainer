@@ -2,7 +2,6 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <filesystem>
-#include <iostream>
 #include "libbase64.h"
 #include "../Utils/Exceptions/RuntimeException.hpp"
 #include "ConfigRepository.hpp"
@@ -61,8 +60,6 @@ std::list<std::string> ConfigRepository::getAvailableUserSettings()
             continue;
         }
         filePath.erase(pathPosition, basePath.length() + 1);
-
-        std::cout << "Erase#3 " << filePath << "\n";
 
         std::string name = decodeName(filePath);
         if (!name.empty()) {

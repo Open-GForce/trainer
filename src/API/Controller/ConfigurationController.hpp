@@ -34,7 +34,7 @@ class ConfigurationController
          * Loads the current user settings
          * Ownership of returned object moves to caller
          */
-        virtual UserSettings* getUserSettings();
+        virtual UserSettings* getUserSettings(Request *request);
 
         /**
         * Loads the current system settings

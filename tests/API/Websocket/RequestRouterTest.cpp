@@ -221,7 +221,9 @@ TEST_CASE( "Request router tests", "[Websocket]" )
         nlohmann::json data = correctMessage;
         data["type"] = "getUserSettings";
 
-        fakeit::When(Method(configControllerMock, getUserSettings)).AlwaysDo([] () {
+        fakeit::When(Method(configControllerMock, getUserSettings)).AlwaysDo([] (Request* request) {
+            REQUIRE(request != nullptr);
+            CHECK(request->getType() == "getUserSettings");
             return new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0, 0, 0,
                                     std::list<AccelerationStage>(), AccelerationMode::targetSpeed, false, false);
         });

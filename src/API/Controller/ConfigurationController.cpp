@@ -7,9 +7,10 @@ using namespace GForce::API;
 Controller::ConfigurationController::ConfigurationController(ProcessingThread *processingThread, ConfigRepository *configRepository) :
     processingThread(processingThread), configRepository(configRepository) {}
 
-UserSettings* Controller::ConfigurationController::getUserSettings()
+UserSettings* Controller::ConfigurationController::getUserSettings(Request *request)
 {
-    return this->configRepository->loadUserSettings("default");
+    Assertion::jsonExistsAndString(request->getData(), "name");
+    return this->configRepository->loadUserSettings(request->getData()["name"]);
 }
 
 SystemSettings *Controller::ConfigurationController::getSystemSettings()

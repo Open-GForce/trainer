@@ -81,7 +81,7 @@ ResponseCastInterface* RequestRouter::route(Request *request)
     }
 
     if (request->getType() == RequestRouter::TYPE_GET_USER_CONFIG) {
-        return this->configurationController->getUserSettings();
+        return this->configurationController->getUserSettings(request);
     }
 
     if (request->getType() == RequestRouter::TYPE_GET_SYSTEM_CONFIG) {

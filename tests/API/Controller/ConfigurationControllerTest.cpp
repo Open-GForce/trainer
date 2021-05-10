@@ -48,6 +48,55 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
     correctAccelerationStagesData["stages"].push_back({{"speed", 100}, {"acceleration", 2500}});
     correctAccelerationStagesData["stages"].push_back({{"speed", 200}, {"acceleration", 3400}});
 
+    SECTION("getUserSettings() => name field is missing")
+    {
+        auto request = new Request("test", {});
+
+        try {
+            controller->getUserSettings(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field name");
+        }
+    }
+
+    SECTION("getUserSettings() => name field not a string")
+    {
+        auto request = new Request("test", {
+            {"name", 5.0}
+        });
+
+        try {
+            controller->getUserSettings(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
+        }
+    }
+
+    SECTION("getUserSettings() => repository called")
+    {
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
+                new Range(1000, 2000),
+                new Range(3000, 4000),
+                5.0,
+                100,
+                1000,
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
+
+        auto request = new Request("test", {
+                {"name", "example"}
+        });
+
+        auto result = controller->getUserSettings(request);
+
+        REQUIRE(result != nullptr);
+        CHECK(result->getSoftStartSpeed() == 100);
+
+        fakeit::Verify(Method(configRepositoryMock, loadUserSettings)).Once();
+        fakeit::Verify(Method(configRepositoryMock, loadUserSettings).Using("example"));
+    }
+
     SECTION("setInnerBrakeRange() => min field is missing")
     {
         auto data = correctInnerBrakeConfiguration;
