@@ -262,6 +262,20 @@ TEST_CASE( "Request router tests", "[Websocket]" )
         CHECK(response == nullptr);
     }
 
+    SECTION("ConfigurationController->getActiveConfigurationName() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "getActiveUserSettingsName";
+
+        fakeit::When(Method(configControllerMock, getActiveConfigurationName)).AlwaysDo([] () {
+            return new ActiveConfigurationResponse("test-settings");
+        });
+
+        auto response = router->handle(data.dump());
+        REQUIRE(response != nullptr);
+        CHECK(response->toResponse()->getType() == "activeConfiguration");
+    }
+
     SECTION("ConfigurationController->switchUserSettings() called")
     {
         nlohmann::json data = correctMessage;

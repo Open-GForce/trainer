@@ -38,6 +38,11 @@ void Controller::ConfigurationController::switchUserSettings(Request *request)
     delete settings;
 }
 
+ActiveConfigurationResponse* Controller::ConfigurationController::getActiveConfigurationName()
+{
+    return new ActiveConfigurationResponse(this->currentSettingsName);
+}
+
 void Controller::ConfigurationController::deleteUserSettings(Request *request)
 {
     Assertion::jsonExistsAndString(request->getData(), "name");
