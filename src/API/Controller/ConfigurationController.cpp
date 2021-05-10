@@ -38,6 +38,20 @@ void Controller::ConfigurationController::switchUserSettings(Request *request)
     delete settings;
 }
 
+void Controller::ConfigurationController::deleteUserSettings(Request *request)
+{
+    Assertion::jsonExistsAndString(request->getData(), "name");
+    std::string name = request->getData()["name"];
+
+    this->configRepository->deleteUserSettings(name);
+
+    if (this->currentSettingsName == name) {
+        auto settings = this->configRepository->loadUserSettings("default");
+        this->processingThread->reloadUserConfig(settings);
+        delete settings;
+    }
+}
+
 SystemSettings *Controller::ConfigurationController::getSystemSettings()
 {
     return this->configRepository->loadSystemSettings();

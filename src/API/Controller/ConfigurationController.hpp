@@ -52,6 +52,11 @@ class ConfigurationController
         virtual void switchUserSettings(Request* request);
 
         /**
+        * Deletes the given user settings by name
+        */
+        virtual void deleteUserSettings(Request* request);
+
+        /**
         * Loads the current system settings
         * Ownership of returned object moves to caller
         */

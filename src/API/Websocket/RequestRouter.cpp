@@ -89,6 +89,11 @@ ResponseCastInterface* RequestRouter::route(Request *request)
         return nullptr;
     }
 
+    if (request->getType() == RequestRouter::TYPE_DELETE_USER_CONFIG) {
+        this->configurationController->deleteUserSettings(request);
+        return nullptr;
+    }
+
     if (request->getType() == RequestRouter::TYPE_SWITCH_USER_CONFIG) {
         this->configurationController->switchUserSettings(request);
         return nullptr;

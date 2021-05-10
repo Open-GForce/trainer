@@ -16,6 +16,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     fakeit::Mock<ConfigRepository> configRepositoryMock;
     fakeit::Fake(Method(configRepositoryMock, loadUserSettings));
+    fakeit::Fake(Method(configRepositoryMock, deleteUserSettings));
     fakeit::Fake(Method(configRepositoryMock, saveUserSettings));
     ConfigRepository* configRepository = &configRepositoryMock.get();
 
@@ -224,6 +225,87 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
         fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Never();
+    }
+
+    SECTION("deleteUserSettings() => name field is missing")
+    {
+        auto request = new Request("test", {});
+
+        try {
+            controller->deleteUserSettings(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field name");
+        }
+    }
+
+    SECTION("deleteUserSettings() => name field not a string")
+    {
+        auto request = new Request("test", {
+                {"name", 5.0}
+        });
+
+        try {
+            controller->deleteUserSettings(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
+        }
+    }
+
+    SECTION("deleteUserSettings() => configuration deleted")
+    {
+        auto request = new Request("test", {
+                {"name", "old-config"}
+        });
+
+        controller->deleteUserSettings(request);
+
+        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Never();
+        fakeit::Verify(Method(configRepositoryMock, deleteUserSettings)).Once();
+        fakeit::Verify(Method(configRepositoryMock, deleteUserSettings).Using("old-config"));
+    }
+
+    SECTION("deleteUserSettings() => default configuration reloaded if deleted config was active")
+    {
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
+            return new UserSettings(
+                new Range(1000, 2000),
+                new Range(3000, 4000),
+                5.0,
+                100,
+                1000,
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true);
+        });
+
+        auto request = new Request("test", {
+                {"name", "old-config"}
+        });
+
+        controller->switchUserSettings(request);
+
+        fakeit::When(Method(processingThreadMock, reloadUserConfig)).AlwaysDo([] (UserSettings* settings) {
+            CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
+            CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
+            CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
+            CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->isOuterBrakeDeactivated());
+            CHECK(settings->getSoftStartSpeed() == 100);
+            CHECK(settings->getSoftStartAcceleration() == 1000);
+            CHECK(settings->getAccelerationStages().size() == 1);
+            CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
+            CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
+        });
+
+        controller->deleteUserSettings(request);
+
+        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Exactly(2);
+
+        fakeit::Verify(Method(configRepositoryMock, deleteUserSettings)).Once();
+        fakeit::Verify(Method(configRepositoryMock, deleteUserSettings).Using("old-config"));
+
+        fakeit::Verify(Method(configRepositoryMock, loadUserSettings)).Exactly(2);
+        fakeit::Verify(Method(configRepositoryMock, loadUserSettings).Using("old-config").Using("default"));
     }
 
     SECTION("setInnerBrakeRange() => name field is missing")

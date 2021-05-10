@@ -248,6 +248,20 @@ TEST_CASE( "Request router tests", "[Websocket]" )
         CHECK(response == nullptr);
     }
 
+    SECTION("ConfigurationController->createUserSettings() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "deleteUserSettings";
+
+        fakeit::When(Method(configControllerMock, deleteUserSettings)).AlwaysDo([] (Request* request) {
+            REQUIRE(request != nullptr);
+            CHECK(request->getType() == "deleteUserSettings");
+        });
+
+        auto response = router->handle(data.dump());
+        CHECK(response == nullptr);
+    }
+
     SECTION("ConfigurationController->switchUserSettings() called")
     {
         nlohmann::json data = correctMessage;
