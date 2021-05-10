@@ -159,9 +159,71 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         controller->createUserSettings(request);
 
         fakeit::Verify(Method(configRepositoryMock, loadUserSettings)).Once();
-        fakeit::Verify(Method(configRepositoryMock, loadUserSettings).Using("new-config"));
+        fakeit::Verify(Method(configRepositoryMock, loadUserSettings).Using("default"));
 
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
+    }
+
+    SECTION("switchUserSettings() => name field is missing")
+    {
+        auto request = new Request("test", {});
+
+        try {
+            controller->switchUserSettings(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field name");
+        }
+    }
+
+    SECTION("switchUserSettings() => name field not a string")
+    {
+        auto request = new Request("test", {
+                {"name", 5.0}
+        });
+
+        try {
+            controller->switchUserSettings(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
+        }
+    }
+
+    SECTION("switchUserSettings() => new configuration loaded")
+    {
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
+                new Range(1000, 2000),
+                new Range(3000, 4000),
+                5.0,
+                100,
+                1000,
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
+
+        fakeit::When(Method(processingThreadMock, reloadUserConfig)).AlwaysDo([] (UserSettings* settings) {
+            CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
+            CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
+            CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
+            CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
+            CHECK(settings->isOuterBrakeDeactivated());
+            CHECK(settings->getSoftStartSpeed() == 100);
+            CHECK(settings->getSoftStartAcceleration() == 1000);
+            CHECK(settings->getAccelerationStages().size() == 1);
+            CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
+            CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
+        });
+
+        auto request = new Request("test", {
+                {"name", "new-config"}
+        });
+
+        controller->switchUserSettings(request);
+
+        fakeit::Verify(Method(configRepositoryMock, loadUserSettings)).Once();
+        fakeit::Verify(Method(configRepositoryMock, loadUserSettings).Using("new-config"));
+
+        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
+        fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Never();
     }
 
     SECTION("setInnerBrakeRange() => name field is missing")
@@ -256,13 +318,20 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
     
     SECTION("setInnerBrakeRange() => config merged and reloaded")
     {
-        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
-                new Range(1000, 2000),
-                new Range(3000, 4000),
-                5.0,
-                100,
-                1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
+            return new UserSettings(
+                    new Range(1000, 2000),
+                    new Range(3000, 4000),
+                    5.0,
+                    100,
+                    1000,
+                    {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true
+            );
+        });
+
+        controller->switchUserSettings(new Request("test", {
+            {"name", "example-1"}
+        }));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
             CHECK(name == "example-1");
@@ -295,7 +364,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         controller->setInnerBrakeRange(request);
         
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
-        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
+        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Exactly(2);
     }
 
     SECTION("setOuterBrakeRange() => deactivated field is missing")
@@ -420,13 +489,19 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setOuterBrakeRange() => config merged and reloaded")
     {
-        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
+            return new UserSettings(
                 new Range(1000, 2000),
                 new Range(3000, 4000),
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false);
+        });
+
+        controller->switchUserSettings(new Request("test", {
+                {"name", "example-2"}
+        }));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
             CHECK(name == "example-2");
@@ -460,7 +535,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         controller->setOuterBrakeRange(request);
 
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
-        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
+        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Exactly(2);
     }
 
     SECTION("setRotationRadius() => name field is missing")
@@ -525,13 +600,20 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setRotationRadius() => config merged and reloaded")
     {
-        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
-                new Range(1000, 2000),
-                new Range(3000, 4000),
-                5.0,
-                100,
-                1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
+            return new UserSettings(
+                    new Range(1000, 2000),
+                    new Range(3000, 4000),
+                    5.0,
+                    100,
+                    1000,
+                    {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true
+            );
+        });
+
+        controller->switchUserSettings(new Request("test", {
+                {"name", "example-3"}
+        }));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
             CHECK(name == "example-3");
@@ -566,7 +648,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         controller->setRotationRadius(request);
 
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
-        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
+        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Exactly(2);
     }
 
     SECTION("setSoftStart() => name field is missing")
@@ -914,13 +996,20 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
     SECTION("setSoftStart() => config merged and reloaded")
     {
-        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
+
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
+            return new UserSettings(
                 new Range(1000, 2000),
                 new Range(3000, 4000),
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true);
+        });
+
+        controller->switchUserSettings(new Request("test", {
+                {"name", "example-4"}
+        }));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
             CHECK(name == "example-4");
@@ -959,18 +1048,24 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         controller->setSoftStart(request);
 
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
-        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
+        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Exactly(2);
     }
 
     SECTION("setAccelerationStages() => config merged and reloaded")
     {
-        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
+            return new UserSettings(
                 new Range(1000, 2000),
                 new Range(3000, 4000),
                 5.0,
                 100,
                 1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
+                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true);
+        });
+
+        controller->switchUserSettings(new Request("test", {
+                {"name", "example-5"}
+        }));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
             CHECK(name == "example-5");
@@ -1011,6 +1106,29 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         controller->setAccelerationStages(request);
 
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
-        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
+        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Exactly(2);
+    }
+
+    SECTION("Config not reloaded it not active")
+    {
+        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
+            return new UserSettings(
+                    new Range(1000, 2000),
+                    new Range(3000, 4000),
+                    5.0,
+                    100,
+                    1000,
+                    {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true);
+        });
+
+        fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
+            CHECK(name == "example-5");
+        });
+
+        auto request = new Request("test", correctAccelerationStagesData);
+        controller->setAccelerationStages(request);
+
+        fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
+        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Never();
     }
 }

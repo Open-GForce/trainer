@@ -5,7 +5,7 @@ using namespace GForce::Utils::Assertions;
 using namespace GForce::API;
 
 Controller::ConfigurationController::ConfigurationController(ProcessingThread *processingThread, ConfigRepository *configRepository) :
-    processingThread(processingThread), configRepository(configRepository) {}
+    processingThread(processingThread), configRepository(configRepository), currentSettingsName("default") {}
 
 UserSettings* Controller::ConfigurationController::getUserSettings(Request *request)
 {
@@ -20,8 +20,22 @@ void Controller::ConfigurationController::createUserSettings(Request* request)
     Assertion::jsonExistsAndString(request->getData(), "name");
     std::string name = request->getData()["name"];
 
-    auto settings = this->configRepository->loadUserSettings(name);
+    auto settings = this->configRepository->loadUserSettings("default");
     this->configRepository->saveUserSettings(name, settings);
+
+    delete settings;
+}
+
+void Controller::ConfigurationController::switchUserSettings(Request *request)
+{
+    Assertion::jsonExistsAndString(request->getData(), "name");
+    std::string name = request->getData()["name"];
+
+    auto settings = this->configRepository->loadUserSettings(name);
+    this->processingThread->reloadUserConfig(settings);
+
+    this->currentSettingsName = name;
+    delete settings;
 }
 
 SystemSettings *Controller::ConfigurationController::getSystemSettings()
@@ -180,7 +194,9 @@ Range* Controller::ConfigurationController::buildRange(Request *request)
 void Controller::ConfigurationController::saveConfig(std::string name, UserSettings *newConfig, UserSettings *oldConfig)
 {
     this->configRepository->saveUserSettings(name, newConfig);
-    this->processingThread->reloadUserConfig(newConfig);
+    if (this->currentSettingsName == name) {
+        this->processingThread->reloadUserConfig(newConfig);
+    }
 
     delete oldConfig;
     delete newConfig;

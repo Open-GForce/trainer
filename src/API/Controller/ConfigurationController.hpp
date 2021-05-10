@@ -18,6 +18,11 @@ class ConfigurationController
         ConfigRepository* configRepository;
 
         /**
+         * Name of current active settings
+         */
+        std::string currentSettingsName;
+
+        /**
          * Validates the request and builds a Range object
          */
         static Range* buildRange(Request* request);
@@ -40,6 +45,11 @@ class ConfigurationController
          * Duplicates the default configuration and saves it with the given name
          */
         virtual void createUserSettings(Request* request);
+
+        /**
+         * Loads and activates settings by given name
+         */
+        virtual void switchUserSettings(Request* request);
 
         /**
         * Loads the current system settings
