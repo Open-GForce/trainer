@@ -7,6 +7,7 @@ websocketpp/0.8.2
 can-utils/v2020.12.0@open-gforce/can-utils
 catch2/2.9.2
 fakeit/2.0.8
+base64/0.4.0
 
 [generators]
 cmake

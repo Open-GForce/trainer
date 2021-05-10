@@ -11,6 +11,9 @@ namespace GForce::Configuration {
 class ConfigRepository
 {
     protected:
+        const static inline std::string USER_SETTINGS_PREFIX = "user_settings.";
+        const static inline std::string SETTINGS_SUFFIX      = ".json";
+
         constexpr const static double DEFAULT_ROTATION_RADIUS     = 3.87;
         const static inline double DEFAULT_SOFT_START_SPEED       = 10;
         const static inline int DEFAULT_SOFT_START_ACCELERATION   = 1000;
@@ -55,6 +58,12 @@ class ConfigRepository
         static BrakeSensorProtocol parseBrakeProtocol(nlohmann::json data);
         static std::map<int, int> parseForceTable(nlohmann::json data);
 
+        /**
+         * Encodes/Decodes base64 names
+         */
+        static std::string decodeName(std::string data);
+        static std::string encodeName(std::string data);
+
     public:
         ConfigRepository();
         explicit ConfigRepository(std::string basePath);
@@ -64,6 +73,11 @@ class ConfigRepository
          * Ownership of returned object moves to caller
          */
         virtual UserSettings* loadUserSettings(std::string name);
+
+        /**
+         * Returns a name list of saved user settings
+         */
+        virtual std::list<std::string> getAvailableUserSettings();
 
         /**
          * Ownership of returned object moves to caller

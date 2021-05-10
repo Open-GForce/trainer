@@ -45,7 +45,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
             repository->loadUserSettings("example");
             FAIL("Expected exception was not thrown");
         } catch (RuntimeException &e) {
-            CHECK(e.getMessage() == "Config file " + basePath + "/user_settings.example.json does not exist");
+            CHECK(e.getMessage() == "Config file " + basePath + "/user_settings.ZXhhbXBsZQ==.json does not exist");
         }
     }
 
@@ -54,7 +54,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data.erase("innerBrakeRange");
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -69,7 +69,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data["innerBrakeRange"].erase("min");
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -84,7 +84,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data["innerBrakeRange"]["max"] = "abc";
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -99,7 +99,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data.erase("rotationRadius");
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -113,7 +113,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data["rotationRadius"] = "abc";
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -127,7 +127,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data.erase("softStartSpeed");
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -141,7 +141,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data["softStartSpeed"] = "abc";
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -156,7 +156,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data.erase("softStartAcceleration");
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -170,7 +170,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data["softStartAcceleration"] = "abc";
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -184,7 +184,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data.erase("useAdaptiveAccelerationUserInterface");
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -198,7 +198,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data["useAdaptiveAccelerationUserInterface"] = "abc";
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -212,7 +212,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data.erase("accelerationMode");
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -226,7 +226,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data.erase("outerBrakeDeactivated");
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -240,7 +240,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data["outerBrakeDeactivated"] = "abc";
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -254,7 +254,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         nlohmann::json data = correctUserConfig;
         data.erase("accelerationStages");
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -273,7 +273,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         data["accelerationStages"] = {};
         data["accelerationStages"].push_back({{"acceleration", 5000}});
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -292,7 +292,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         data["accelerationStages"] = {};
         data["accelerationStages"].push_back({{"speed", 200}});
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -311,7 +311,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         data["accelerationStages"] = {};
         data["accelerationStages"].push_back({{"speed", "abc"}, {"acceleration", 5000}});
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -330,7 +330,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         data["accelerationStages"] = {};
         data["accelerationStages"].push_back({{"speed", 200}, {"acceleration", "abc"}});
 
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << data.dump() << "\n";
         configFile.close();
 
@@ -343,7 +343,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
 
     SECTION("Config correctly decoded")
     {
-        std::ofstream configFile(basePath + "/user_settings.test.json");
+        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
         configFile << correctUserConfig.dump() << "\n";
         configFile.close();
 
@@ -386,6 +386,30 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         CHECK(loaded->getAccelerationMode() == AccelerationMode::differential);
         CHECK(loaded->isAdaptiveAccelerationUIActivated());
         CHECK(loaded->isOuterBrakeDeactivated());
+    }
+
+    SECTION("Correct name list")
+    {
+        auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 5.2, 125, 1500, {AccelerationStage(500.5, 7400)}, AccelerationMode::differential, true, true);
+        repository->saveUserSettings("default", saved);
+        repository->saveUserSettings("test", saved);
+        repository->saveUserSettings("Example", saved);
+        repository->saveUserSettings("test with space", saved);
+
+        std::ofstream dummyFile1(basePath + "/dummy.dGVzdA==.json");
+        dummyFile1 << "dummy" << "\n";
+        dummyFile1.close();
+
+        std::ofstream dummyFile2(basePath + "/user_settings.dGVzdA==.csv");
+        dummyFile2 << "dummy" << "\n";
+        dummyFile2.close();
+
+        std::list<std::string> result = repository->getAvailableUserSettings();
+        CHECK(result.size() == 4);
+        CHECK(std::find (result.begin(), result.end(), "default") != result.end());
+        CHECK(std::find (result.begin(), result.end(), "test") != result.end());
+        CHECK(std::find (result.begin(), result.end(), "Example") != result.end());
+        CHECK(std::find (result.begin(), result.end(), "test with space") != result.end());
     }
 
     boost::filesystem::remove_all(basePath);
