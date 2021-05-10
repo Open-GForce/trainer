@@ -10,7 +10,9 @@ Controller::ConfigurationController::ConfigurationController(ProcessingThread *p
 UserSettings* Controller::ConfigurationController::getUserSettings(Request *request)
 {
     Assertion::jsonExistsAndString(request->getData(), "name");
-    return this->configRepository->loadUserSettings(request->getData()["name"]);
+    std::string name = request->getData()["name"];
+    
+    return this->configRepository->loadUserSettings(name);
 }
 
 SystemSettings *Controller::ConfigurationController::getSystemSettings()
@@ -20,9 +22,12 @@ SystemSettings *Controller::ConfigurationController::getSystemSettings()
 
 void Controller::ConfigurationController::setInnerBrakeRange(Request *request)
 {
+    Assertion::jsonExistsAndString(request->getData(), "name");
+    std::string name = request->getData()["name"];
+
     auto range = buildRange(request);
 
-    auto oldConfig = this->configRepository->loadUserSettings("default");
+    auto oldConfig = this->configRepository->loadUserSettings(name);
     auto newConfig = new UserSettings(
             range,
             oldConfig->getOuterBrakeRange()->clone(),
@@ -34,15 +39,18 @@ void Controller::ConfigurationController::setInnerBrakeRange(Request *request)
             oldConfig->isAdaptiveAccelerationUIActivated(),
             oldConfig->isOuterBrakeDeactivated());
 
-    this->saveConfig(newConfig, oldConfig);
+    this->saveConfig(name, newConfig, oldConfig);
 }
 
 void Controller::ConfigurationController::setOuterBrakeRange(Request *request)
 {
+    Assertion::jsonExistsAndString(request->getData(), "name");
+    std::string name = request->getData()["name"];
+    
     Assertion::jsonExistsAndBool(request->getData(), "deactivated");
     auto range = buildRange(request);
 
-    auto oldConfig = this->configRepository->loadUserSettings("default");
+    auto oldConfig = this->configRepository->loadUserSettings(name);
     auto newConfig = new UserSettings(
             oldConfig->getInnerBrakeRange()->clone(),
             range,
@@ -54,14 +62,17 @@ void Controller::ConfigurationController::setOuterBrakeRange(Request *request)
             oldConfig->isAdaptiveAccelerationUIActivated(),
             request->getData()["deactivated"]);
 
-    this->saveConfig(newConfig, oldConfig);
+    this->saveConfig(name, newConfig, oldConfig);
 }
 
 void Controller::ConfigurationController::setRotationRadius(Request *request)
 {
+    Assertion::jsonExistsAndString(request->getData(), "name");
+    std::string name = request->getData()["name"];
+    
     Assertion::jsonExistsAndNumber(request->getData(), "rotationRadius");
 
-    auto oldConfig = this->configRepository->loadUserSettings("default");
+    auto oldConfig = this->configRepository->loadUserSettings(name);
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
                                       oldConfig->getOuterBrakeRange()->clone(),
                                       request->getData()["rotationRadius"],
@@ -72,16 +83,19 @@ void Controller::ConfigurationController::setRotationRadius(Request *request)
                                       oldConfig->isAdaptiveAccelerationUIActivated(),
                                       oldConfig->isOuterBrakeDeactivated());
 
-    this->saveConfig(newConfig, oldConfig);
+    this->saveConfig(name, newConfig, oldConfig);
 }
 
 
 void Controller::ConfigurationController::setSoftStart(Request *request)
 {
+    Assertion::jsonExistsAndString(request->getData(), "name");    
     Assertion::jsonExistsAndNumber(request->getData(), "speed");
     Assertion::jsonExistsAndNumber(request->getData(), "acceleration");
 
-    auto oldConfig = this->configRepository->loadUserSettings("default");
+    std::string name = request->getData()["name"];
+    
+    auto oldConfig = this->configRepository->loadUserSettings(name);
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
                                       oldConfig->getOuterBrakeRange()->clone(),
                                       oldConfig->getRotationRadius(),
@@ -92,14 +106,16 @@ void Controller::ConfigurationController::setSoftStart(Request *request)
                                       oldConfig->isAdaptiveAccelerationUIActivated(),
                                       oldConfig->isOuterBrakeDeactivated());
 
-    this->saveConfig(newConfig, oldConfig);
+    this->saveConfig(name, newConfig, oldConfig);
 }
 
 void Controller::ConfigurationController::setAccelerationStages(Request *request)
 {
+    Assertion::jsonExistsAndString(request->getData(), "name");
     Assertion::jsonExistsAndArray(request->getData(), "stages");
     Assertion::jsonExistsAndString(request->getData(), "mode");
 
+    std::string name = request->getData()["name"];
     std::list<AccelerationStage> stages = {};
 
     for (auto& item : request->getData()["stages"]) {
@@ -109,7 +125,7 @@ void Controller::ConfigurationController::setAccelerationStages(Request *request
         stages.push_back(AccelerationStage(item["speed"], item["acceleration"]));
     }
 
-    auto oldConfig = this->configRepository->loadUserSettings("default");
+    auto oldConfig = this->configRepository->loadUserSettings(name);
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
                                       oldConfig->getOuterBrakeRange()->clone(),
                                       oldConfig->getRotationRadius(),
@@ -120,14 +136,17 @@ void Controller::ConfigurationController::setAccelerationStages(Request *request
                                       oldConfig->isAdaptiveAccelerationUIActivated(),
                                       oldConfig->isOuterBrakeDeactivated());
 
-    this->saveConfig(newConfig, oldConfig);
+    this->saveConfig(name, newConfig, oldConfig);
 }
 
 void Controller::ConfigurationController::setUserInterfaceSettings(Request* request)
 {
+    Assertion::jsonExistsAndString(request->getData(), "name");
     Assertion::jsonExistsAndBool(request->getData(), "activateAdaptiveAcceleration");
 
-    auto oldConfig = this->configRepository->loadUserSettings("default");
+    std::string name = request->getData()["name"];
+    
+    auto oldConfig = this->configRepository->loadUserSettings(name);
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
                                       oldConfig->getOuterBrakeRange()->clone(),
                                       oldConfig->getRotationRadius(),
@@ -138,20 +157,20 @@ void Controller::ConfigurationController::setUserInterfaceSettings(Request* requ
                                       request->getData()["activateAdaptiveAcceleration"],
                                       oldConfig->isOuterBrakeDeactivated());
 
-    this->saveConfig(newConfig, oldConfig);
+    this->saveConfig(name, newConfig, oldConfig);
 }
 
 Range* Controller::ConfigurationController::buildRange(Request *request)
 {
     Assertion::jsonExistsAndNumber(request->getData(), "min");
     Assertion::jsonExistsAndNumber(request->getData(), "max");
-
+    
     return new Range(request->getData()["min"], request->getData()["max"]);
 }
 
-void Controller::ConfigurationController::saveConfig(UserSettings *newConfig, UserSettings *oldConfig)
+void Controller::ConfigurationController::saveConfig(std::string name, UserSettings *newConfig, UserSettings *oldConfig)
 {
-    this->configRepository->saveUserSettings("default", newConfig);
+    this->configRepository->saveUserSettings(name, newConfig);
     this->processingThread->reloadUserConfig(newConfig);
 
     delete oldConfig;

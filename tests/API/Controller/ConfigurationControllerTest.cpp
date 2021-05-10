@@ -22,26 +22,31 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
     auto controller = new ConfigurationController(processingThread, configRepository);
 
     nlohmann::json correctInnerBrakeConfiguration = {
+            {"name", "example-1"},
             {"min", 1673},
             {"max", 4434}
     };
 
     nlohmann::json correctOuterBrakeConfiguration = {
+            {"name", "example-2"},
             {"min", 1673},
             {"max", 4434},
             {"deactivated", true},
     };
 
     nlohmann::json correctRadiusData = {
+            {"name", "example-3"},
             {"rotationRadius", 2.53}
     };
 
     nlohmann::json correctSoftStartData = {
+            {"name", "example-4"},
             {"speed", 750.5},
             {"acceleration", 1555}
     };
 
     nlohmann::json correctAccelerationStagesData = {
+            {"name", "example-5"},
             {"stages", {}},
             {"mode", "differential"}
     };
@@ -97,6 +102,21 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         fakeit::Verify(Method(configRepositoryMock, loadUserSettings).Using("example"));
     }
 
+    SECTION("setInnerBrakeRange() => name field is missing")
+    {
+        auto data = correctInnerBrakeConfiguration;
+        data.erase("name");
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setInnerBrakeRange(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field name");
+        }
+    }
+
     SECTION("setInnerBrakeRange() => min field is missing")
     {
         auto data = correctInnerBrakeConfiguration;
@@ -142,6 +162,21 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         }
     }
 
+    SECTION("setInnerBrakeRange() => name field not a string")
+    {
+        auto data = correctInnerBrakeConfiguration;
+        data["name"] = 5.0;
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setInnerBrakeRange(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
+        }
+    }
+
     SECTION("setInnerBrakeRange() => max field not a number")
     {
         auto data = correctInnerBrakeConfiguration;
@@ -168,7 +203,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
-            CHECK(name == "default");
+            CHECK(name == "example-1");
             CHECK(settings->getInnerBrakeRange()->getMin() == 1673);
             CHECK(settings->getInnerBrakeRange()->getMax() == 4434);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
@@ -213,6 +248,21 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             FAIL("Expected exception was not thrown");
         } catch (AssertionFailedException &e) {
             CHECK(e.getMessage() == "Assertion failed. Missing JSON field deactivated");
+        }
+    }
+
+    SECTION("setOuterBrakeRange() => deactivated field is missing")
+    {
+        auto data = correctOuterBrakeConfiguration;
+        data.erase("name");
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setOuterBrakeRange(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field name");
         }
     }
 
@@ -261,6 +311,21 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         }
     }
 
+    SECTION("setOuterBrakeRange() => name field not a number")
+    {
+        auto data = correctOuterBrakeConfiguration;
+        data["name"] = 5.0;
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setOuterBrakeRange(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
+        }
+    }
+
     SECTION("setOuterBrakeRange() => max field not a number")
     {
         auto data = correctOuterBrakeConfiguration;
@@ -302,7 +367,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
-            CHECK(name == "default");
+            CHECK(name == "example-2");
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 1673);
@@ -336,6 +401,21 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
     }
 
+    SECTION("setRotationRadius() => name field is missing")
+    {
+        auto data = correctRadiusData;
+        data.erase("name");
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setRotationRadius(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field name");
+        }
+    }
+
     SECTION("setRotationRadius() => rotationRadius field is missing")
     {
         auto data = correctRadiusData;
@@ -366,6 +446,21 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         }
     }
 
+    SECTION("setRotationRadius() => name field not a string")
+    {
+        auto data = correctRadiusData;
+        data["name"] = 5.0;
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setRotationRadius(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
+        }
+    }
+
     SECTION("setRotationRadius() => config merged and reloaded")
     {
         fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
@@ -377,7 +472,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
-            CHECK(name == "default");
+            CHECK(name == "example-3");
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
@@ -412,6 +507,21 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Once();
     }
 
+    SECTION("setSoftStart() => name field is missing")
+    {
+        auto data = correctSoftStartData;
+        data.erase("name");
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setSoftStart(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field name");
+        }
+    }
+
     SECTION("setSoftStart() => speed field is missing")
     {
         auto data = correctSoftStartData;
@@ -442,6 +552,21 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         }
     }
 
+    SECTION("setRotationRadius() => name field not a string")
+    {
+        auto data = correctSoftStartData;
+        data["name"] = 5.0;
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setSoftStart(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
+        }
+    }
+
     SECTION("setSoftStart() => acceleration field is missing")
     {
         auto data = correctSoftStartData;
@@ -469,6 +594,36 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             FAIL("Expected exception was not thrown");
         } catch (AssertionFailedException &e) {
             CHECK(e.getMessage() == "Assertion failed. JSON field acceleration is not a number");
+        }
+    }
+
+    SECTION("setAccelerationStages() => name field is missing")
+    {
+        auto data = correctAccelerationStagesData;
+        data.erase("name");
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setAccelerationStages(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field name");
+        }
+    }
+
+    SECTION("setAccelerationStages() => name field is not a string")
+    {
+        auto data = correctAccelerationStagesData;
+        data["name"] = 5.0;
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setAccelerationStages(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
         }
     }
 
@@ -516,7 +671,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
-            CHECK(name == "default");
+            CHECK(name == "example-5");
             CHECK(settings->getAccelerationMode() == AccelerationMode::targetSpeed);
         });
 
@@ -524,6 +679,21 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         controller->setAccelerationStages(request);
 
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
+    }
+
+    SECTION("setAdaptiveAccelerationUIToggle() => name filed missing")
+    {
+        auto data = correctSoftStartData;
+        data.erase("name");
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setUserInterfaceSettings(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. Missing JSON field name");
+        }
     }
 
     SECTION("setAdaptiveAccelerationUIToggle() => toggle not a boolean")
@@ -585,6 +755,22 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             FAIL("Expected exception was not thrown");
         } catch (AssertionFailedException &e) {
             CHECK(e.getMessage() == "Assertion failed. JSON field mode is not a string");
+        }
+    }
+
+    SECTION("setAccelerationStages() => name field not a string")
+    {
+        auto data = correctAccelerationStagesData;
+        data.erase("mode");
+        data["name"] = 5.0;
+
+        auto request = new Request("test", data);
+
+        try {
+            controller->setAccelerationStages(request);
+            FAIL("Expected exception was not thrown");
+        } catch (AssertionFailedException &e) {
+            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
         }
     }
 
@@ -675,7 +861,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
-            CHECK(name == "default");
+            CHECK(name == "example-4");
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
@@ -725,7 +911,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
                 {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
 
         fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
-            CHECK(name == "default");
+            CHECK(name == "example-5");
             CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
             CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);

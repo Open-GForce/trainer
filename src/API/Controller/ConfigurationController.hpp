@@ -25,7 +25,7 @@ class ConfigurationController
         /**
          * Saves the configuration and deletes the objects afterwards
          */
-        void saveConfig(UserSettings* newConfig, UserSettings* oldConfig);
+        void saveConfig(std::string name, UserSettings* newConfig, UserSettings* oldConfig);
 
     public:
         ConfigurationController(ProcessingThread *processingThread, ConfigRepository *configRepository);
