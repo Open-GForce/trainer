@@ -17,7 +17,9 @@ enum AccelerationMode {
     // Determines the acceleration based on difference between current and target speed
     differential,
     // Determines the acceleration based on target speed
-    targetSpeed
+    targetSpeed,
+    // Determines the acceleration mode on current speed
+    currentSpeed
 };
 
 class UserSettings : public ResponseCastInterface
@@ -94,6 +96,10 @@ class UserSettings : public ResponseCastInterface
         static AccelerationMode stringToAccelerationMode(std::string input) {
             if (input == "differential") {
                 return AccelerationMode::differential;
+            }
+
+            if (input == "currentSpeed") {
+                return AccelerationMode::currentSpeed;
             }
 
             return AccelerationMode::targetSpeed;

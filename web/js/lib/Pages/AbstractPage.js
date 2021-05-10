@@ -63,11 +63,16 @@ class AbstractPage
     /**
      * @param {jQuery} active
      * @param {jQuery} passive
+     * @param {jQuery|undefined} passive2
      * @protected
      */
-    toggleButtons(active, passive)
+    toggleButtons(active, passive, passive2 = undefined)
     {
         active.addClass('active').addClass('white');
         passive.removeClass('active').removeClass('white');
+
+        if (passive2 !== undefined) {
+            passive2.removeClass('active').removeClass('white');
+        }
     };
 }
