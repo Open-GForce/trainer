@@ -3,6 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <filesystem>
 #include "libbase64.h"
+#include <cstdio>
 #include "../Utils/Exceptions/RuntimeException.hpp"
 #include "ConfigRepository.hpp"
 
@@ -68,6 +69,20 @@ std::list<std::string> ConfigRepository::getAvailableUserSettings()
     }
 
     return names;
+}
+
+void ConfigRepository::deleteUserSettings(std::string name)
+{
+    if (name == "default") {
+        throw RuntimeException("Deletion of default settings is not allowed");
+    }
+
+    std::string filePath = basePath + "/" + USER_SETTINGS_PREFIX + encodeName(name) + SETTINGS_SUFFIX;
+    try {
+        fs::remove(filePath);
+    } catch (std::exception &e) {
+        throw RuntimeException("Failed deleting configuration file " + filePath + " => " + std::string(e.what()));
+    }
 }
 
 std::string ConfigRepository::loadFileContent(std::string file)

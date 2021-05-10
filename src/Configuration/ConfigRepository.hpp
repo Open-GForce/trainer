@@ -75,6 +75,12 @@ class ConfigRepository
         virtual UserSettings* loadUserSettings(std::string name);
 
         /**
+         * Deletes the given user settings.
+         * Deletion of default settings throws an exception
+         */
+        virtual void deleteUserSettings(std::string name);
+
+        /**
          * Returns a name list of saved user settings
          */
         virtual std::list<std::string> getAvailableUserSettings();

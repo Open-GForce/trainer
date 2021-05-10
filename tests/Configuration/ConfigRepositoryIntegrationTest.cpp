@@ -412,6 +412,32 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         CHECK(std::find (result.begin(), result.end(), "test with space") != result.end());
     }
 
+    SECTION("Deletion of default user settings is not allowed")
+    {
+        try {
+            repository->deleteUserSettings("default");
+            FAIL("Expected exception was not thrown");
+        } catch (RuntimeException &e) {
+            CHECK(e.getMessage() == "Deletion of default settings is not allowed");
+        }
+    }
+
+    SECTION("User settings deleted successfully")
+    {
+        auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 5.2, 125, 1500, {AccelerationStage(500.5, 7400)}, AccelerationMode::differential, true, true);
+        repository->saveUserSettings("default", saved);
+        repository->saveUserSettings("test", saved);
+        repository->saveUserSettings("Example", saved);
+
+        repository->deleteUserSettings("test");
+
+        std::list<std::string> result = repository->getAvailableUserSettings();
+        CHECK(result.size() == 2);
+        CHECK(std::find (result.begin(), result.end(), "default") != result.end());
+        CHECK(std::find (result.begin(), result.end(), "test") == result.end());
+        CHECK(std::find (result.begin(), result.end(), "Example") != result.end());
+    }
+
     boost::filesystem::remove_all(basePath);
 }
 
