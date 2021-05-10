@@ -48,6 +48,8 @@ nlohmann::json UserSettings::toJSON()
             data[JSON_KEY_ACC_MODE] = "differential"; break;
         case targetSpeed:
             data[JSON_KEY_ACC_MODE] = "targetSpeed"; break;
+        case currentSpeed:
+            data[JSON_KEY_ACC_MODE] = "currentSpeed"; break;
     }
 
     for (auto const& stage : this->accelerationStages) {

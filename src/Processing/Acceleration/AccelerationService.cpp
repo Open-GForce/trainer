@@ -16,9 +16,17 @@ int AccelerationService::getAcceleration(double currentSpeed, double targetSpeed
         return this->softStartAcceleration;
     }
 
-    double needle = this->accelerationMode == AccelerationMode::targetSpeed
-            ? targetSpeed
-            : std::abs(targetSpeed - currentSpeed);
+    double needle = 0;
+
+    switch (this->accelerationMode) {
+        case AccelerationMode::differential:
+            needle = std::abs(targetSpeed - currentSpeed); break;
+        case AccelerationMode::targetSpeed:
+            needle = targetSpeed; break;
+        case AccelerationMode::currentSpeed:
+        default:
+            needle = currentSpeed; break;
+    }
 
     std::list<AccelerationStage>:: reverse_iterator revit;
     for( revit = this->stages.rbegin(); revit != this->stages.rend(); revit++) {
