@@ -189,6 +189,7 @@ std::map<int, int> ConfigRepository::parseForceTable(nlohmann::json data)
         || data.find(SystemSettings::JSON_KEY_FORCE_TABLE)->empty()) {
 
         return {
+                {100, 0},
                 {120, 1654},
                 {140, 1744},
                 {160, 1840},
