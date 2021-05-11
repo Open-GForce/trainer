@@ -56,6 +56,11 @@ class OperationsPage extends AbstractPage
         this.forceSegment = undefined;
 
         /**
+         * @type {jQuery}
+         */
+        this.settingsNameSegment = undefined;
+
+        /**
          * Is engine released (based on system status)?
          *
          * @type {boolean}
@@ -111,6 +116,18 @@ class OperationsPage extends AbstractPage
          * @type {undefined|SystemStatus}
          */
         this.lastStatus = undefined;
+
+        /**
+         * Current active user settings name
+         *
+         * @type {undefined|string}
+         */
+        this.settingsName = undefined;
+
+        /**
+         * @type {undefined|number}
+         */
+        this.activeConfigurationRefreshInterval = undefined;
     }
 
     /**
@@ -120,8 +137,9 @@ class OperationsPage extends AbstractPage
     {
         this.firstStatusHandled = false;
 
-        let userConfigRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
-        app.socket.send(userConfigRequest);
+        this.settingsName = undefined;
+        this._refreshActiveConfigurationName();
+        this.activeConfigurationRefreshInterval = setInterval(this._refreshActiveConfigurationName, 1000);
 
         let systemConfigRequest = new Message(Message.REQUEST_GET_SYSTEM_SETTINGS, {});
         app.socket.send(systemConfigRequest);
@@ -129,6 +147,7 @@ class OperationsPage extends AbstractPage
         this.statusSegment = $('.status.segment');
         this.forceSegment = $('.force.segment');
         this.controlSegment = $('.control.segment');
+        this.settingsNameSegment = $('#settingsNameSegment');
 
         this.directionButtons.right = this.controlSegment.find('.direction.buttons .right');
         this.directionButtons.left = this.controlSegment.find('.direction.buttons .left');
@@ -155,12 +174,13 @@ class OperationsPage extends AbstractPage
     shutdown()
     {
         this.lastStatus = undefined;
+        this.settingsName = undefined;
+        clearInterval(this.activeConfigurationRefreshInterval);
     }
 
     onSocketConnected()
     {
-        let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
-        app.socket.send(configRequest);
+        this._refreshActiveConfigurationName();
     }
 
     /**
@@ -204,6 +224,33 @@ class OperationsPage extends AbstractPage
         RotationMath.setSystemSettings(settings);
     }
 
+    onActiveConfiguration(name)
+    {
+        if (name === this.settingsName) {
+            return;
+        }
+
+        this.settingsName = name;
+
+        app.socket.send(new Message(Message.REQUEST_GET_USER_SETTINGS, {
+            name: this.settingsName
+        }));
+
+        app.socket.send(new Message(Message.REQUEST_GET_AVAILABLE_USER_SETTINGS, {}));
+    }
+
+    _refreshActiveConfigurationName()
+    {
+        let userConfigRequest = new Message(Message.REQUEST_GET_ACTIVE_USER_SETTINGS, {});
+        app.socket.send(userConfigRequest);
+    }
+
+    onAvailableUserSettings(names)
+    {
+        let values = this.settingsNamesToDropdownValues(names, this.settingsName);
+        this._renderSettingsDropdown(values);
+    }
+
     _bindControls()
     {
         let page = this;
@@ -213,7 +260,7 @@ class OperationsPage extends AbstractPage
             min: 1,
             max: 7,
             start: 1,
-            step: 0.2,
+            step: 0.5,
             onChange: function (value) {
                 if (value === 0) {
                     return;
@@ -466,5 +513,27 @@ class OperationsPage extends AbstractPage
             this.adaptiveAccelerationControlsContainer.show();
             this.accelerationButtonVisiable = true;
         }
+    }
+
+    _renderSettingsDropdown(values)
+    {
+        let page = this;
+        let dropdown = this.settingsNameSegment.find('.dropdown');
+
+        dropdown.dropdown({
+            onChange: function (value) {
+                page.settingsName = value;
+
+                app.socket.send(new Message(Message.REQUEST_SWITCH_USER_SETTINGS, {
+                    name: value
+                }));
+
+                app.socket.send(new Message(Message.REQUEST_GET_USER_SETTINGS, {
+                    name: value
+                }));
+            },
+            action: "activate",
+            values: values
+        });
     }
 }

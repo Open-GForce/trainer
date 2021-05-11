@@ -1,11 +1,15 @@
 #include <utility>
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <filesystem>
+#include "libbase64.h"
+#include <cstdio>
 #include "../Utils/Exceptions/RuntimeException.hpp"
 #include "ConfigRepository.hpp"
 
 using namespace GForce::Configuration;
 using namespace GForce::Utils::Exceptions;
+namespace fs = std::filesystem;
 
 ConfigRepository::ConfigRepository()
 {
@@ -14,9 +18,9 @@ ConfigRepository::ConfigRepository()
 
 ConfigRepository::ConfigRepository(std::string basePath) : basePath(std::move(basePath)) {}
 
-UserSettings* ConfigRepository::loadUserSettings()
+UserSettings* ConfigRepository::loadUserSettings(std::string name)
 {
-    std::string content = this->loadFileContent("user_settings.json");
+    std::string content = this->loadFileContent(USER_SETTINGS_PREFIX + encodeName(name) + SETTINGS_SUFFIX);
     return ConfigRepository::decodeUserSettings(content);
 }
 
@@ -26,11 +30,59 @@ SystemSettings *ConfigRepository::loadSystemSettings()
     return ConfigRepository::decodeSystemSettings(content);
 }
 
-void ConfigRepository::saveUserSettings(UserSettings *settings)
+void ConfigRepository::saveUserSettings(std::string name, UserSettings *settings)
 {
-    std::ofstream configFile(basePath + "/user_settings.json");
+    std::ofstream configFile(basePath + "/" + USER_SETTINGS_PREFIX + encodeName(name) + SETTINGS_SUFFIX);
     configFile << settings->toJSON().dump() << "\n";
     configFile.close();
+}
+
+std::list<std::string> ConfigRepository::getAvailableUserSettings()
+{
+    std::list<std::string> names = {};
+
+    for (const auto &entry : fs::directory_iterator(basePath)) {
+        std::string filePath = entry.path().string();
+
+        size_t suffixPosition = filePath.find(SETTINGS_SUFFIX);
+        if (suffixPosition == std::string::npos) {
+            continue;
+        }
+        filePath.erase(suffixPosition, SETTINGS_SUFFIX.length());
+
+        size_t prefixPosition = filePath.find(USER_SETTINGS_PREFIX);
+        if (prefixPosition == std::string::npos) {
+            continue;
+        }
+        filePath.erase(prefixPosition, USER_SETTINGS_PREFIX.length());
+
+        size_t pathPosition = filePath.find(basePath + "/");
+        if (pathPosition == std::string::npos) {
+            continue;
+        }
+        filePath.erase(pathPosition, basePath.length() + 1);
+
+        std::string name = decodeName(filePath);
+        if (!name.empty()) {
+            names.push_back(name);
+        }
+    }
+
+    return names;
+}
+
+void ConfigRepository::deleteUserSettings(std::string name)
+{
+    if (name == "default") {
+        throw RuntimeException("Deletion of default settings is not allowed");
+    }
+
+    std::string filePath = basePath + "/" + USER_SETTINGS_PREFIX + encodeName(name) + SETTINGS_SUFFIX;
+    try {
+        fs::remove(filePath);
+    } catch (std::exception &e) {
+        throw RuntimeException("Failed deleting configuration file " + filePath + " => " + std::string(e.what()));
+    }
 }
 
 std::string ConfigRepository::loadFileContent(std::string file)
@@ -209,6 +261,39 @@ std::map<int, int> ConfigRepository::parseForceTable(nlohmann::json data)
     }
 
     return data.at(SystemSettings::JSON_KEY_FORCE_TABLE).get<std::map<int, int>>();
+}
+
+std::string ConfigRepository::decodeName(std::string data)
+{
+    if (data == "default") {
+        return data;
+    }
+
+    char decoded[128];
+    size_t decodedLength;
+
+    int result = base64_decode(data.c_str(), data.size(), decoded, &decodedLength, 0);
+    if (result == 0) {
+        return "";
+    }
+
+    std::string name(decoded, decodedLength);
+    return name;
+}
+
+std::string ConfigRepository::encodeName(std::string data)
+{
+    if (data == "default") {
+        return data;
+    }
+
+    char encoded[128];
+    size_t encodedLength;
+
+    base64_encode(data.c_str(), data.size(), encoded, &encodedLength, 0);
+
+    std::string name(encoded, encodedLength);
+    return name;
 }
 
 

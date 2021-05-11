@@ -7,6 +7,11 @@ class SettingsPage extends AbstractPage
         /**
          * @type {jQuery}
          */
+        this.settingsNameSegment = undefined;
+
+        /**
+         * @type {jQuery}
+         */
         this.brakeStatsSegment = undefined;
 
         /**
@@ -48,10 +53,18 @@ class SettingsPage extends AbstractPage
          * @type {SystemStatus}
          */
         this.lastSystemStatus = undefined;
+
+        /**
+         * Current loaded settings
+         *
+         * @type {string}
+         */
+        this.name = "default";
     }
 
     _initialize()
     {
+        this.settingsNameSegment = $('#settingsNameSegment');
         this.brakeStatsSegment = $('#brakeStatsSegment');
         this._renderBrakeStats(undefined);
 
@@ -75,8 +88,9 @@ class SettingsPage extends AbstractPage
         this._configureAccelerationStagesSegment();
         this._configureUserInterfaceConfigSegment();
 
-        let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {});
+        let configRequest = new Message(Message.REQUEST_GET_AVAILABLE_USER_SETTINGS, {});
         app.socket.send(configRequest);
+        this._loadSettings();
 
         $('body').css('overflow-y', 'scroll');
     }
@@ -84,6 +98,93 @@ class SettingsPage extends AbstractPage
     shutdown()
     {
         $('body').css('overflow-y', '');
+    }
+
+    _loadSettings()
+    {
+        let configRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {
+            name: this.name
+        });
+        app.socket.send(configRequest);
+    }
+
+    /**
+     * @private
+     */
+    _configureNameSegment(values)
+    {
+        let page = this;
+
+        let deleteButton = this.settingsNameSegment.find('.delete.button');
+        let deleteButtonNormalText = deleteButton.html();
+
+        let dropdown = this.settingsNameSegment.find('.dropdown');
+        dropdown.dropdown({
+            onChange: function (value) {
+                page.name = value;
+                page._loadSettings();
+
+                if (value === "default") {
+                    deleteButton.addClass("disabled");
+                } else {
+                    deleteButton.removeClass("disabled");
+                }
+            },
+            action: "activate",
+            values: values
+        });
+
+        let nameInput = this.settingsNameSegment.find('.input input');
+        let createButton = this.settingsNameSegment.find('.input .button');
+
+        createButton.click(() => {
+            let newSettingsName = nameInput.val();
+            nameInput.val('');
+
+            if (newSettingsName === '') {
+                return;
+            }
+
+            this.name = newSettingsName;
+            deleteButton.removeClass("disabled");
+
+            app.socket.send(new Message(Message.REQUEST_CREATE_USER_SETTINGS, {
+                name: newSettingsName
+            }));
+            this._saveAnimation(createButton, 'green', 'white', "Erstellen");
+
+            app.socket.send(new Message(Message.REQUEST_GET_AVAILABLE_USER_SETTINGS, {}));
+            this._loadSettings();
+        });
+
+        deleteButton.click(() => {
+            if (!deleteButton.hasClass("approve")) {
+                deleteButton.addClass("approve");
+                deleteButton.html("Sicher?");
+
+                setTimeout(() => {
+                    if (deleteButton.hasClass("approve")) {
+                        deleteButton.removeClass("approve");
+                        deleteButton.html(deleteButtonNormalText);
+                    }
+                }, 3000);
+                return;
+            }
+
+            deleteButton.removeClass("approve");
+            deleteButton.addClass("disabled");
+
+            let currentName = this.name;
+            this.name = "default";
+
+            app.socket.send(new Message(Message.REQUEST_DELETE_USER_SETTINGS, {
+                name: currentName
+            }));
+            this._saveAnimation(deleteButton, 'green', 'red', "L&ouml;schen", "Gel&ouml;scht!");
+
+            app.socket.send(new Message(Message.REQUEST_GET_AVAILABLE_USER_SETTINGS, {}));
+            this._loadSettings();
+        });
     }
 
     /**
@@ -110,6 +211,7 @@ class SettingsPage extends AbstractPage
         let saveButton = segment.find('.save.button');
         saveButton.click(() => {
             let message = new Message(messageType, {
+                name: this.name,
                 min: parseInt(minInput.val()),
                 max: parseInt(maxInput.val()),
                 deactivated: parseActivationStatus ? checkbox.checkbox('is checked') : false
@@ -129,6 +231,7 @@ class SettingsPage extends AbstractPage
 
         saveButton.click(() => {
             let message = new Message(Message.REQUEST_TYPE_CONF_ROT_RADIUS, {
+                name: this.name,
                 rotationRadius: parseFloat(radiusInput.val().replace(',', '.')),
             });
             app.socket.send(message);
@@ -146,6 +249,7 @@ class SettingsPage extends AbstractPage
 
         saveButton.click(() => {
             let message = new Message(Message.REQUEST_TYPE_CONF_UI_SETTINGS, {
+                name: this.name,
                 activateAdaptiveAcceleration: checkbox.checkbox('is checked'),
             });
             app.socket.send(message);
@@ -164,6 +268,7 @@ class SettingsPage extends AbstractPage
 
         saveButton.click(() => {
             let message = new Message(Message.REQUEST_TYPE_CONF_SOFT_START, {
+                name: this.name,
                 speed: RotationMath.forceToSpeed(parseFloat(speedInput.val().replace(',', '.'))),
                 acceleration: parseInt(accelerationInput.val())
             });
@@ -199,6 +304,7 @@ class SettingsPage extends AbstractPage
         let saveButton = this.accelerationStagesSegment.find('.save.button');
         saveButton.click(() => {
             let message = new Message(Message.REQUEST_TYPE_CONF_ACC_STAGES, {
+                name: this.name,
                 stages: this.settings.accelerationStages,
                 mode: this.settings.accelerationMode
             });
@@ -217,6 +323,8 @@ class SettingsPage extends AbstractPage
         let data = {
             stages: []
         };
+
+        this.settings.sortAccelerationStages();
 
         for (const stage of this.settings.accelerationStages) {
             data.stages.push({
@@ -240,9 +348,14 @@ class SettingsPage extends AbstractPage
                 let speedInput = segment.find('.speed input');
                 let accelerationInput = segment.find('.acceleration input');
 
+                let acceleration = parseInt(accelerationInput.val());
+                if (acceleration <= UserSettings.MAX_ACCELERATION) {
+                    acceleration = UserSettings.MAX_ACCELERATION;
+                }
+
                 page.settings.accelerationStages.push({
                     speed: RotationMath.forceToSpeed(parseFloat(speedInput.val().replace(',', '.'))),
-                    acceleration: parseInt(accelerationInput.val())
+                    acceleration: acceleration
                 });
 
                 page._renderAccelerationStages();
@@ -257,6 +370,15 @@ class SettingsPage extends AbstractPage
     {
         this.lastSystemStatus = status;
         this._renderBrakeStats(status);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    onAvailableUserSettings(names)
+    {
+        let values = this.settingsNamesToDropdownValues(names, this.name);
+        this._configureNameSegment(values);
     }
 
     /**
@@ -329,20 +451,29 @@ class SettingsPage extends AbstractPage
 
     /**
      * @param {jQuery} button
+     * @param {string} animationColor
+     * @param {string} normalColor
+     * @param {string} normalText
+     * @param {string} animationText
      * @private
      */
-    _saveAnimation(button)
+    _saveAnimation(button, animationColor = 'green', normalColor = 'blue', normalText = 'Speichern', animationText = "Gespeichert!")
     {
-        button.html('<i class="ui checkmark icon"></i>Gespeichert!')
-            .removeClass('blue')
-            .addClass('green')
+        let wasDisabled = button.hasClass("disabled");
+
+        button.html('<i class="ui checkmark icon"></i>' + animationText)
+            .removeClass(normalColor)
+            .addClass(animationColor)
             .addClass('disabled');
 
         setTimeout(function () {
-            button.html('Speichern')
-                .removeClass('green')
-                .addClass('blue')
-                .removeClass('disabled');
+            button.html(normalText)
+                .removeClass(animationColor)
+                .addClass(normalColor);
+
+            if (!wasDisabled) {
+                button.removeClass("disabled");
+            }
         }, 3000);
     }
 }

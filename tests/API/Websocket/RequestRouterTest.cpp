@@ -221,7 +221,9 @@ TEST_CASE( "Request router tests", "[Websocket]" )
         nlohmann::json data = correctMessage;
         data["type"] = "getUserSettings";
 
-        fakeit::When(Method(configControllerMock, getUserSettings)).AlwaysDo([] () {
+        fakeit::When(Method(configControllerMock, getUserSettings)).AlwaysDo([] (Request* request) {
+            REQUIRE(request != nullptr);
+            CHECK(request->getType() == "getUserSettings");
             return new UserSettings(new Range(1000, 2000), new Range(3000, 4000), 5.0, 0, 0,
                                     std::list<AccelerationStage>(), AccelerationMode::targetSpeed, false, false);
         });
@@ -230,6 +232,76 @@ TEST_CASE( "Request router tests", "[Websocket]" )
 
         REQUIRE(response != nullptr);
         CHECK(response->toResponse()->getType() == "userSettings");
+    }
+
+    SECTION("ConfigurationController->createUserSettings() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "createUserSettings";
+
+        fakeit::When(Method(configControllerMock, createUserSettings)).AlwaysDo([] (Request* request) {
+            REQUIRE(request != nullptr);
+            CHECK(request->getType() == "createUserSettings");
+        });
+
+        auto response = router->handle(data.dump());
+        CHECK(response == nullptr);
+    }
+
+    SECTION("ConfigurationController->createUserSettings() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "deleteUserSettings";
+
+        fakeit::When(Method(configControllerMock, deleteUserSettings)).AlwaysDo([] (Request* request) {
+            REQUIRE(request != nullptr);
+            CHECK(request->getType() == "deleteUserSettings");
+        });
+
+        auto response = router->handle(data.dump());
+        CHECK(response == nullptr);
+    }
+
+    SECTION("ConfigurationController->getActiveConfigurationName() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "getActiveUserSettingsName";
+
+        fakeit::When(Method(configControllerMock, getActiveConfigurationName)).AlwaysDo([] () {
+            return new ActiveConfigurationResponse("test-settings");
+        });
+
+        auto response = router->handle(data.dump());
+        REQUIRE(response != nullptr);
+        CHECK(response->toResponse()->getType() == "activeConfiguration");
+    }
+
+    SECTION("ConfigurationController->getAvailableUserSettings() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "getAvailableUserSettingsNames";
+
+        fakeit::When(Method(configControllerMock, getAvailableUserSettings)).AlwaysDo([] () {
+            return new AvailableUserSettingsResponse({"default", "test"});
+        });
+
+        auto response = router->handle(data.dump());
+        REQUIRE(response != nullptr);
+        CHECK(response->toResponse()->getType() == "availableUserSettings");
+    }
+
+    SECTION("ConfigurationController->switchUserSettings() called")
+    {
+        nlohmann::json data = correctMessage;
+        data["type"] = "switchUserSettings";
+
+        fakeit::When(Method(configControllerMock, switchUserSettings)).AlwaysDo([] (Request* request) {
+            REQUIRE(request != nullptr);
+            CHECK(request->getType() == "switchUserSettings");
+        });
+
+        auto response = router->handle(data.dump());
+        CHECK(response == nullptr);
     }
 
     SECTION("ConfigurationController->loadSystemSettings() called")

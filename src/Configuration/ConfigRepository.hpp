@@ -11,6 +11,9 @@ namespace GForce::Configuration {
 class ConfigRepository
 {
     protected:
+        const static inline std::string USER_SETTINGS_PREFIX = "user_settings.";
+        const static inline std::string SETTINGS_SUFFIX      = ".json";
+
         constexpr const static double DEFAULT_ROTATION_RADIUS     = 3.87;
         const static inline double DEFAULT_SOFT_START_SPEED       = 10;
         const static inline int DEFAULT_SOFT_START_ACCELERATION   = 1000;
@@ -55,14 +58,32 @@ class ConfigRepository
         static BrakeSensorProtocol parseBrakeProtocol(nlohmann::json data);
         static std::map<int, int> parseForceTable(nlohmann::json data);
 
+        /**
+         * Encodes/Decodes base64 names
+         */
+        static std::string decodeName(std::string data);
+        static std::string encodeName(std::string data);
+
     public:
         ConfigRepository();
         explicit ConfigRepository(std::string basePath);
 
         /**
+         * Loads the user settings based on name.
          * Ownership of returned object moves to caller
          */
-        virtual UserSettings* loadUserSettings();
+        virtual UserSettings* loadUserSettings(std::string name);
+
+        /**
+         * Deletes the given user settings.
+         * Deletion of default settings throws an exception
+         */
+        virtual void deleteUserSettings(std::string name);
+
+        /**
+         * Returns a name list of saved user settings
+         */
+        virtual std::list<std::string> getAvailableUserSettings();
 
         /**
          * Ownership of returned object moves to caller
@@ -70,9 +91,10 @@ class ConfigRepository
         virtual SystemSettings* loadSystemSettings();
 
         /**
+         * Saves the user settings based on name.
         * Ownership of object stays at caller
         */
-        virtual void saveUserSettings(UserSettings* settings);
+        virtual void saveUserSettings(std::string name, UserSettings* settings);
 };
 
 }

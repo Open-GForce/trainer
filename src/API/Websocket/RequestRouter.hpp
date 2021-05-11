@@ -17,14 +17,19 @@ class RequestRouter : public RouterInterface
     const std::string TYPE_SET_RELEASE        = "setReleaseStatus";
     const std::string TYPE_SET_OPERATION_MODE = "setOperationMode";
 
-    const std::string TYPE_GET_USER_CONFIG        = "getUserSettings";
-    const std::string TYPE_GET_SYSTEM_CONFIG      = "getSystemSettings";
-    const std::string TYPE_SET_CONFIG_INNER_BRAKE = "setInnerBrakeRange";
-    const std::string TYPE_SET_CONFIG_OUTER_BRAKE = "setOuterBrakeRange";
-    const std::string TYPE_SET_CONFIG_ROT_RADIUS  = "setRotationRadius";
-    const std::string TYPE_SET_CONFIG_SOFT_START  = "setSoftStart";
-    const std::string TYPE_SET_CONFIG_ACC_STAGES  = "setAccelerationStages";
-    const std::string TYPE_SET_CONFIG_UI          = "setUserInterfaceSettings";
+    const std::string TYPE_GET_USER_CONFIG             = "getUserSettings";
+    const std::string TYPE_GET_ACTIVE_CONFIG_NAME      = "getActiveUserSettingsName";
+    const std::string TYPE_GET_AVAILABLE_CONFIG_NAMES  = "getAvailableUserSettingsNames";
+    const std::string TYPE_CREATE_USER_CONFIG          = "createUserSettings";
+    const std::string TYPE_DELETE_USER_CONFIG          = "deleteUserSettings";
+    const std::string TYPE_SWITCH_USER_CONFIG          = "switchUserSettings";
+    const std::string TYPE_GET_SYSTEM_CONFIG           = "getSystemSettings";
+    const std::string TYPE_SET_CONFIG_INNER_BRAKE      = "setInnerBrakeRange";
+    const std::string TYPE_SET_CONFIG_OUTER_BRAKE      = "setOuterBrakeRange";
+    const std::string TYPE_SET_CONFIG_ROT_RADIUS       = "setRotationRadius";
+    const std::string TYPE_SET_CONFIG_SOFT_START       = "setSoftStart";
+    const std::string TYPE_SET_CONFIG_ACC_STAGES       = "setAccelerationStages";
+    const std::string TYPE_SET_CONFIG_UI               = "setUserInterfaceSettings";
 
     const std::string TYPE_HEARTBEAT = "heartbeat";
 

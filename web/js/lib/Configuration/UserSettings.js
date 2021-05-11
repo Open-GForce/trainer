@@ -54,4 +54,15 @@ class UserSettings
          */
         this.outerBrakeDeactivated = props.outerBrakeDeactivated;
     }
+
+    sortAccelerationStages ()
+    {
+        if (this.accelerationStages === undefined) {
+            return;
+        }
+
+        this.accelerationStages.sort((a, b) => (a.speed > b.speed) ? 1 : -1);
+    }
 }
+
+UserSettings.MAX_ACCELERATION = 8000;

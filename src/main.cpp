@@ -49,7 +49,7 @@ void runControllerMode(bool CANDummyMode)
     logger->info(LOG_CHANNEL_MAIN, "Running main controller mode [" + canMode + " CAN]", {});
 
     auto configRepository = new ConfigRepository();
-    auto userConfig = configRepository->loadUserSettings();
+    auto userConfig = configRepository->loadUserSettings("default");
     auto systemConfig = configRepository->loadSystemSettings();
 
     CANThread* canThread = nullptr;
@@ -82,7 +82,7 @@ void runControllerMode(bool CANDummyMode)
         brakeThread = new BrakeInput::CAN::WayconBrakeInputThread(canThread, logger);
     }
 
-    auto configController = new ConfigurationController(processingThread, configRepository);
+    auto configController = new ConfigurationController(processingThread, configRepository, logger);
     auto operationsController = new OperationsController(processingThread);
     auto router = new RequestRouter(operationsController, configController);
     auto websocketServer = new Server(router, logger);

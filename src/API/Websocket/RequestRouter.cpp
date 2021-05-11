@@ -24,7 +24,7 @@ ResponseCastInterface* RequestRouter::handle(const std::string& message)
         return response;
     } catch (std::exception &e) {
         delete request;
-        throw e;
+        throw;
     }
 }
 
@@ -81,7 +81,30 @@ ResponseCastInterface* RequestRouter::route(Request *request)
     }
 
     if (request->getType() == RequestRouter::TYPE_GET_USER_CONFIG) {
-        return this->configurationController->getUserSettings();
+        return this->configurationController->getUserSettings(request);
+    }
+
+    if (request->getType() == RequestRouter::TYPE_GET_ACTIVE_CONFIG_NAME) {
+        return this->configurationController->getActiveConfigurationName();
+    }
+
+    if (request->getType() == RequestRouter::TYPE_GET_AVAILABLE_CONFIG_NAMES) {
+        return this->configurationController->getAvailableUserSettings();
+    }
+
+    if (request->getType() == RequestRouter::TYPE_CREATE_USER_CONFIG) {
+        this->configurationController->createUserSettings(request);
+        return nullptr;
+    }
+
+    if (request->getType() == RequestRouter::TYPE_DELETE_USER_CONFIG) {
+        this->configurationController->deleteUserSettings(request);
+        return nullptr;
+    }
+
+    if (request->getType() == RequestRouter::TYPE_SWITCH_USER_CONFIG) {
+        this->configurationController->switchUserSettings(request);
+        return nullptr;
     }
 
     if (request->getType() == RequestRouter::TYPE_GET_SYSTEM_CONFIG) {
