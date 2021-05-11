@@ -19,6 +19,7 @@ Message.REQUEST_TYPE_RELEASE_STATUS = 'setReleaseStatus';
 Message.REQUEST_GET_USER_SETTINGS           = 'getUserSettings';
 Message.REQUEST_CREATE_USER_SETTINGS        = 'createUserSettings';
 Message.REQUEST_DELETE_USER_SETTINGS        = 'deleteUserSettings';
+Message.REQUEST_SWITCH_USER_SETTINGS        = 'switchUserSettings';
 Message.REQUEST_GET_ACTIVE_USER_SETTINGS    = 'getActiveUserSettingsName';
 Message.REQUEST_GET_AVAILABLE_USER_SETTINGS = 'getAvailableUserSettingsNames';
 Message.REQUEST_GET_SYSTEM_SETTINGS         = 'getSystemSettings';

@@ -10,12 +10,14 @@
 using namespace GForce::Processing;
 using namespace GForce::API::Websocket;
 using namespace GForce::Configuration;
+using namespace GForce::Utils::Logging;
 
 namespace GForce::API::Controller {
 
 class ConfigurationController
 {
     private:
+        LoggerInterface* logger;
         ProcessingThread* processingThread;
         ConfigRepository* configRepository;
 
@@ -35,7 +37,7 @@ class ConfigurationController
         void saveConfig(std::string name, UserSettings* newConfig, UserSettings* oldConfig);
 
     public:
-        ConfigurationController(ProcessingThread *processingThread, ConfigRepository *configRepository);
+        ConfigurationController(ProcessingThread *processingThread, ConfigRepository *configRepository, LoggerInterface *logger);
 
         /**
          * Loads the current user settings

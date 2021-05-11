@@ -74,6 +74,32 @@ class AbstractPage
     }
 
     /**
+     * Helper function for converting available user settings names to dropdown values
+     *
+     * @param names
+     * @param active
+     * @returns {*[]}
+     */
+    settingsNamesToDropdownValues(names, active)
+    {
+        let values = [];
+
+        for (name of names) {
+            let item = name === "default"
+                ? {name: "Standard", value: "default"}
+                : {name: name, value: name};
+
+            if (name === active) {
+                item.selected = true;
+            }
+
+            values.push(item);
+        }
+
+        return values;
+    }
+
+    /**
      * @param {jQuery} active
      * @param {jQuery} passive
      * @param {jQuery|undefined} passive2

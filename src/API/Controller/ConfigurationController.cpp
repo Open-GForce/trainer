@@ -4,8 +4,11 @@
 using namespace GForce::Utils::Assertions;
 using namespace GForce::API;
 
-Controller::ConfigurationController::ConfigurationController(ProcessingThread *processingThread, ConfigRepository *configRepository) :
-    processingThread(processingThread), configRepository(configRepository), currentSettingsName("default") {}
+Controller::ConfigurationController::ConfigurationController(ProcessingThread *processingThread,
+                                                             ConfigRepository *configRepository,
+                                                             LoggerInterface *logger) :
+        processingThread(processingThread), configRepository(configRepository), currentSettingsName("default"),
+        logger(logger) {}
 
 UserSettings* Controller::ConfigurationController::getUserSettings(Request *request)
 {
@@ -27,6 +30,8 @@ void Controller::ConfigurationController::createUserSettings(Request* request)
     auto settings = this->configRepository->loadUserSettings("default");
     this->configRepository->saveUserSettings(name, settings);
 
+    this->logger->info("Configuration", "Created user settings with name = " + name, {});
+
     delete settings;
 }
 
@@ -37,6 +42,8 @@ void Controller::ConfigurationController::switchUserSettings(Request *request)
 
     auto settings = this->configRepository->loadUserSettings(name);
     this->processingThread->reloadUserConfig(settings);
+
+    this->logger->info("Configuration", "Switched user settings to " + name, {});
 
     this->currentSettingsName = name;
     delete settings;
@@ -64,6 +71,8 @@ void Controller::ConfigurationController::deleteUserSettings(Request *request)
         this->processingThread->reloadUserConfig(settings);
         delete settings;
     }
+
+    this->logger->info("Configuration", "Deleted user settings " + name, {});
 }
 
 SystemSettings *Controller::ConfigurationController::getSystemSettings()

@@ -82,7 +82,7 @@ void runControllerMode(bool CANDummyMode)
         brakeThread = new BrakeInput::CAN::WayconBrakeInputThread(canThread, logger);
     }
 
-    auto configController = new ConfigurationController(processingThread, configRepository);
+    auto configController = new ConfigurationController(processingThread, configRepository, logger);
     auto operationsController = new OperationsController(processingThread);
     auto router = new RequestRouter(operationsController, configController);
     auto websocketServer = new Server(router, logger);

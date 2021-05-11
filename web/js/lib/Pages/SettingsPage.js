@@ -324,6 +324,8 @@ class SettingsPage extends AbstractPage
             stages: []
         };
 
+        this.settings.sortAccelerationStages();
+
         for (const stage of this.settings.accelerationStages) {
             data.stages.push({
                 force: RotationMath.speedToForce(stage.speed).toFixed(2) + ' G',
@@ -346,9 +348,14 @@ class SettingsPage extends AbstractPage
                 let speedInput = segment.find('.speed input');
                 let accelerationInput = segment.find('.acceleration input');
 
+                let acceleration = parseInt(accelerationInput.val());
+                if (acceleration <= UserSettings.MAX_ACCELERATION) {
+                    acceleration = UserSettings.MAX_ACCELERATION;
+                }
+
                 page.settings.accelerationStages.push({
                     speed: RotationMath.forceToSpeed(parseFloat(speedInput.val().replace(',', '.'))),
-                    acceleration: parseInt(accelerationInput.val())
+                    acceleration: acceleration
                 });
 
                 page._renderAccelerationStages();
@@ -370,20 +377,7 @@ class SettingsPage extends AbstractPage
      */
     onAvailableUserSettings(names)
     {
-        let values = [];
-
-        for (name of names) {
-            let item = name === "default"
-                ? {name: "Standard", value: "default"}
-                : {name: name, value: name};
-
-            if (name === this.name) {
-                item.selected = true;
-            }
-
-            values.push(item);
-        }
-
+        let values = this.settingsNamesToDropdownValues(names, this.name);
         this._configureNameSegment(values);
     }
 

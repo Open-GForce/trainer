@@ -64,7 +64,7 @@ body {
 }
 
 .speed.header{
-    margin-top: 28px !important;
+    margin-top: 16px !important;
 }
 
 .speed.segment {
@@ -73,7 +73,7 @@ body {
 }
 
 .force.segment {
-    height: 100px;
+    height: 93px;
 }
 
 #speedChart {
@@ -134,7 +134,7 @@ body {
 
 #forceStatistics .value {
     font-size: 40px !important;
-    padding-top: 10px;
+    padding-top: 4px;
 }
 
 #forceStatistics .label {

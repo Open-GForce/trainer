@@ -3,6 +3,7 @@
 #include "../../../src/API/Controller/ConfigurationController.hpp"
 #include "../../../src/Configuration/ConfigRepository.hpp"
 #include "../../../src/Utils/Assertions/AssertionFailedException.hpp"
+#include "../../../src/Utils/Logging/NullLogger.hpp"
 
 using namespace GForce::API::Controller;
 using namespace GForce::Configuration;
@@ -20,7 +21,7 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
     fakeit::Fake(Method(configRepositoryMock, saveUserSettings));
     ConfigRepository* configRepository = &configRepositoryMock.get();
 
-    auto controller = new ConfigurationController(processingThread, configRepository);
+    auto controller = new ConfigurationController(processingThread, configRepository, new NullLogger());
 
     nlohmann::json correctInnerBrakeConfiguration = {
             {"name", "example-1"},

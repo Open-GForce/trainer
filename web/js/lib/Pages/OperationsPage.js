@@ -56,6 +56,11 @@ class OperationsPage extends AbstractPage
         this.forceSegment = undefined;
 
         /**
+         * @type {jQuery}
+         */
+        this.settingsNameSegment = undefined;
+
+        /**
          * Is engine released (based on system status)?
          *
          * @type {boolean}
@@ -132,6 +137,7 @@ class OperationsPage extends AbstractPage
     {
         this.firstStatusHandled = false;
 
+        this.settingsName = undefined;
         this._refreshActiveConfigurationName();
         this.activeConfigurationRefreshInterval = setInterval(this._refreshActiveConfigurationName, 1000);
 
@@ -141,6 +147,7 @@ class OperationsPage extends AbstractPage
         this.statusSegment = $('.status.segment');
         this.forceSegment = $('.force.segment');
         this.controlSegment = $('.control.segment');
+        this.settingsNameSegment = $('#settingsNameSegment');
 
         this.directionButtons.right = this.controlSegment.find('.direction.buttons .right');
         this.directionButtons.left = this.controlSegment.find('.direction.buttons .left');
@@ -167,6 +174,7 @@ class OperationsPage extends AbstractPage
     shutdown()
     {
         this.lastStatus = undefined;
+        this.settingsName = undefined;
         clearInterval(this.activeConfigurationRefreshInterval);
     }
 
@@ -223,16 +231,24 @@ class OperationsPage extends AbstractPage
         }
 
         this.settingsName = name;
-        let userConfigRequest = new Message(Message.REQUEST_GET_USER_SETTINGS, {
+
+        app.socket.send(new Message(Message.REQUEST_GET_USER_SETTINGS, {
             name: this.settingsName
-        });
-        app.socket.send(userConfigRequest);
+        }));
+
+        app.socket.send(new Message(Message.REQUEST_GET_AVAILABLE_USER_SETTINGS, {}));
     }
 
     _refreshActiveConfigurationName()
     {
         let userConfigRequest = new Message(Message.REQUEST_GET_ACTIVE_USER_SETTINGS, {});
         app.socket.send(userConfigRequest);
+    }
+
+    onAvailableUserSettings(names)
+    {
+        let values = this.settingsNamesToDropdownValues(names, this.settingsName);
+        this._renderSettingsDropdown(values);
     }
 
     _bindControls()
@@ -497,5 +513,27 @@ class OperationsPage extends AbstractPage
             this.adaptiveAccelerationControlsContainer.show();
             this.accelerationButtonVisiable = true;
         }
+    }
+
+    _renderSettingsDropdown(values)
+    {
+        let page = this;
+        let dropdown = this.settingsNameSegment.find('.dropdown');
+
+        dropdown.dropdown({
+            onChange: function (value) {
+                page.settingsName = value;
+
+                app.socket.send(new Message(Message.REQUEST_SWITCH_USER_SETTINGS, {
+                    name: value
+                }));
+
+                app.socket.send(new Message(Message.REQUEST_GET_USER_SETTINGS, {
+                    name: value
+                }));
+            },
+            action: "activate",
+            values: values
+        });
     }
 }

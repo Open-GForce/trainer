@@ -47,7 +47,7 @@ class SpeedChart
                 value: this.currentSpeed,
                 showValue: true,
                 label: function(value) {
-                    return Math.round(value) + ' 1/min'
+                    return Math.round(value) + ' U/min'
                 },
             },
         );
