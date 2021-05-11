@@ -91,7 +91,6 @@ void Controller::ConfigurationController::setInnerBrakeRange(Request *request)
     auto newConfig = new UserSettings(
             range,
             oldConfig->getOuterBrakeRange()->clone(),
-            oldConfig->getRotationRadius(),
             oldConfig->getSoftStartSpeed(),
             oldConfig->getSoftStartAcceleration(),
             oldConfig->getAccelerationStages(),
@@ -114,7 +113,6 @@ void Controller::ConfigurationController::setOuterBrakeRange(Request *request)
     auto newConfig = new UserSettings(
             oldConfig->getInnerBrakeRange()->clone(),
             range,
-            oldConfig->getRotationRadius(),
             oldConfig->getSoftStartSpeed(),
             oldConfig->getSoftStartAcceleration(),
             oldConfig->getAccelerationStages(),
@@ -124,28 +122,6 @@ void Controller::ConfigurationController::setOuterBrakeRange(Request *request)
 
     this->saveConfig(name, newConfig, oldConfig);
 }
-
-void Controller::ConfigurationController::setRotationRadius(Request *request)
-{
-    Assertion::jsonExistsAndString(request->getData(), "name");
-    std::string name = request->getData()["name"];
-    
-    Assertion::jsonExistsAndNumber(request->getData(), "rotationRadius");
-
-    auto oldConfig = this->configRepository->loadUserSettings(name);
-    auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
-                                      oldConfig->getOuterBrakeRange()->clone(),
-                                      request->getData()["rotationRadius"],
-                                      oldConfig->getSoftStartSpeed(),
-                                      oldConfig->getSoftStartAcceleration(),
-                                      oldConfig->getAccelerationStages(),
-                                      oldConfig->getAccelerationMode(),
-                                      oldConfig->isAdaptiveAccelerationUIActivated(),
-                                      oldConfig->isOuterBrakeDeactivated());
-
-    this->saveConfig(name, newConfig, oldConfig);
-}
-
 
 void Controller::ConfigurationController::setSoftStart(Request *request)
 {
@@ -158,7 +134,6 @@ void Controller::ConfigurationController::setSoftStart(Request *request)
     auto oldConfig = this->configRepository->loadUserSettings(name);
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
                                       oldConfig->getOuterBrakeRange()->clone(),
-                                      oldConfig->getRotationRadius(),
                                       request->getData()["speed"],
                                       request->getData()["acceleration"],
                                       oldConfig->getAccelerationStages(),
@@ -188,7 +163,6 @@ void Controller::ConfigurationController::setAccelerationStages(Request *request
     auto oldConfig = this->configRepository->loadUserSettings(name);
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
                                       oldConfig->getOuterBrakeRange()->clone(),
-                                      oldConfig->getRotationRadius(),
                                       oldConfig->getSoftStartSpeed(),
                                       oldConfig->getSoftStartAcceleration(),
                                       stages,
@@ -209,7 +183,6 @@ void Controller::ConfigurationController::setUserInterfaceSettings(Request* requ
     auto oldConfig = this->configRepository->loadUserSettings(name);
     auto newConfig = new UserSettings(oldConfig->getInnerBrakeRange()->clone(),
                                       oldConfig->getOuterBrakeRange()->clone(),
-                                      oldConfig->getRotationRadius(),
                                       oldConfig->getSoftStartSpeed(),
                                       oldConfig->getSoftStartAcceleration(),
                                       oldConfig->getAccelerationStages(),

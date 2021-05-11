@@ -25,7 +25,6 @@ enum AccelerationMode {
 class UserSettings : public ResponseCastInterface
 {
     public:
-        const static inline std::string JSON_KEY_ROT_RADIUS             = "rotationRadius";
         const static inline std::string JSON_KEY_SOFT_START_ACC         = "softStartAcceleration";
         const static inline std::string JSON_KEY_SOFT_START_SPEED       = "softStartSpeed";
         const static inline std::string JSON_KEY_ACC_STAGES             = "accelerationStages";
@@ -36,11 +35,6 @@ class UserSettings : public ResponseCastInterface
     private:
         Range* innerBrakeRange;
         Range* outerBrakeRange;
-
-        /**
-         * Distance in meters between the center of the trainer and the passenger
-         */
-        double rotationRadius;
 
         /**
         * Acceleration configuration dependent on target speed
@@ -73,10 +67,9 @@ class UserSettings : public ResponseCastInterface
         bool outerBrakeDeactivated;
 
     public:
-        UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double trainerRadius,
-                     double softStartSpeed, int softStartAcceleration, std::list<AccelerationStage> stages,
-                     AccelerationMode accelerationMode, bool useAdaptiveAccelerationButtons,
-                     bool deactivateOuterBrake);
+        UserSettings(Range *innerBrakeRange, Range *outerBrakeRange, double softStartSpeed, int softStartAcceleration,
+                     std::list<AccelerationStage> stages, AccelerationMode accelerationMode,
+                     bool useAdaptiveAccelerationButtons, bool deactivateOuterBrake);
 
         ~UserSettings() override;
 
@@ -85,7 +78,6 @@ class UserSettings : public ResponseCastInterface
 
         [[nodiscard]] Range* getInnerBrakeRange() const;
         [[nodiscard]] Range* getOuterBrakeRange() const;
-        [[nodiscard]] double getRotationRadius() const;
         [[nodiscard]] const std::list<AccelerationStage> getAccelerationStages() const;
         [[nodiscard]] AccelerationMode getAccelerationMode() const;
         [[nodiscard]] double getSoftStartSpeed() const;

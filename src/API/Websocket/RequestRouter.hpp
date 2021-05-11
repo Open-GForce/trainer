@@ -26,7 +26,6 @@ class RequestRouter : public RouterInterface
     const std::string TYPE_GET_SYSTEM_CONFIG           = "getSystemSettings";
     const std::string TYPE_SET_CONFIG_INNER_BRAKE      = "setInnerBrakeRange";
     const std::string TYPE_SET_CONFIG_OUTER_BRAKE      = "setOuterBrakeRange";
-    const std::string TYPE_SET_CONFIG_ROT_RADIUS       = "setRotationRadius";
     const std::string TYPE_SET_CONFIG_SOFT_START       = "setSoftStart";
     const std::string TYPE_SET_CONFIG_ACC_STAGES       = "setAccelerationStages";
     const std::string TYPE_SET_CONFIG_UI               = "setUserInterfaceSettings";

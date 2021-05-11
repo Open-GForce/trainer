@@ -86,7 +86,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
                 new Range(1000, 2000),
                 new Range(3000, 4000),
-                5.0,
                 100,
                 1000,
                 {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
@@ -135,7 +134,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
                 new Range(1000, 2000),
                 new Range(3000, 4000),
-                5.0,
                 100,
                 1000,
                 {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
@@ -186,7 +184,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
                 new Range(1000, 2000),
                 new Range(3000, 4000),
-                5.0,
                 100,
                 1000,
                 {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
@@ -236,7 +233,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
                 new Range(1000, 2000),
                 new Range(3000, 4000),
-                5.0,
                 100,
                 1000,
                 {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true));
@@ -310,12 +306,11 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
     {
         fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
             return new UserSettings(
-                new Range(1000, 2000),
-                new Range(3000, 4000),
-                5.0,
-                100,
-                1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true);
+                    new Range(1000, 2000),
+                    new Range(3000, 4000),
+                    100,
+                    1000,
+                    {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true);
         });
 
         auto request = new Request("test", {
@@ -444,7 +439,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             return new UserSettings(
                     new Range(1000, 2000),
                     new Range(3000, 4000),
-                    5.0,
                     100,
                     1000,
                     {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true
@@ -613,12 +607,11 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
     {
         fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
             return new UserSettings(
-                new Range(1000, 2000),
-                new Range(3000, 4000),
-                5.0,
-                100,
-                1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false);
+                    new Range(1000, 2000),
+                    new Range(3000, 4000),
+                    100,
+                    1000,
+                    {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false);
         });
 
         controller->switchUserSettings(new Request("test", {
@@ -655,119 +648,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
         auto request = new Request("test", correctOuterBrakeConfiguration);
         controller->setOuterBrakeRange(request);
-
-        fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
-        fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Exactly(2);
-    }
-
-    SECTION("setRotationRadius() => name field is missing")
-    {
-        auto data = correctRadiusData;
-        data.erase("name");
-
-        auto request = new Request("test", data);
-
-        try {
-            controller->setRotationRadius(request);
-            FAIL("Expected exception was not thrown");
-        } catch (AssertionFailedException &e) {
-            CHECK(e.getMessage() == "Assertion failed. Missing JSON field name");
-        }
-    }
-
-    SECTION("setRotationRadius() => rotationRadius field is missing")
-    {
-        auto data = correctRadiusData;
-        data.erase("rotationRadius");
-
-        auto request = new Request("test", data);
-
-        try {
-            controller->setRotationRadius(request);
-            FAIL("Expected exception was not thrown");
-        } catch (AssertionFailedException &e) {
-            CHECK(e.getMessage() == "Assertion failed. Missing JSON field rotationRadius");
-        }
-    }
-
-    SECTION("setRotationRadius() => rotationRadius field not a number")
-    {
-        auto data = correctRadiusData;
-        data["rotationRadius"] = "abc";
-
-        auto request = new Request("test", data);
-
-        try {
-            controller->setRotationRadius(request);
-            FAIL("Expected exception was not thrown");
-        } catch (AssertionFailedException &e) {
-            CHECK(e.getMessage() == "Assertion failed. JSON field rotationRadius is not a number");
-        }
-    }
-
-    SECTION("setRotationRadius() => name field not a string")
-    {
-        auto data = correctRadiusData;
-        data["name"] = 5.0;
-
-        auto request = new Request("test", data);
-
-        try {
-            controller->setRotationRadius(request);
-            FAIL("Expected exception was not thrown");
-        } catch (AssertionFailedException &e) {
-            CHECK(e.getMessage() == "Assertion failed. JSON field name is not a string");
-        }
-    }
-
-    SECTION("setRotationRadius() => config merged and reloaded")
-    {
-        fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
-            return new UserSettings(
-                    new Range(1000, 2000),
-                    new Range(3000, 4000),
-                    5.0,
-                    100,
-                    1000,
-                    {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true
-            );
-        });
-
-        controller->switchUserSettings(new Request("test", {
-                {"name", "example-3"}
-        }));
-
-        fakeit::When(Method(configRepositoryMock, saveUserSettings)).AlwaysDo([] (std::string name, UserSettings* settings) {
-            CHECK(name == "example-3");
-            CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
-            CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
-            CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
-            CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
-            CHECK(settings->isOuterBrakeDeactivated());
-            CHECK(settings->getRotationRadius() == 2.53);
-            CHECK(settings->getSoftStartSpeed() == 100);
-            CHECK(settings->getSoftStartAcceleration() == 1000);
-            CHECK(settings->getAccelerationStages().size() == 1);
-            CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
-            CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
-        });
-
-        fakeit::When(Method(processingThreadMock, reloadUserConfig)).AlwaysDo([] (UserSettings* settings) {
-            CHECK(settings->getInnerBrakeRange()->getMin() == 1000);
-            CHECK(settings->getInnerBrakeRange()->getMax() == 2000);
-            CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
-            CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
-            CHECK(settings->isOuterBrakeDeactivated());
-            CHECK(settings->getRotationRadius() == 2.53);
-            CHECK(settings->getSoftStartSpeed() == 100);
-            CHECK(settings->getSoftStartAcceleration() == 1000);
-            CHECK(settings->getAccelerationStages().size() == 1);
-            CHECK(settings->getAccelerationStages().front().getSpeed() == 500);
-            CHECK(settings->getAccelerationStages().front().getAcceleration() == 1250);
-        });
-
-        auto request = new Request("test", correctRadiusData);
-        controller->setRotationRadius(request);
 
         fakeit::Verify(Method(configRepositoryMock, saveUserSettings)).Once();
         fakeit::Verify(Method(processingThreadMock, reloadUserConfig)).Exactly(2);
@@ -931,7 +811,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
         fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysReturn(new UserSettings(
                 new Range(1000, 2000),
                 new Range(3000, 4000),
-                5.0,
                 100,
                 1000,
                 {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, false));
@@ -1121,12 +1000,11 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
 
         fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
             return new UserSettings(
-                new Range(1000, 2000),
-                new Range(3000, 4000),
-                5.0,
-                100,
-                1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true);
+                    new Range(1000, 2000),
+                    new Range(3000, 4000),
+                    100,
+                    1000,
+                    {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true);
         });
 
         controller->switchUserSettings(new Request("test", {
@@ -1140,7 +1018,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
             CHECK(settings->isOuterBrakeDeactivated());
-            CHECK(settings->getRotationRadius() == 5.0);
             CHECK(settings->getSoftStartSpeed() == 750.5);
             CHECK(settings->getSoftStartAcceleration() == 1555);
             CHECK(settings->getAccelerationStages().size() == 1);
@@ -1156,7 +1033,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
             CHECK(settings->isOuterBrakeDeactivated());
-            CHECK(settings->getRotationRadius() == 5.0);
             CHECK(settings->getSoftStartSpeed() == 750.5);
             CHECK(settings->getSoftStartAcceleration() == 1555);
             CHECK(settings->getAccelerationStages().size() == 1);
@@ -1177,12 +1053,11 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
     {
         fakeit::When(Method(configRepositoryMock, loadUserSettings)).AlwaysDo([] (std::string name) {
             return new UserSettings(
-                new Range(1000, 2000),
-                new Range(3000, 4000),
-                5.0,
-                100,
-                1000,
-                {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true);
+                    new Range(1000, 2000),
+                    new Range(3000, 4000),
+                    100,
+                    1000,
+                    {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true);
         });
 
         controller->switchUserSettings(new Request("test", {
@@ -1196,7 +1071,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
             CHECK(settings->isOuterBrakeDeactivated());
-            CHECK(settings->getRotationRadius() == 5.0);
             CHECK(settings->getSoftStartSpeed() == 100);
             CHECK(settings->getSoftStartAcceleration() == 1000);
             CHECK(settings->getAccelerationStages().size() == 2);
@@ -1213,7 +1087,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             CHECK(settings->getOuterBrakeRange()->getMin() == 3000);
             CHECK(settings->getOuterBrakeRange()->getMax() == 4000);
             CHECK(settings->isOuterBrakeDeactivated());
-            CHECK(settings->getRotationRadius() == 5.0);
             CHECK(settings->getSoftStartSpeed() == 100);
             CHECK(settings->getSoftStartAcceleration() == 1000);
             CHECK(settings->getAccelerationStages().size() == 2);
@@ -1237,7 +1110,6 @@ TEST_CASE( "ConfigurationController tests", "[Controller]" )
             return new UserSettings(
                     new Range(1000, 2000),
                     new Range(3000, 4000),
-                    5.0,
                     100,
                     1000,
                     {AccelerationStage(500, 1250)}, AccelerationMode::targetSpeed, false, true);
