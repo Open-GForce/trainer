@@ -27,11 +27,6 @@ class SettingsPage extends AbstractPage
         /**
          * @type {jQuery}
          */
-        this.forceCalculationSegment = undefined;
-
-        /**
-         * @type {jQuery}
-         */
         this.uiConfigurationSegment = undefined;
 
         /**
@@ -70,7 +65,6 @@ class SettingsPage extends AbstractPage
 
         this.innerBrakeSegment = $('#innerBrakeSegment');
         this.outerBrakeSegment = $('#outerBrakeSegment');
-        this.forceCalculationSegment = $('#forceCalculationSegment');
         this.softStartSegment = $('#softStartSegment');
         this.accelerationStagesSegment = $('#accelerationStagesSegment');
         this.uiConfigurationSegment = $('#userInterfaceConfiguration');
@@ -83,7 +77,6 @@ class SettingsPage extends AbstractPage
             return this.lastSystemStatus.outerBrake
         }, true);
 
-        this._configureForceCalculationSegment();
         this._configureSoftStartSegment();
         this._configureAccelerationStagesSegment();
         this._configureUserInterfaceConfigSegment();
@@ -215,24 +208,6 @@ class SettingsPage extends AbstractPage
                 min: parseInt(minInput.val()),
                 max: parseInt(maxInput.val()),
                 deactivated: parseActivationStatus ? checkbox.checkbox('is checked') : false
-            });
-            app.socket.send(message);
-            this._saveAnimation(saveButton);
-        });
-    }
-
-    /**
-     * @private
-     */
-    _configureForceCalculationSegment()
-    {
-        let radiusInput = this.forceCalculationSegment.find('.radius.input input');
-        let saveButton = this.forceCalculationSegment.find('.save.button');
-
-        saveButton.click(() => {
-            let message = new Message(Message.REQUEST_TYPE_CONF_ROT_RADIUS, {
-                name: this.name,
-                rotationRadius: parseFloat(radiusInput.val().replace(',', '.')),
             });
             app.socket.send(message);
             this._saveAnimation(saveButton);
@@ -394,8 +369,6 @@ class SettingsPage extends AbstractPage
         this.outerBrakeSegment.find('.minimum.input input').val(settings.outerBrakeRange.min);
         this.outerBrakeSegment.find('.maximum.input input').val(settings.outerBrakeRange.max);
         this.outerBrakeSegment.find('.brake-deactivated').checkbox(settings.outerBrakeDeactivated ? 'set checked' : 'set unchecked');
-
-        this.forceCalculationSegment.find('.radius.input input').val(settings.rotationRadius);
 
         this.softStartSegment.find('.speed input').val(RotationMath.speedToForce(settings.softStart.speed).toFixed(2));
         this.softStartSegment.find('.acceleration input').val(settings.softStart.acceleration);

@@ -94,34 +94,6 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         CHECK(config->getInnerBrakeRange()->getMax() == 10000);
     }
 
-    SECTION("Default values for rotation radius if key is missing")
-    {
-        nlohmann::json data = correctUserConfig;
-        data.erase("rotationRadius");
-
-        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
-        configFile << data.dump() << "\n";
-        configFile.close();
-
-        auto config = repository->loadUserSettings("test");
-
-        CHECK(config->getRotationRadius() == 3.87);
-    }
-
-    SECTION("Default values for rotation radius if value is not number")
-    {
-        nlohmann::json data = correctUserConfig;
-        data["rotationRadius"] = "abc";
-
-        std::ofstream configFile(basePath + "/user_settings.dGVzdA==.json");
-        configFile << data.dump() << "\n";
-        configFile.close();
-
-        auto config = repository->loadUserSettings("test");
-
-        CHECK(config->getRotationRadius() == 3.87);
-    }
-
     SECTION("Default values for soft start speed if key is missing")
     {
         nlohmann::json data = correctUserConfig;
@@ -353,7 +325,6 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         CHECK(config->getInnerBrakeRange()->getMax() == 2500);
         CHECK(config->getOuterBrakeRange()->getMin() == 500);
         CHECK(config->getOuterBrakeRange()->getMax() == 1400);
-        CHECK(config->getRotationRadius() == 7.6);
         CHECK(config->getSoftStartSpeed() == 25);
         CHECK(config->getSoftStartAcceleration() == 2500);
         CHECK(config->getAccelerationStages().size() == 2);
@@ -368,7 +339,7 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
 
     SECTION("Config saved correctly")
     {
-        auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 5.2, 125, 1500, {
+        auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 125, 1500, {
                 AccelerationStage(500.5, 7400)
         }, AccelerationMode::differential, true, true);
         repository->saveUserSettings("test", saved);
@@ -379,7 +350,6 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
         CHECK(loaded->getInnerBrakeRange()->getMax() == 720);
         CHECK(loaded->getOuterBrakeRange()->getMin() == 550);
         CHECK(loaded->getOuterBrakeRange()->getMax() == 3792);
-        CHECK(loaded->getRotationRadius() == 5.2);
         CHECK(loaded->getAccelerationStages().size() == 1);
         CHECK(loaded->getAccelerationStages().front().getSpeed() == 500.5);
         CHECK(loaded->getAccelerationStages().front().getAcceleration() == 7400);
@@ -390,7 +360,8 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
 
     SECTION("Correct name list")
     {
-        auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 5.2, 125, 1500, {AccelerationStage(500.5, 7400)}, AccelerationMode::differential, true, true);
+        auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 125, 1500,
+                                      {AccelerationStage(500.5, 7400)}, AccelerationMode::differential, true, true);
         repository->saveUserSettings("default", saved);
         repository->saveUserSettings("test", saved);
         repository->saveUserSettings("Example", saved);
@@ -424,7 +395,8 @@ TEST_CASE( "Configuration repository user settings test", "[Configuration]" )
 
     SECTION("User settings deleted successfully")
     {
-        auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 5.2, 125, 1500, {AccelerationStage(500.5, 7400)}, AccelerationMode::differential, true, true);
+        auto saved = new UserSettings(new Range(150, 720), new Range(550, 3792), 125, 1500,
+                                      {AccelerationStage(500.5, 7400)}, AccelerationMode::differential, true, true);
         repository->saveUserSettings("default", saved);
         repository->saveUserSettings("test", saved);
         repository->saveUserSettings("Example", saved);

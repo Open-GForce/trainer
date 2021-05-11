@@ -60,11 +60,6 @@ ResponseCastInterface* RequestRouter::route(Request *request)
         return nullptr;
     }
 
-    if (request->getType() == RequestRouter::TYPE_SET_CONFIG_ROT_RADIUS) {
-        this->configurationController->setRotationRadius(request);
-        return nullptr;
-    }
-
     if (request->getType() == RequestRouter::TYPE_SET_CONFIG_SOFT_START) {
         this->configurationController->setSoftStart(request);
         return nullptr;

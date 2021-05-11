@@ -24,7 +24,7 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
     fakeit::Fake(Method(accelerationServiceMock, setAccelerationMode));
     AccelerationService* accelerationService = &accelerationServiceMock.get();
 
-    auto settings = new UserSettings(new Range(30, 200), new Range(40, 100), 6.3, 25, 1000,
+    auto settings = new UserSettings(new Range(30, 200), new Range(40, 100), 25, 1000,
                                      {AccelerationStage(100, 2000)}, AccelerationMode::targetSpeed, false, false);
     auto service = new ProcessingService(driveService, settings, accelerationService);
 
@@ -146,8 +146,8 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
 
     SECTION("Outer brake activated")
     {
-        settings = new UserSettings(new Range(30, 200), new Range(30, 200), 6.3, 25, 1000,
-                                         {AccelerationStage(100, 2000)}, AccelerationMode::targetSpeed, false, false);
+        settings = new UserSettings(new Range(30, 200), new Range(30, 200), 25, 1000,
+                                    {AccelerationStage(100, 2000)}, AccelerationMode::targetSpeed, false, false);
         service->loadUserConfig(settings);
 
         fakeit::When(Method(driveServiceMock, setRotationSpeed)).AlwaysDo([] (double speed) {
@@ -170,7 +170,7 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
 
     SECTION("Outer brake deactivated")
     {
-        settings = new UserSettings(new Range(30, 200), new Range(30, 200), 6.3, 25, 1000,
+        settings = new UserSettings(new Range(30, 200), new Range(30, 200), 25, 1000,
                                     {AccelerationStage(100, 2000)}, AccelerationMode::targetSpeed, false, true);
         service->loadUserConfig(settings);
 
