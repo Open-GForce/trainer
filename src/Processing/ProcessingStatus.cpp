@@ -4,14 +4,15 @@
 
 using namespace GForce::Processing;
 
-ProcessingStatus::ProcessingStatus(EngineStatus *engineStatus, double rotationSpeed, double maxSpeed,
-                                   double targetSpeed,
-                                   int innerBrakeRawValue, int outerBrakeRawValue, double innerBrakePercentage,
-                                   double outerBrakePercentage, RotationDirection rotationDirection,
-                                   std::string operationMode) : engineStatus(engineStatus), rotationSpeed(rotationSpeed),
-                                                                maxSpeed(maxSpeed), targetSpeed(targetSpeed), innerBrakeRawValue(innerBrakeRawValue),
-                                                                outerBrakeRawValue(outerBrakeRawValue), innerBrakePercentage(innerBrakePercentage),
-                                                                outerBrakePercentage(outerBrakePercentage), rotationDirection(rotationDirection), operationMode(std::move(operationMode)) {}
+ProcessingStatus::ProcessingStatus(EngineStatus *engineStatus, bool released, double rotationSpeed, double maxSpeed,
+                                   double targetSpeed, int innerBrakeRawValue, int outerBrakeRawValue,
+                                   double innerBrakePercentage, double outerBrakePercentage,
+                                   RotationDirection rotationDirection, std::string operationMode)
+        : engineStatus(engineStatus), rotationSpeed(rotationSpeed),
+          maxSpeed(maxSpeed), targetSpeed(targetSpeed), innerBrakeRawValue(innerBrakeRawValue),
+          outerBrakeRawValue(outerBrakeRawValue), innerBrakePercentage(innerBrakePercentage),
+          outerBrakePercentage(outerBrakePercentage), rotationDirection(rotationDirection), operationMode(std::move(operationMode)),
+          released(released) {}
 
 ProcessingStatus::~ProcessingStatus()
 {
@@ -22,6 +23,7 @@ Websocket::Response *ProcessingStatus::toResponse()
 {
     nlohmann::json data = {
         {"rotationSpeed", this->rotationSpeed},
+        {"released", this->released},
         {"maxSpeed", this->maxSpeed},
         {"targetSpeed", this->targetSpeed},
         {"innerBrake", {
@@ -83,4 +85,8 @@ RotationDirection ProcessingStatus::getRotationDirection() const {
 
 const std::string &ProcessingStatus::getOperationMode() const {
     return operationMode;
+}
+
+bool ProcessingStatus::isReleased() const {
+    return released;
 }

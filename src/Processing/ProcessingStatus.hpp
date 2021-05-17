@@ -24,6 +24,12 @@ class ProcessingStatus : public Websocket::ResponseCastInterface
         EngineStatus* engineStatus;
 
         /**
+         * Has the user released the system?
+         * Overwrites the inverter release status on false
+         */
+        bool released;
+
+        /**
          * Current rotation speed in 1/min
          */
         double rotationSpeed;
@@ -61,15 +67,17 @@ class ProcessingStatus : public Websocket::ResponseCastInterface
         std::string operationMode;
 
     public:
-        ProcessingStatus(EngineStatus *engineStatus, double rotationSpeed, double maxSpeed, double targetSpeed,
-                         int innerBrakeRawValue, int outerBrakeRawValue, double innerBrakePercentage,
-                         double outerBrakePercentage, RotationDirection rotationDirection, std::string operationMode);
+        ProcessingStatus(EngineStatus *engineStatus, bool released, double rotationSpeed, double maxSpeed,
+                         double targetSpeed, int innerBrakeRawValue, int outerBrakeRawValue,
+                         double innerBrakePercentage, double outerBrakePercentage,
+                         RotationDirection rotationDirection, std::string operationMode);
 
         ~ProcessingStatus() override;
 
         Websocket::Response *toResponse() override;
 
         [[nodiscard]] EngineStatus *getEngineStatus() const;
+        [[nodiscard]] bool isReleased() const;
 
         [[nodiscard]] double getRotationSpeed() const;
         [[nodiscard]] double getMaxSpeed() const;

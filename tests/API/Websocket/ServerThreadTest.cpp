@@ -18,7 +18,9 @@ TEST_CASE( "Websocket server thread tests", "[Processing]" )
 
     SECTION("Broadcast message sent")
     {
-        auto message = new ProcessingStatus(new EngineStatus(true, false, true, 1, 2, false, true, false), 1497, 3500, 1450, 1434, 1000, 0.44, 0.35, RotationDirection::right, "regularSpiral");
+        auto message = new ProcessingStatus(new EngineStatus(true, false, true, 1, 2, false, true, false), false, 1497,
+                                            3500, 1450, 1434, 1000, 0.44, 0.35, RotationDirection::right,
+                                            "regularSpiral");
         thread->addBroadcastMessage(message);
 
         fakeit::When(Method(serverMock, broadcast)).AlwaysDo([thread] (Response* response) {

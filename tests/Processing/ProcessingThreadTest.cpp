@@ -54,7 +54,9 @@ TEST_CASE( "ProcessingThread tests", "[Processing]" )
 
     SECTION("Processing status sent to websocket thread based on status interval")
     {
-        auto status = new ProcessingStatus(new EngineStatus(true, false, true, 1, 2, false, true, false), 1497, 3500,1450, 1434, 1000, 0.44, 0.35, RotationDirection::right,"regularSpiral");
+        auto status = new ProcessingStatus(new EngineStatus(true, false, true, 1, 2, false, true, false), false, 1497,
+                                           3500, 1450, 1434, 1000, 0.44, 0.35, RotationDirection::right,
+                                           "regularSpiral");
         int cycleCount = 0;
 
         fakeit::When(Method(serviceMock, getStatus)).AlwaysReturn(status);
