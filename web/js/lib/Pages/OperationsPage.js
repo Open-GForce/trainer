@@ -465,11 +465,11 @@ class OperationsPage extends AbstractPage
      */
     _renderReleaseButton(status)
     {
-        if (status && this.lastStatus && this.lastStatus.isEngineStatusEqual(status)) {
+        if (status && this.lastStatus && this.lastStatus.isEngineStatusEqual(status) && this.lastStatus.released === status.released) {
             return;
         }
 
-        let released = status.engineStatus === undefined ? false : status.engineStatus.isFullyReleased();
+        let released = status.engineStatus === undefined ? false : (status.engineStatus.isFullyReleased() && status.released);
         let statusChanged = released !== this.released;
 
         if (statusChanged && this.releaseButton.hasClass('loading')) {

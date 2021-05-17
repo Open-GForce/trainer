@@ -2,6 +2,7 @@ class SystemStatus
 {
     /**
      * @param {EngineStatus} engineStatus
+     * @param {boolean} released
      * @param {BrakeInput} innerBrake
      * @param {BrakeInput} outerBrake
      * @param {string} direction
@@ -10,9 +11,10 @@ class SystemStatus
      * @param {number} targetSpeed
      * @param {string }operationMode
      */
-    constructor(engineStatus, innerBrake, outerBrake, direction, currentSpeed, maxSpeed, targetSpeed, operationMode)
+    constructor(engineStatus, released, innerBrake, outerBrake, direction, currentSpeed, maxSpeed, targetSpeed, operationMode)
     {
         this.engineStatus = engineStatus;
+        this.released = released;
         this.innerBrake = innerBrake;
         this.outerBrake = outerBrake;
         this.direction = direction;

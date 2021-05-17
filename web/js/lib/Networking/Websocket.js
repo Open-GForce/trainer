@@ -193,6 +193,7 @@ class Websocket
         
         let status = new SystemStatus(
             message.data.engineStatus ? new EngineStatus(message.data.engineStatus) : undefined,
+            message.data.released,
             new BrakeInput(message.data.innerBrake),
             new BrakeInput(message.data.outerBrake),
             message.data['rotationDirection'],

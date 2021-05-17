@@ -4,6 +4,7 @@
 #include "../../../src/API/Controller/HeartbeatResponse.hpp"
 #include "../../../src/Utils/Assertions/AssertionFailedException.hpp"
 #include "../../../src/Processing/ProcessingStatus.hpp"
+#include "../../../src/Utils/Logging/NullLogger.hpp"
 
 using namespace GForce::API::Websocket;
 using namespace GForce::Utils::Assertions;
@@ -24,7 +25,7 @@ TEST_CASE( "Request router tests", "[Websocket]" )
     fakeit::Fake(Method(configControllerMock, setAccelerationStages));
     ConfigurationController* configController = &configControllerMock.get();
 
-    auto router = new RequestRouter(operationsController, configController);
+    auto router = new RequestRouter(new NullLogger(), operationsController, configController);
 
     nlohmann::json correctMessage = {
             {"type", "replace_me"},

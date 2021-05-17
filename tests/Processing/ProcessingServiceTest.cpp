@@ -237,6 +237,7 @@ TEST_CASE( "ProcessingService tests", "[Processing]" )
         auto status = service->getStatus();
 
         REQUIRE(status->getEngineStatus() != nullptr);
+        CHECK(status->isReleased());
         CHECK(status->getEngineStatus()->isPowerAmplifierReleased());
         CHECK(status->getRotationSpeed() == 500);
         CHECK(status->getInnerBrakeRawValue() == 115);

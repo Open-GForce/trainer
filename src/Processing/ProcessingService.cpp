@@ -117,6 +117,7 @@ ProcessingStatus *ProcessingService::getStatus()
 
     return new ProcessingStatus(
             this->status != nullptr ? this->status->getEngineStatus()->clone() : nullptr,
+            this->released,
             this->status != nullptr ? rotationSpeed : -1,
             this->maxSpeed,
             this->calcTargetSpeed(),
