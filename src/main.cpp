@@ -84,7 +84,7 @@ void runControllerMode(bool CANDummyMode)
 
     auto configController = new ConfigurationController(processingThread, configRepository, logger);
     auto operationsController = new OperationsController(processingThread);
-    auto router = new RequestRouter(operationsController, configController);
+    auto router = new RequestRouter(logger, operationsController, configController);
     auto websocketServer = new Server(router, logger);
     auto webSocketThread = new ServerThread(websocketServer, logger);
 

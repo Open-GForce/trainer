@@ -7,8 +7,9 @@ using namespace GForce::Utils::Assertions;
 using namespace GForce::Utils::Exceptions;
 using namespace GForce::API::Websocket;
 
-RequestRouter::RequestRouter(OperationsController *operationsController, ConfigurationController *configurationController) :
-    operationsController(operationsController), configurationController(configurationController) {}
+RequestRouter::RequestRouter(LoggerInterface *logger, OperationsController *operationsController,
+                             ConfigurationController *configurationController) :
+        operationsController(operationsController), configurationController(configurationController), logger(logger) {}
 
 ResponseCastInterface* RequestRouter::handle(const std::string& message)
 {
@@ -18,11 +19,21 @@ ResponseCastInterface* RequestRouter::handle(const std::string& message)
     Assertion::jsonExistsAndObject(data, "data");
 
     auto request = new Request(data["type"], data["data"]);
+    this->logger->info("Websocket", "New " + request->getType() + " request. Message = " + message, {
+            {"type", request->getType()},
+            {"data", request->getData()}
+    });
+
     try {
         auto response = this->route(request);
         delete request;
         return response;
     } catch (std::exception &e) {
+        this->logger->error("Websocket", "Error handling request => " + std::string(e.what()), {
+                {"type", request->getType()},
+                {"data", request->getData()}
+        });
+
         delete request;
         throw;
     }

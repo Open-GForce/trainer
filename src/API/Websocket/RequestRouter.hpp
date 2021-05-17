@@ -7,6 +7,7 @@
 #include "../Controller/ConfigurationController.hpp"
 
 using namespace GForce::API::Controller;
+using namespace GForce::Utils::Logging;
 
 namespace GForce::API::Websocket {
 
@@ -33,13 +34,15 @@ class RequestRouter : public RouterInterface
     const std::string TYPE_HEARTBEAT = "heartbeat";
 
     private:
+        LoggerInterface* logger;
         OperationsController* operationsController;
         ConfigurationController* configurationController;
 
         ResponseCastInterface* route(Request* request);
 
     public:
-        RequestRouter(OperationsController *operationsController, ConfigurationController *configurationController);
+        RequestRouter(LoggerInterface *logger, OperationsController *operationsController,
+                      ConfigurationController *configurationController);
 
         /**
          * Decodes and routes incoming messages
