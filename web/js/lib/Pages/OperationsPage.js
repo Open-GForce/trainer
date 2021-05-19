@@ -193,7 +193,8 @@ class OperationsPage extends AbstractPage
         this.maxSpeed = status.maxSpeed;
 
         if (!this.firstStatusHandled) {
-            this.speedSliderElement.slider("set value", RotationMath.speedToForce(status.maxSpeed));
+            let force = RotationMath.speedToForce(status.maxSpeed);
+            this.speedSliderElement.slider("set value", this._forceToSliderValue(force));
             this.firstStatusHandled = true;
         }
 
@@ -255,13 +256,25 @@ class OperationsPage extends AbstractPage
     {
         let page = this;
 
+        let valueToForce = function (value) {
+            if (value < 6) {
+                return 1 + (0.2 * value);
+            }
+
+            return (2 + (0.5 * (value - 5)));
+        };
+
         this.speedSliderElement = $('.control.segment .slider');
         this.speedSliderElement.slider({
             min: 1,
-            max: 7,
+            max: 16,
             start: 1,
-            step: 0.5,
+            step: 1,
+            interpretLabel: function (value) {
+                return valueToForce(value).toFixed(1);
+            },
             onChange: function (value) {
+                value = valueToForce(value - 1);
                 if (value === 0) {
                     return;
                 }
@@ -535,5 +548,24 @@ class OperationsPage extends AbstractPage
             action: "activate",
             values: values
         });
+    }
+
+    _forceToSliderValue(force) {
+        if (force >= 7) {return 16;}
+        if (force >= 6.5) {return 15;}
+        if (force >= 6.0) {return 14;}
+        if (force >= 5.5) {return 13;}
+        if (force >= 5.0) {return 12;}
+        if (force >= 4.5) {return 11;}
+        if (force >= 4.0) {return 10;}
+        if (force >= 3.5) {return 9;}
+        if (force >= 3.0) {return 8;}
+        if (force >= 2.5) {return 7;}
+        if (force >= 2.0) {return 6;}
+        if (force >= 1.8) {return 5;}
+        if (force >= 1.6) {return 4;}
+        if (force >= 1.4) {return 3;}
+        if (force >= 1.2) {return 2;}
+        if (force >= 1.0) {return 1;}
     }
 }
