@@ -225,6 +225,14 @@ class OperationsPage extends AbstractPage
         RotationMath.setSystemSettings(settings);
     }
 
+    /**
+     * @inheritDoc
+     */
+    onUserSettings(settings)
+    {
+        this.useAdaptiveAccelerationButton = settings.useAdaptiveAccelerationUserInterface;
+    }
+
     onActiveConfiguration(name)
     {
         if (name === this.settingsName) {
@@ -508,10 +516,12 @@ class OperationsPage extends AbstractPage
     _renderAccelerationButton(status)
     {
         if (!this.useAdaptiveAccelerationButton) {
+            console.log("Adaptive Button deactivated");
             return;
         }
 
         if (!this.released && this.accelerationButtonVisiable) {
+            console.log("Adaptive button visible");
             this.adaptiveAccelerationControlsContainer.hide();
             this.regularControlsContainer.show();
             this.accelerationButtonVisiable = false;
@@ -519,6 +529,7 @@ class OperationsPage extends AbstractPage
         }
 
         if (this.released && !this.accelerationButtonVisiable) {
+            console.log("Showing adaptive button ");
             let containerHeight = this.regularControlsContainer.height();
             this.accelerationButton.height(containerHeight);
 
